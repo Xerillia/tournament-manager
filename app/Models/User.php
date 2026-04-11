@@ -9,7 +9,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
-#[Fillable(['osu_id', 'username', 'country_code', 'country_name', 'avatar_url'])]
+#[Fillable(['osu_id', 'username', 'discord', 'country_code', 'country_name', 'avatar_url'])]
 class User extends Authenticatable
 {
     /** @use HasFactory<UserFactory> */
