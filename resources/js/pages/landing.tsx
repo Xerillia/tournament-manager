@@ -1,6 +1,7 @@
 import { login, logout } from '@/routes/osu';
 import { Head, Link, usePage } from '@inertiajs/react';
 import { link, unlink } from '@/routes/discord';
+import { create } from '@/routes/tournaments';
 
 type User = {
     username: string;
@@ -51,20 +52,31 @@ export default function Landing() {
                         Logout
                     </Link>
                     {!auth.user.discord && (
-                        <Link href={link()} className="bg-yellow-200 p-2">
+                        <Link
+                            href={link()}
+                            className="inline-block bg-yellow-200 p-2 hover:bg-yellow-300"
+                        >
                             Link Discord
                         </Link>
                     )}
                     {auth.user.discord && (
                         <Link
                             href={unlink()}
-                            method="get"
+                            method="post"
                             as="button"
-                            className="h-fit bg-purple-200 p-2 hover:cursor-pointer hover:bg-purple-300"
+                            className="bg-purple-200 p-2 hover:cursor-pointer hover:bg-purple-300"
                         >
                             Unlink Discord
                         </Link>
                     )}
+                    <div className="mt-4">
+                        <Link
+                            href={create()}
+                            className="bg-orange-200 p-2 hover:bg-orange-300"
+                        >
+                            Create Tournament
+                        </Link>
+                    </div>
                 </>
             )}
         </>
