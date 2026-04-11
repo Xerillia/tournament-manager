@@ -1,6 +1,6 @@
 import { login, logout } from '@/routes/osu';
 import { Head, Link, usePage } from '@inertiajs/react';
-import { link } from '@/routes/discord';
+import { link, unlink } from '@/routes/discord';
 
 type User = {
     username: string;
@@ -44,12 +44,25 @@ export default function Landing() {
                             </span>
                         </p>
                     </div>
-                    <Link href={logout()} className="bg-red-200 p-2">
+                    <Link
+                        href={logout()}
+                        className="bg-red-200 p-2 hover:cursor-pointer hover:bg-red-300"
+                    >
                         Logout
                     </Link>
                     {!auth.user.discord && (
                         <Link href={link()} className="bg-yellow-200 p-2">
                             Link Discord
+                        </Link>
+                    )}
+                    {auth.user.discord && (
+                        <Link
+                            href={unlink()}
+                            method="get"
+                            as="button"
+                            className="h-fit bg-purple-200 p-2 hover:cursor-pointer hover:bg-purple-300"
+                        >
+                            Unlink Discord
                         </Link>
                     )}
                 </>

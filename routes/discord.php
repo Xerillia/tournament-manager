@@ -19,4 +19,12 @@ Route::group(['prefix' => config('discord.route_prefix'), 'middleware' => ['auth
 
         return redirect()->intended(config('discord.redirect_login', '/'));
     })->name('discord.callback');
+
+    Route::post('/unlink', function () {
+        $user = Auth::user();
+
+        $user->updateorFail(['discord' => null]);
+
+        return redirect()->intended(config('discord.redirect_login', '/'));
+    })->name('discord.unlink');
 });

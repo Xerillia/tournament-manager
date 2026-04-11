@@ -14,7 +14,7 @@ Route::get('/login', function () {
 
 Route::group(['prefix' => config('osu.route_prefix', 'osu')], function () {
     Route::get('/callback', [OsuController::class, 'handle'])
-        ->name('osu.handle');
+        ->name('osu.callback');
 
     Route::redirect('/refresh-token', 'https://osu.ppy.sh/oauth/authorize?client_id='.config('osu.client_id')
         .'&redirect_uri='.config('osu.redirect_uri')
@@ -22,6 +22,6 @@ Route::group(['prefix' => config('osu.route_prefix', 'osu')], function () {
         ->middleware(['auth'])
         ->name('osu.refresh_token');
 
-    Route::get('/logout', [OsuController::class, 'logout'])
+    Route::post('/logout', [OsuController::class, 'logout'])
         ->name('osu.logout');
 });
