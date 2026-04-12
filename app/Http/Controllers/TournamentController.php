@@ -3,9 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreTournamentRequest;
+use App\Http\Requests\UpdateTournamentRequest;
 use App\Models\Tournament;
 use Illuminate\Http\RedirectResponse;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
 
@@ -57,15 +57,19 @@ class TournamentController extends Controller
      */
     public function edit(Tournament $tournament)
     {
-        //
+        return Inertia::render('edit-tournament', [
+            'tournament' => $tournament,
+        ]);
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Tournament $tournament)
+    public function update(UpdateTournamentRequest $request, Tournament $tournament)
     {
-        //
+        $tournament->update($request->validated());
+
+        return redirect()->to(route('landing'));
     }
 
     /**

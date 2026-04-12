@@ -5,6 +5,7 @@ export type Tournament = {
     id: number;
     host: User;
     name: string;
+    caption: string;
     gamemode: Gamemode;
     max_rank: number;
     min_rank: number;
