@@ -3,7 +3,6 @@
 namespace App\Http\Requests;
 
 use App\Gamemode;
-use App\TournamentStatus;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
@@ -32,8 +31,6 @@ class StoreTournamentRequest extends FormRequest
             'min_rank' => ['required', 'numeric', 'gt:max_rank'],
             'start_datetime' => ['required', 'date', 'before:end_datetime'],
             'end_datetime' => ['required', 'date', 'after:start_datetime'],
-            'status' => ['required', Rule::enum(TournamentStatus::class)],
-            'automatic_status_update' => ['required', 'boolean'],
             'forum_post' => ['nullable', 'url'],
         ];
     }

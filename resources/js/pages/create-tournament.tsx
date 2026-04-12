@@ -75,123 +75,95 @@ export default function CreateTournament() {
                             <p className="text-red-600">{errors.gamemode}</p>
                         )}
 
-                        <label
-                            htmlFor="max_rank"
-                            className="mt-4 text-lg font-bold"
-                        >
-                            Maximum Rank<span className="text-red-600">*</span>
-                        </label>
-                        <input
-                            type="number"
-                            name="max_rank"
-                            className="rounded-md border border-slate-800 p-2"
-                            placeholder="10000"
-                            required
-                        />
-                        {invalid('max_rank') && (
-                            <p className="text-red-600">{errors.max_rank}</p>
-                        )}
+                        <div className="flex gap-4">
+                            <div className="flex flex-1 flex-col">
+                                <label
+                                    htmlFor="max_rank"
+                                    className="mt-4 text-lg font-bold"
+                                >
+                                    Maximum Rank
+                                    <span className="text-red-600">*</span>
+                                </label>
+                                <input
+                                    type="number"
+                                    name="max_rank"
+                                    className="rounded-md border border-slate-800 p-2"
+                                    placeholder="10000"
+                                    required
+                                />
+                                {invalid('max_rank') && (
+                                    <p className="text-red-600">
+                                        {errors.max_rank}
+                                    </p>
+                                )}
+                            </div>
 
-                        <label
-                            htmlFor="min_rank"
-                            className="mt-4 text-lg font-bold"
-                        >
-                            Minimum Rank<span className="text-red-600">*</span>
-                        </label>
-                        <input
-                            type="number"
-                            name="min_rank"
-                            className="rounded-md border border-slate-800 p-2"
-                            placeholder="100000"
-                            required
-                        />
-                        {invalid('min_rank') && (
-                            <p className="text-red-600">{errors.min_rank}</p>
-                        )}
+                            <div className="flex flex-1 flex-col">
+                                <label
+                                    htmlFor="min_rank"
+                                    className="mt-4 text-lg font-bold"
+                                >
+                                    Minimum Rank
+                                    <span className="text-red-600">*</span>
+                                </label>
+                                <input
+                                    type="number"
+                                    name="min_rank"
+                                    className="rounded-md border border-slate-800 p-2"
+                                    placeholder="100000"
+                                    required
+                                />
+                                {invalid('min_rank') && (
+                                    <p className="text-red-600">
+                                        {errors.min_rank}
+                                    </p>
+                                )}
+                            </div>
+                        </div>
 
-                        <label
-                            htmlFor="start_datetime"
-                            className="mt-4 text-lg font-bold"
-                        >
-                            Start Date<span className="text-red-600">*</span>
-                        </label>
-                        <input
-                            type="datetime-local"
-                            name="start_datetime"
-                            className="rounded-md border border-slate-800 p-2"
-                            required
-                        />
-                        {invalid('start_datetime') && (
-                            <p className="text-red-600">
-                                {errors.start_datetime}
-                            </p>
-                        )}
+                        <div className="flex gap-4">
+                            <div className="flex flex-1 flex-col">
+                                <label
+                                    htmlFor="start_datetime"
+                                    className="mt-4 text-lg font-bold"
+                                >
+                                    Start Date
+                                    <span className="text-red-600">*</span>
+                                </label>
+                                <input
+                                    type="datetime-local"
+                                    name="start_datetime"
+                                    className="rounded-md border border-slate-800 p-2"
+                                    required
+                                />
+                                {invalid('start_datetime') && (
+                                    <p className="text-red-600">
+                                        {errors.start_datetime}
+                                    </p>
+                                )}
+                            </div>
 
-                        <label
-                            htmlFor="end_datetime"
-                            className="mt-4 text-lg font-bold"
-                        >
-                            End Date<span className="text-red-600">*</span>
-                        </label>
-                        <input
-                            type="datetime-local"
-                            name="end_datetime"
-                            className="rounded-md border border-slate-800 p-2"
-                            required
-                        />
-                        {invalid('end_datetime') && (
-                            <p className="text-red-600">
-                                {errors.end_datetime}
-                            </p>
-                        )}
-
-                        <label
-                            htmlFor="status"
-                            className="mt-4 text-lg font-bold"
-                        >
-                            Status<span className="text-red-600">*</span>
-                        </label>
-                        <select
-                            name="status"
-                            className="rounded-md border border-slate-800 p-2"
-                            defaultValue="unpublished"
-                            required
-                        >
-                            <option value="unpublished">Unpublished</option>
-                            <option value="open">Open</option>
-                            <option value="ongoing">Ongoing</option>
-                            <option value="ended">Ended</option>
-                        </select>
-                        {invalid('status') && (
-                            <p className="text-red-600">{errors.status}</p>
-                        )}
-
-                        <label
-                            htmlFor="automatic_status_update"
-                            className="mt-4 text-lg font-bold"
-                        >
-                            Automatic Status Update
-                            <span className="text-red-600">*</span>
-                            <p className="text-sm font-normal">
-                                Setting this to false will require you to
-                                manually set the status of the tournament as it
-                                progresses. It is recommended to leave this to{' '}
-                                <span className="font-bold">true</span>.
-                            </p>
-                        </label>
-                        <select
-                            name="automatic_status_update"
-                            className="rounded-md border border-slate-800 p-2"
-                            defaultValue="true"
-                        >
-                            <option value={1}>True</option>
-                            <option value={0}>False</option>
-                        </select>
-                        {invalid('automatic_status_update') && (
-                            <p className="text-red-600">
-                                {errors.automatic_status_update}
-                            </p>
-                        )}
+                            <div className="flex flex-1 flex-col">
+                                <label
+                                    htmlFor="end_datetime"
+                                    className="mt-4 text-lg font-bold"
+                                >
+                                    End Date
+                                    <span className="text-red-600">*</span>
+                                </label>
+                                <input
+                                    type="datetime-local"
+                                    name="end_datetime"
+                                    className="rounded-md border border-slate-800 p-2"
+                                    required
+                                />
+                                {invalid('end_datetime') && (
+                                    <p className="text-red-600">
+                                        {errors.end_datetime}
+                                    </p>
+                                )}
+                            </div>
+                        </div>
 
                         <label
                             htmlFor="forum_post"

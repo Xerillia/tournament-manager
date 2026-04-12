@@ -29,7 +29,7 @@ return new class extends Migration
             $table->dateTime('start_datetime');
             $table->dateTime('end_datetime');
 
-            $table->enum('status', TournamentStatus::cases());
+            $table->enum('status', TournamentStatus::cases())->default(TournamentStatus::UNPUBLISHED);
             $table->boolean('automatic_status_update')->default(true);
 
             $table->string('forum_post')->nullable();
