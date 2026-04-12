@@ -26,3 +26,7 @@ yarn-error.log
 /.nova
 /.vscode
 /.zed
+
+# Laravel Enumify
+/resources/js/enums/*
+!/resources/js/enums/.gitkeep

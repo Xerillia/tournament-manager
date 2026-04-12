@@ -1,70 +1,111 @@
-import { login, logout } from '@/routes/osu';
+import SimpleAuth from '@/components/xeril/simple-auth';
 import { Head, Link, usePage } from '@inertiajs/react';
-import { link, unlink } from '@/routes/discord';
+import { Tournament } from '@/types/tournament';
+import { destroy, edit, show } from '@/routes/tournaments';
 
-type User = {
-    username: string;
-    country_name: string;
-    discord: string;
-};
-export default function Landing() {
-    const { auth } = usePage<{
-        auth: {
-            user: User;
-        };
-    }>().props;
+interface LandingProps {
+    tournaments: Tournament[];
+    ownTournaments: Tournament[];
+}
+
+export default function Landing({ tournaments, ownTournaments }: LandingProps) {
+    const { auth } = usePage().props;
+    const tournamentItems = tournaments.map((tournament: Tournament) => (
+        <Link
+            href={show(tournament.id)}
+            as="tr"
+            key={tournament.id}
+            className="hover:cursor-pointer hover:bg-black/5"
+        >
+            <td className="border p-2">{tournament.name}</td>
+            <td className="border p-2">{tournament.host.username}</td>
+            <td className="border p-2">{tournament.gamemode}</td>
+            <td className="border p-2">
+                {tournament.max_rank} - {tournament.min_rank}
+            </td>
+            <td className="border p-2">
+                {tournament.start_datetime.toString()} -{' '}
+                {tournament.end_datetime.toString()}
+            </td>
+            <td className="border p-2">{tournament.status}</td>
+            <td className="border p-2">{tournament.forum_post}</td>
+        </Link>
+    ));
+    const ownTournamentItems = ownTournaments.map((tournament: Tournament) => (
+        <Link
+            href={show(tournament.id)}
+            as="tr"
+            key={tournament.id}
+            className="hover:cursor-pointer hover:bg-black/5"
+        >
+            <td className="border p-2">{tournament.name}</td>
+            <td className="border p-2">{tournament.gamemode}</td>
+            <td className="border p-2">
+                {tournament.max_rank} - {tournament.min_rank}
+            </td>
+            <td className="border p-2">
+                {tournament.start_datetime.toString()} -{' '}
+                {tournament.end_datetime.toString()}
+            </td>
+            <td className="border p-2">{tournament.status}</td>
+            <td className="border p-2">{tournament.forum_post}</td>
+            <td className="border p-2 text-center">
+                <Link
+                    href={edit(tournament.id)}
+                    className="mr-2 inline-block rounded-md bg-blue-200 p-2 hover:bg-blue-300"
+                >
+                    Edit
+                </Link>
+                <Link
+                    href={destroy(tournament.id)}
+                    method="delete"
+                    className="rounded-md bg-red-200 p-2 hover:cursor-pointer hover:bg-red-300"
+                >
+                    Delete
+                </Link>
+            </td>
+        </Link>
+    ));
 
     return (
         <>
             <Head title="Landing" />
-            {!auth.user && (
-                <Link href={login()} className="bg-green-200 p-2">
-                    Login Osu
-                </Link>
-            )}
-            {auth.user && (
+            <SimpleAuth user={auth.user} />
+
+            <h1 className="mt-12 text-3xl font-bold">Public Tournaments</h1>
+            <table className="border-2">
+                <thead>
+                    <tr>
+                        <th className="border p-4">Tournament Name</th>
+                        <th className="border p-4">Host</th>
+                        <th className="border p-4">Gamemode</th>
+                        <th className="border p-4">Rank Range</th>
+                        <th className="border p-4">Period</th>
+                        <th className="border p-4">Status</th>
+                        <th className="border p-4">Forum Post</th>
+                    </tr>
+                </thead>
+                <tbody>{tournamentItems}</tbody>
+            </table>
+            {auth.user && ownTournaments.length > 0 && (
                 <>
-                    <div className="mb-4">
-                        <p>
-                            Logged in user:{' '}
-                            <span className="font-bold">
-                                {auth.user.username}
-                            </span>
-                        </p>
-                        <p>
-                            User Country:{' '}
-                            <span className="font-bold">
-                                {auth.user.country_name}
-                            </span>
-                        </p>
-                        <p>
-                            Linked Discord username:{' '}
-                            <span className="font-bold">
-                                {auth.user.discord}
-                            </span>
-                        </p>
-                    </div>
-                    <Link
-                        href={logout()}
-                        className="bg-red-200 p-2 hover:cursor-pointer hover:bg-red-300"
-                    >
-                        Logout
-                    </Link>
-                    {!auth.user.discord && (
-                        <Link href={link()} className="bg-yellow-200 p-2">
-                            Link Discord
-                        </Link>
-                    )}
-                    {auth.user.discord && (
-                        <Link
-                            href={unlink()}
-                            method="get"
-                            as="button"
-                            className="h-fit bg-purple-200 p-2 hover:cursor-pointer hover:bg-purple-300"
-                        >
-                            Unlink Discord
-                        </Link>
-                    )}
+                    <h1 className="mt-12 text-3xl font-bold">
+                        Your Tournaments
+                    </h1>
+                    <table className="border-2">
+                        <thead>
+                            <tr>
+                                <th className="border p-4">Tournament Name</th>
+                                <th className="border p-4">Gamemode</th>
+                                <th className="border p-4">Rank Range</th>
+                                <th className="border p-4">Period</th>
+                                <th className="border p-4">Status</th>
+                                <th className="border p-4">Forum Post</th>
+                                <th className="border p-4">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>{ownTournamentItems}</tbody>
+                    </table>
                 </>
             )}
         </>

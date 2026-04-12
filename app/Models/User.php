@@ -16,10 +16,10 @@ class User extends Authenticatable
     use HasFactory, InteractsWithOsu, Notifiable;
 
     /**
-     * Get the statistics of the user
+     * Get the tournaments that belong to the user
      */
-    public function statistics(): HasMany
+    public function tournaments(): HasMany
     {
-        return $this->hasMany(Statistic::class);
+        return $this->hasMany(Tournament::class);
     }
 }
