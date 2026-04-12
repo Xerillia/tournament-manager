@@ -1,7 +1,7 @@
 import SimpleAuth from '@/components/xeril/simple-auth';
 import { Head, Link, usePage } from '@inertiajs/react';
 import { Tournament } from '@/types/tournament';
-import { edit } from '@/routes/tournaments';
+import { destroy, edit } from '@/routes/tournaments';
 
 interface LandingProps {
     tournaments: Tournament[];
@@ -39,12 +39,19 @@ export default function Landing({ tournaments, ownTournaments }: LandingProps) {
             </td>
             <td className="border p-2">{tournament.status}</td>
             <td className="border p-2">{tournament.forum_post}</td>
-            <td className="border p-2">
+            <td className="border p-2 text-center">
                 <Link
                     href={edit(tournament.id)}
-                    className="rounded-md bg-blue-200 p-2"
+                    className="mr-2 inline-block rounded-md bg-blue-200 p-2 hover:bg-blue-300"
                 >
                     Edit
+                </Link>
+                <Link
+                    href={destroy(tournament.id)}
+                    method="delete"
+                    className="rounded-md bg-red-200 p-2 hover:cursor-pointer hover:bg-red-300"
+                >
+                    Delete
                 </Link>
             </td>
         </tr>

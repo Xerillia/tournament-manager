@@ -74,6 +74,8 @@ class TournamentController extends Controller
      */
     public function destroy(Tournament $tournament)
     {
-        //
+        $tournament->delete(); // soft deleted
+
+        return redirect()->to(route('landing'));
     }
 }

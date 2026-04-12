@@ -10,5 +10,6 @@ Route::prefix('tournaments')->name('tournaments.')->group(function () {
         Route::post('/', [TournamentController::class, 'store'])->middleware([HandlePrecognitiveRequests::class])->name('store');
         Route::get('/{tournament}/edit', [TournamentController::class, 'edit'])->name('edit');
         Route::put('/{tournament}', [TournamentController::class, 'update'])->middleware([HandlePrecognitiveRequests::class])->name('update');
+        Route::delete('/{tournament}', [TournamentController::class, 'destroy'])->name('destroy');
     });
 });
