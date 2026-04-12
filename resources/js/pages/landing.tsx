@@ -1,7 +1,7 @@
 import SimpleAuth from '@/components/xeril/simple-auth';
 import { Head, Link, usePage } from '@inertiajs/react';
 import { Tournament } from '@/types/tournament';
-import { destroy, edit } from '@/routes/tournaments';
+import { destroy, edit, show } from '@/routes/tournaments';
 
 interface LandingProps {
     tournaments: Tournament[];
@@ -11,7 +11,12 @@ interface LandingProps {
 export default function Landing({ tournaments, ownTournaments }: LandingProps) {
     const { auth } = usePage().props;
     const tournamentItems = tournaments.map((tournament: Tournament) => (
-        <tr key={tournament.id}>
+        <Link
+            href={show(tournament.id)}
+            as="tr"
+            key={tournament.id}
+            className="hover:cursor-pointer hover:bg-black/5"
+        >
             <td className="border p-2">{tournament.name}</td>
             <td className="border p-2">{tournament.host.username}</td>
             <td className="border p-2">{tournament.gamemode}</td>
@@ -24,10 +29,15 @@ export default function Landing({ tournaments, ownTournaments }: LandingProps) {
             </td>
             <td className="border p-2">{tournament.status}</td>
             <td className="border p-2">{tournament.forum_post}</td>
-        </tr>
+        </Link>
     ));
     const ownTournamentItems = ownTournaments.map((tournament: Tournament) => (
-        <tr key={tournament.id}>
+        <Link
+            href={show(tournament.id)}
+            as="tr"
+            key={tournament.id}
+            className="hover:cursor-pointer hover:bg-black/5"
+        >
             <td className="border p-2">{tournament.name}</td>
             <td className="border p-2">{tournament.gamemode}</td>
             <td className="border p-2">
@@ -54,7 +64,7 @@ export default function Landing({ tournaments, ownTournaments }: LandingProps) {
                     Delete
                 </Link>
             </td>
-        </tr>
+        </Link>
     ));
 
     return (

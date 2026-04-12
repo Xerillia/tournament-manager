@@ -46,7 +46,11 @@ class TournamentController extends Controller
      */
     public function show(Tournament $tournament)
     {
-        //
+        $tournament->load('host');
+
+        return Inertia::render('show-tournament', [
+            'tournament' => $tournament,
+        ]);
     }
 
     /**
