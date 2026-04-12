@@ -2,7 +2,7 @@
 
 namespace App\Http\Requests;
 
-use App\Gamemode;
+use App\Enums\Gamemode;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
@@ -31,7 +31,7 @@ class StoreTournamentRequest extends FormRequest
             'min_rank' => ['required', 'numeric', 'gt:max_rank'],
             'start_datetime' => ['required', 'date'],
             'end_datetime' => ['required', 'date', 'after:start_datetime'],
-            'forum_post' => ['nullable', 'url', 'regex:/https:\/\/osu.ppy.sh\/community\/forums\/topics\/\d+/i'],
+            'forum_post' => ['nullable', 'url', 'regex:/^https:\/\/osu.ppy.sh\/community\/forums\/topics\/\d+(\?n=\d+)?$/i'],
         ];
     }
 

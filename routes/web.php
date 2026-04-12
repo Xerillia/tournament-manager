@@ -1,8 +1,17 @@
 <?php
 
+use App\Models\Tournament;
 use Illuminate\Support\Facades\Route;
+use Inertia\Inertia;
 
-Route::inertia('/', 'landing')->name('landing');
+Route::get('/', function () {
+    // get all tourney
+    $tournaments = Tournament::with('host')->get();
+
+    return Inertia::render('landing', [
+        'tournaments' => $tournaments,
+    ]);
+})->name('landing');
 
 // Route::middleware(['auth', 'verified'])->group(function () {
 //     Route::inertia('dashboard', 'dashboard')->name('dashboard');
