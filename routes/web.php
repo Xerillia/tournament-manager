@@ -1,15 +1,23 @@
 <?php
 
+use App\Enums\TournamentStatus;
 use App\Models\Tournament;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
 Route::get('/', function () {
     // get all tourney
-    $tournaments = Tournament::with('host')->get();
+    $tournaments = Tournament::where('status', '!=', TournamentStatus::UNPUBLISHED)->with('host')->get();
+
+    $ownTournaments = [];
+    if (Auth::check()) {
+        $ownTournaments = Tournament::where('user_id', '=', Auth::id())->get();
+    }
 
     return Inertia::render('landing', [
         'tournaments' => $tournaments,
+        'ownTournaments' => $ownTournaments,
     ]);
 })->name('landing');
 
