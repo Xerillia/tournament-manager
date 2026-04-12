@@ -1,5 +1,18 @@
 # Table of Contents
 
+- [Prerequisite](#prerequisite)
+- [Cloning repository](#cloning-repository)
+- [Generating node_modules and vendor](#generating-node_modules-and-vendor)
+- [Creating .env](#creating-env)
+    - [osu OAuth API setup](#osu-oauth-api-setup)
+    - [Discord OAuth API setup](#discord-oauth-api-setup)
+- [Running migrations](#running-migrations)
+- [Setting up local platform](#setting-up-local-platform)
+    - [Laragon](#laragon)
+- [Development environment](#development-environment)
+- [Building application](#building-application)
+- [FAQ and Troubleshooting](#faq-and-troubleshooting)
+
 # Prerequisite
 
 1. [Install git](https://git-scm.com/install/windows).
@@ -82,7 +95,6 @@ You can use Laragon, XAMPP, or anything you like.
 5. Run the [migrations](#running-migrations).
 6. Have the [dev environment running](#development-environment) (recommended) or [app built](#building-application).
 7. Open `http://<project_name>.test/` (e.g. `http://project-manager.test/`).
-8. If it doesn't load, ensure `Auto-create Virtual Hosts` is enabled in the settings.
 
 # Development environment
 
@@ -101,4 +113,6 @@ npm run build
 
 # FAQ and Troubleshooting
 
-TBA
+### I can't open http://<project_name>.test/ while using Laragon
+
+Ensure `Auto-create Virtual Hosts` is enabled in the Laragon's settings.
