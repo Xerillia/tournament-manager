@@ -5,7 +5,7 @@ namespace App\Models;
 use App\Concerns\InteractsWithOsu;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
@@ -16,10 +16,10 @@ class User extends Authenticatable
     use HasFactory, InteractsWithOsu, Notifiable;
 
     /**
-     * Get the statistics of the user
+     * Get the tournaments that belong to the user
      */
-    public function statistics(): HasMany
+    public function tournaments(): BelongsToMany
     {
-        return $this->hasMany(Statistic::class);
+        return $this->belongsToMany(Tournament::class)->withTimestamps();
     }
 }
