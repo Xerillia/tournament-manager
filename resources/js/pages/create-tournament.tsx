@@ -41,7 +41,7 @@ export default function CreateTournament() {
                         >
                             Tournament Caption
                             <span className="ml-1 text-sm text-gray-500">
-                                (optional)
+                                (optional, 255 characters max)
                             </span>
                         </label>
                         <input
@@ -49,6 +49,7 @@ export default function CreateTournament() {
                             name="caption"
                             className="rounded-md border border-slate-800 p-2"
                             placeholder="Ready to show your might?"
+                            onChange={() => validate('caption')}
                         />
                         {invalid('caption') && (
                             <p className="text-red-600">{errors.caption}</p>
@@ -65,6 +66,7 @@ export default function CreateTournament() {
                             className="rounded-md border border-slate-800 p-2"
                             defaultValue="std"
                             required
+                            onChange={() => validate('gamemode')}
                         >
                             <option value="std">Standard</option>
                             <option value="mania">Mania</option>
@@ -90,6 +92,7 @@ export default function CreateTournament() {
                                     className="rounded-md border border-slate-800 p-2"
                                     placeholder="10000"
                                     required
+                                    onChange={() => validate('max_rank')}
                                 />
                                 {invalid('max_rank') && (
                                     <p className="text-red-600">
@@ -109,9 +112,11 @@ export default function CreateTournament() {
                                 <input
                                     type="number"
                                     name="min_rank"
+                                    min={1}
                                     className="rounded-md border border-slate-800 p-2"
                                     placeholder="100000"
                                     required
+                                    onChange={() => validate('min_rank')}
                                 />
                                 {invalid('min_rank') && (
                                     <p className="text-red-600">
@@ -135,6 +140,7 @@ export default function CreateTournament() {
                                     name="start_datetime"
                                     className="rounded-md border border-slate-800 p-2"
                                     required
+                                    onChange={() => validate('start_datetime')}
                                 />
                                 {invalid('start_datetime') && (
                                     <p className="text-red-600">
@@ -156,6 +162,7 @@ export default function CreateTournament() {
                                     name="end_datetime"
                                     className="rounded-md border border-slate-800 p-2"
                                     required
+                                    onChange={() => validate('end_datetime')}
                                 />
                                 {invalid('end_datetime') && (
                                     <p className="text-red-600">
@@ -179,6 +186,7 @@ export default function CreateTournament() {
                             name="forum_post"
                             className="rounded-md border border-slate-800 p-2"
                             placeholder="https://osu.ppy.sh/community/forums/topics/..."
+                            onChange={() => validate('forum_post')}
                         />
                         {invalid('forum_post') && (
                             <p className="text-red-600">{errors.forum_post}</p>
