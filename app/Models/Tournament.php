@@ -4,7 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 #[Fillable(['user_id', 'name', 'caption', 'gamemode', 'max_rank', 'min_rank', 'start_datetime',
     'end_datetime', 'status', 'automatic_status_update', 'forum_post', 'groupchat',
@@ -13,10 +13,10 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 class Tournament extends Model
 {
     /**
-     * Get the founder of the tournament.
+     * Get the host of the tournament.
      */
-    public function founder(): BelongsToMany
+    public function host(): BelongsTo
     {
-        return $this->belongsToMany(User::class)->withTimestamps();
+        return $this->belongsTo(User::class, 'user_id');
     }
 }
