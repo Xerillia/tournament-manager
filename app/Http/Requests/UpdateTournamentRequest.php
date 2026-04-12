@@ -24,7 +24,7 @@ class UpdateTournamentRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'name' => ['required', Rule::unique('tournaments', 'name')->ignore($this->route('tournament'))],
+            'name' => ['required', Rule::unique('tournaments', 'name')->ignore($this->route('tournament'))->whereNull('deleted_at')],
             'caption' => ['nullable', 'max:255'],
             'gamemode' => ['required', Rule::enum(Gamemode::class)],
             'max_rank' => ['required', 'numeric', 'min:1'],
