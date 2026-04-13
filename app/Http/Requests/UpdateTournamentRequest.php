@@ -31,7 +31,9 @@ class UpdateTournamentRequest extends FormRequest
             'min_rank' => ['required', 'numeric', 'gt:max_rank'],
             'start_datetime' => ['required', 'date'],
             'end_datetime' => ['required', 'date', 'after:start_datetime'],
-            'forum_post' => ['nullable', 'url', 'regex:/^https:\/\/osu.ppy.sh\/community\/forums\/topics\/\d+(\?n=\d+)?$/i'],
+            'links.*.label' => ['required', 'string'],
+            'links.*.url' => ['required', 'url'],
+            'links.*.sequence' => ['required', 'numeric'],
         ];
     }
 
@@ -43,7 +45,8 @@ class UpdateTournamentRequest extends FormRequest
         return [
             'end_datetime.after' => 'The end date must be after the start date.',
             'min_rank.gt' => 'The min rank value must be higher than max rank.',
-            'forum_post.regex' => 'The url must be an osu! Forum Post url.',
+            'links.*.label' => 'The label is required.',
+            'links.*.url' => 'The link must be a valid url.',
         ];
     }
 }

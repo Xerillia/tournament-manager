@@ -7,6 +7,7 @@ use App\Http\Requests\UpdateTournamentRequest;
 use App\Models\Tournament;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
 
 class TournamentController extends Controller
@@ -35,7 +36,27 @@ class TournamentController extends Controller
         $user_id = ['user_id' => Auth::id()];
 
         // attempt to create tournament
-        Tournament::create($request->safe()->merge($user_id)->toArray());
+        $tournament = Tournament::create($request->safe()->merge($user_id)->toArray());
+
+        // create links if there is any
+        $links = $request->safe()->only(['links']);
+
+        if ($links && $links['links']) {
+            $links = $links['links'];
+
+            DB::beginTransaction();
+
+            foreach ($links as $key => $value) {
+                $value['tournament_id'] = $tournament->id;
+                $value['created_at'] = now();
+                $value['updated_at'] = now();
+                $links[$key] = $value;
+            }
+
+            DB::table('tournament_links')->insert($links);
+
+            DB::commit();
+        }
 
         // redirect home
         return redirect()->to(route('landing'));
@@ -46,7 +67,7 @@ class TournamentController extends Controller
      */
     public function show(Tournament $tournament)
     {
-        $tournament->load('host');
+        $tournament->load(['host', 'links']);
 
         return Inertia::render('show-tournament', [
             'tournament' => $tournament,
@@ -58,6 +79,8 @@ class TournamentController extends Controller
      */
     public function edit(Tournament $tournament)
     {
+        $tournament->load('links');
+
         return Inertia::render('edit-tournament', [
             'tournament' => $tournament,
         ]);
@@ -69,6 +92,28 @@ class TournamentController extends Controller
     public function update(UpdateTournamentRequest $request, Tournament $tournament)
     {
         $tournament->update($request->validated());
+
+        // update links if there is any
+        $links = $request->safe()->only(['links']);
+
+        if ($links && $links['links']) {
+            $links = $links['links'];
+
+            DB::beginTransaction();
+
+            DB::table('tournament_links')->where('tournament_id', '=', $tournament->id)->delete();
+
+            foreach ($links as $key => $value) {
+                $value['tournament_id'] = $tournament->id;
+                $value['created_at'] = now();
+                $value['updated_at'] = now();
+                $links[$key] = $value;
+            }
+
+            DB::table('tournament_links')->insert($links);
+
+            DB::commit();
+        }
 
         return redirect()->to(route('landing'));
     }
