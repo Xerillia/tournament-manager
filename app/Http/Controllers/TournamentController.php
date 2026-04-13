@@ -48,8 +48,6 @@ class TournamentController extends Controller
 
             foreach ($links as $key => $value) {
                 $value['tournament_id'] = $tournament->id;
-                $value['created_at'] = now();
-                $value['updated_at'] = now();
                 $links[$key] = $value;
             }
 
@@ -105,8 +103,6 @@ class TournamentController extends Controller
 
             foreach ($links as $key => $value) {
                 $value['tournament_id'] = $tournament->id;
-                $value['created_at'] = now();
-                $value['updated_at'] = now();
                 $links[$key] = $value;
             }
 
