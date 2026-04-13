@@ -64,7 +64,7 @@ class TournamentController extends Controller
     }
 
     /**
-     * Show the form for editing the specified resource.
+     * Show the admin page for a specified resource
      */
     public function admin(Tournament $tournament)
     {
@@ -72,6 +72,17 @@ class TournamentController extends Controller
             'tournament' => $tournament,
         ]);
     }
+     /**
+     * Show the admin player page for a specified resource
+     */
+
+    public function players(Tournament $tournament)
+    {
+        return Inertia::render('admin/players', [
+            'tournament' => $tournament,
+        ]);
+    }
+    
 
     /**
      * Update the specified resource in storage.
