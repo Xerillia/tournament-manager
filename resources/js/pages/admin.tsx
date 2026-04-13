@@ -1,30 +1,33 @@
 // resources/js/Pages/Admin/Tournament.jsx
+import type { Tournament } from '@/types/tournament';
 
-import { router } from '@inertiajs/react'
-import { useState } from 'react'
+interface EditTournamentProps {
+    tournament: Tournament;
+}
 
-export default function Admin() {
+export default function Admin({ tournament }: EditTournamentProps) {
+
     return (
-        <Layout>
+        <Layout tournament={tournament}>
             <div className="flex-1 max-w-5xl mx-5 py-10 px-4">
-                <h1 className="text-2xl font-medium mb-6">Tournament admin</h1>
-
-                {/* Tabs */}
+                <h1 className="text-2xl font-medium mb-6">Tournament admin panel</h1>
+                
                 <div className="flex border-b mb-6"></div>
-
-                {/* Search */}
-                <div className="mb-4"></div>
+                <div className="mb-4">
+                    <p>{tournament.name}</p>
+                    <p>{tournament.id}</p>
+                </div>
             </div>
         </Layout>
     )
 }
 
-export function AdminSidebar({ className = "" }: { className?: string }) {
+export function AdminSidebar({ className = "", tournament }: { className?: string; tournament: Tournament}) {
     return (
         <div className={`w-64 bg-zinc-800 min-h-screen flex flex-col p-4 gap-2 ${className}`}>
-            <a className="text-white hover:text-orange-400">Dashboard</a>
-            <a className="text-white hover:text-orange-400">Players</a>
-            <a className="text-white hover:text-orange-400">Teams</a>
+            <a href={`/tournaments/${tournament.id}/admin`} className="text-white hover:text-orange-400">Dashboard</a>
+            <a href={`/tournaments/${tournament.id}/admin/players`} className="text-white hover:text-orange-400">Players</a>
+            <a href={`/tournaments/${tournament.id}/admin/teams`}  className="text-white hover:text-orange-400">Teams</a>
         </div>
     )
 }
@@ -37,12 +40,14 @@ export function Header({ className = "" }: { className?: string }) {
     )
 }
 
-export function Layout({ children }: { children: React.ReactNode }) {
+export function Layout(
+    { children, tournament }: { children: React.ReactNode; tournament: Tournament }
+) {
     return (
         <div className="min-h-screen flex flex-col">
             <Header />
             <div className="flex flex-1">
-                <AdminSidebar />
+                <AdminSidebar tournament={tournament}/>
 
                 <main className="flex-1 bg-zinc-900">
                     {children}
