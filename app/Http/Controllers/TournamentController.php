@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreTournamentRequest;
 use App\Http\Requests\UpdateTournamentRequest;
+use App\Models\Team;
 use App\Models\Tournament;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Auth;
@@ -78,8 +79,11 @@ class TournamentController extends Controller
 
     public function players(Tournament $tournament)
     {
+        $members = $tournament->users;
+
         return Inertia::render('admin/players', [
             'tournament' => $tournament,
+            'players' => $members
         ]);
     }
     

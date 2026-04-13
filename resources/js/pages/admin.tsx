@@ -1,11 +1,11 @@
 // resources/js/Pages/Admin/Tournament.jsx
 import type { Tournament } from '@/types/tournament';
 
-interface EditTournamentProps {
+interface Props {
     tournament: Tournament;
 }
 
-export default function Admin({ tournament }: EditTournamentProps) {
+export default function Admin({ tournament }: Props) {
 
     return (
         <Layout tournament={tournament}>
