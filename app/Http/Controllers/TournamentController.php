@@ -64,6 +64,16 @@ class TournamentController extends Controller
     }
 
     /**
+     * Show the form for editing the specified resource.
+     */
+    public function admin(Tournament $tournament)
+    {
+        return Inertia::render('admin', [
+            'tournament' => $tournament,
+        ]);
+    }
+
+    /**
      * Update the specified resource in storage.
      */
     public function update(UpdateTournamentRequest $request, Tournament $tournament)
