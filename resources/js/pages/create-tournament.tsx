@@ -11,7 +11,7 @@ export default function CreateTournament() {
     const [nextId, setNextId] = useState<number>(0);
 
     function addLink() {
-        setLinks([...links, { label: '', url: '', sequence: nextId + 1, id: nextId }]);
+        setLinks([...links, { label: '', url: '', id: nextId }]);
         setNextId(nextId + 1);
     }
 
@@ -229,12 +229,6 @@ export default function CreateTournament() {
                                         </button>
                                     </div>
                                 )} */}
-                                <input
-                                    type="hidden"
-                                    name={'links[' + link.id + '][sequence]'}
-                                    id={'links[' + link.id + '][sequence]'}
-                                    value={links.find((obj) => obj.id === link.id)?.id}
-                                />
                             </div>
                         ))}
                         {links.length < MAX_ROW && (

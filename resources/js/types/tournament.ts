@@ -18,6 +18,5 @@ export type Tournament = {
 export type Link = {
     label: string;
     url: string;
-    sequence: number;
     id: number;
 };

@@ -33,7 +33,6 @@ class UpdateTournamentRequest extends FormRequest
             'end_datetime' => ['required', 'date', 'after:start_datetime'],
             'links.*.label' => ['required', 'string'],
             'links.*.url' => ['required', 'url'],
-            'links.*.sequence' => ['required', 'numeric'],
         ];
     }
 

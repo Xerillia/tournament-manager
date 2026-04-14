@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
-#[Fillable(['tournament_id', 'label', 'url', 'sequence'])]
+#[Fillable(['tournament_id', 'label', 'url'])]
 class TournamentLink extends Model
 {
     /**

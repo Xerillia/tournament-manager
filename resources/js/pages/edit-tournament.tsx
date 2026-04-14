@@ -15,7 +15,7 @@ export default function EditTournament({ tournament }: EditTournamentProps) {
     const [nextId, setNextId] = useState<number>(links.length === 0 ? 0 : Math.max(...links.map((obj) => obj.id)) + 1); // ensures id won't cause conflict locally
 
     function addLink() {
-        setLinks([...links, { label: '', url: '', sequence: nextId + 1, id: nextId }]);
+        setLinks([...links, { label: '', url: '', id: nextId }]);
         setNextId(nextId + 1);
     }
 
@@ -246,12 +246,6 @@ export default function EditTournament({ tournament }: EditTournamentProps) {
                                         </button>
                                     </div>
                                 )} */}
-                                <input
-                                    type="hidden"
-                                    name={'links[' + link.id + '][sequence]'}
-                                    id={'links[' + link.id + '][sequence]'}
-                                    value={links.find((obj) => obj.id === link.id)?.id}
-                                />
                             </div>
                         ))}
                         {links.length < MAX_ROW && (
