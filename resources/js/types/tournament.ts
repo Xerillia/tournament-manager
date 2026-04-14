@@ -12,5 +12,11 @@ export type Tournament = {
     start_datetime: Date;
     end_datetime: Date;
     status: TournamentStatus;
-    forum_post: string;
+    links: Link[];
+};
+
+export type Link = {
+    label: string;
+    url: string;
+    id: number;
 };
