@@ -19,6 +19,59 @@ export default function CreateTournament() {
         setLinks(links.filter((obj) => obj.id !== link.id));
     }
 
+    const linkIndex = (link: Link) => links.findIndex((obj) => obj.id === link.id); // find the index of the link
+
+    const linkFilteredOut = (link: Link) => links.filter((obj) => obj.id !== link.id); // filter out the link from the list
+
+    function insertLink(link: Link, newIndex = linkIndex(link)) {
+        const filtered = linkFilteredOut(link);
+
+        const newLinks = [
+            ...filtered.slice(0, newIndex), // elements before insertion point
+            link,
+            ...filtered.slice(newIndex), // elements after insertion point
+        ];
+
+        setLinks(newLinks);
+    }
+
+    function move(link: Link, direction = 'up') {
+        const index = linkIndex(link);
+
+        let newIndex = -1;
+        switch (direction) {
+            case 'up':
+                if (index !== 0) {
+                    newIndex = index - 1;
+                }
+                break;
+            case 'down':
+                if (index !== links.length + 1) {
+                    newIndex = index + 1;
+                }
+                break;
+            default:
+                break;
+        }
+
+        const otherLink = links.at(newIndex) as Link;
+        [link.id, otherLink.id] = [otherLink.id, link.id];
+
+        insertLink(link, newIndex);
+    }
+
+    function setLabel(newLabel: string, link: Link) {
+        link.label = newLabel;
+
+        insertLink(link);
+    }
+
+    function setUrl(newUrl: string, link: Link) {
+        link.url = newUrl;
+
+        insertLink(link);
+    }
+
     return (
         <>
             <Head title="Create Tournament" />
@@ -45,10 +98,12 @@ export default function CreateTournament() {
                         <input
                             type="text"
                             name="name"
+                            id="name"
                             className="rounded-md border border-slate-800 p-2"
                             placeholder="Awesome Osu Tournament"
                             required
                             onChange={() => validate('name')}
+                            autoComplete="false"
                         />
                         {invalid('name') && <p className="text-red-600">{errors.name}</p>}
 
@@ -62,6 +117,7 @@ export default function CreateTournament() {
                         <input
                             type="text"
                             name="caption"
+                            id="caption"
                             className="rounded-md border border-slate-800 p-2"
                             placeholder="Ready to show your might?"
                             onChange={() => validate('caption')}
@@ -76,6 +132,7 @@ export default function CreateTournament() {
                         </label>
                         <select
                             name="gamemode"
+                            id="gamemode"
                             className="rounded-md border border-slate-800 p-2"
                             defaultValue="std"
                             required
@@ -100,6 +157,7 @@ export default function CreateTournament() {
                                 <input
                                     type="number"
                                     name="max_rank"
+                                    id="max_rank"
                                     className="rounded-md border border-slate-800 p-2"
                                     placeholder="10000"
                                     required
@@ -119,6 +177,7 @@ export default function CreateTournament() {
                                 <input
                                     type="number"
                                     name="min_rank"
+                                    id="min_rank"
                                     min={1}
                                     className="rounded-md border border-slate-800 p-2"
                                     placeholder="100000"
@@ -141,6 +200,7 @@ export default function CreateTournament() {
                                 <input
                                     type="datetime-local"
                                     name="start_datetime"
+                                    id="start_datetime"
                                     className="rounded-md border border-slate-800 p-2"
                                     required
                                     onChange={() => validate('start_datetime')}
@@ -159,6 +219,7 @@ export default function CreateTournament() {
                                 <input
                                     type="datetime-local"
                                     name="end_datetime"
+                                    id="end_datetime"
                                     className="rounded-md border border-slate-800 p-2"
                                     required
                                     onChange={() => validate('end_datetime')}
@@ -171,7 +232,6 @@ export default function CreateTournament() {
                         {links.map((link) => (
                             <div
                                 key={link.id}
-                                id="links"
                                 className="mb-4 flex gap-2"
                             >
                                 {links.length >= 2 && (
@@ -193,7 +253,8 @@ export default function CreateTournament() {
                                             className="block w-full rounded-md border border-slate-800 p-2"
                                             required
                                             onBlur={() => validate('links.' + link.id + '.label')}
-                                            defaultValue={links.find((obj) => obj.id === link.id)?.label}
+                                            value={link.label}
+                                            onChange={(e) => setLabel(e.target.value, link)}
                                         />
                                         {invalid('links.' + link.id + '.label') && <p className="text-red-600">{errors['links.' + link.id + '.label']}</p>}
                                     </div>
@@ -206,29 +267,34 @@ export default function CreateTournament() {
                                             className="flex w-full flex-1 rounded-md border border-slate-800 p-2"
                                             required
                                             onBlur={() => validate('links.' + link.id + '.url')}
-                                            defaultValue={links.find((obj) => obj.id === link.id)?.url}
+                                            value={link.url}
+                                            onChange={(e) => setUrl(e.target.value, link)}
                                         />
                                         {invalid('links.' + link.id + '.url') && <p className="text-red-600">{errors['links.' + link.id + '.url']}</p>}
                                     </div>
                                 </div>
-                                {/* {links.length >= 2 && (
+                                {links.length >= 2 && (
                                     <div className="flex gap-2 place-self-end">
-                                        <button
-                                            type="button"
-                                            className="aspect-square h-10 rounded-md bg-gray-200 p-2 hover:cursor-pointer hover:bg-gray-300"
-                                            disabled={link.sequence === 1}
-                                        >
-                                            Up
-                                        </button>
-                                        <button
-                                            type="button"
-                                            className="aspect-square h-10 rounded-md bg-gray-200 p-2 hover:cursor-pointer hover:bg-gray-300"
-                                            disabled={link.sequence === MAX_ROW}
-                                        >
-                                            Down
-                                        </button>
+                                        {link !== links.at(0) && (
+                                            <button
+                                                type="button"
+                                                className="aspect-square h-10 rounded-md bg-gray-200 p-2 hover:cursor-pointer hover:bg-gray-300"
+                                                onClick={() => move(link, 'up')}
+                                            >
+                                                Up
+                                            </button>
+                                        )}
+                                        {link !== links.at(-1) && (
+                                            <button
+                                                type="button"
+                                                className="aspect-square h-10 rounded-md bg-gray-200 p-2 hover:cursor-pointer hover:bg-gray-300"
+                                                onClick={() => move(link, 'down')}
+                                            >
+                                                Down
+                                            </button>
+                                        )}
                                     </div>
-                                )} */}
+                                )}
                             </div>
                         ))}
                         {links.length < MAX_ROW && (
