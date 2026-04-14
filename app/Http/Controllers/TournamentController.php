@@ -51,9 +51,13 @@ class TournamentController extends Controller
                 $links[$key] = $value;
             }
 
-            DB::table('tournament_links')->insert($links);
+            try {
+                DB::table('tournament_links')->insert($links);
 
-            DB::commit();
+                DB::commit();
+            } catch (\Exception $e) {
+                DB::rollback();
+            }
         }
 
         // redirect home
@@ -99,16 +103,20 @@ class TournamentController extends Controller
 
             DB::beginTransaction();
 
-            DB::table('tournament_links')->where('tournament_id', '=', $tournament->id)->delete();
+            try {
+                DB::table('tournament_links')->where('tournament_id', '=', $tournament->id)->delete();
 
-            foreach ($links as $key => $value) {
-                $value['tournament_id'] = $tournament->id;
-                $links[$key] = $value;
+                foreach ($links as $key => $value) {
+                    $value['tournament_id'] = $tournament->id;
+                    $links[$key] = $value;
+                }
+
+                DB::table('tournament_links')->insert($links);
+
+                DB::commit();
+            } catch (\Exception $e) {
+                DB::rollback();
             }
-
-            DB::table('tournament_links')->insert($links);
-
-            DB::commit();
         }
 
         return redirect()->to(route('landing'));
