@@ -28,4 +28,12 @@ class Tournament extends Model
     {
         return $this->hasMany(TournamentLink::class);
     }
+
+    /**
+     * Get all mappools in the tournament.
+     */
+    public function mappools(): HasMany
+    {
+        return $this->hasMany(Mappool::class);
+    }
 }
