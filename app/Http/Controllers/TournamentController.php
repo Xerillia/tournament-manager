@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreTournamentRequest;
 use App\Http\Requests\UpdateTournamentRequest;
+use App\Models\Team;
 use App\Models\Tournament;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Auth;
@@ -87,6 +88,45 @@ class TournamentController extends Controller
             'tournament' => $tournament,
         ]);
     }
+
+    /**
+     * Show the admin page for a specified resource
+     */
+    public function admin(Tournament $tournament)
+    {
+        return Inertia::render('admin/admin', [
+            'tournament' => $tournament,
+        ]);
+    }
+     /**
+     * Show the admin player page for a specified resource
+     */
+
+    public function players(Tournament $tournament)
+    {
+        $players = $tournament->users;
+
+        return Inertia::render('admin/players', [
+            'tournament' => $tournament,
+            'players' => $players
+        ]);
+    }
+    public function teams(Tournament $tournament)
+    {
+        $tournament->load('teams.users');
+        
+        return Inertia::render('admin/teams', [
+            'tournament' => $tournament,
+            'teams' => $tournament->teams
+        ]);
+    }
+    public function settings(Tournament $tournament)
+    {        
+        return Inertia::render('admin/settings', [
+            'tournament' => $tournament,
+        ]);
+    }
+    
 
     /**
      * Update the specified resource in storage.
