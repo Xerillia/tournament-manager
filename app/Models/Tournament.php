@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 #[Fillable([
@@ -46,5 +47,11 @@ class Tournament extends Model
     public function teams()
     {
         return $this->hasMany(Team::class);
+    /**
+     * Get the external links of the tournament.
+     */
+    public function links(): HasMany
+    {
+        return $this->hasMany(TournamentLink::class);
     }
 }

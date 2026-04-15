@@ -24,11 +24,9 @@ export default function Landing({ tournaments, ownTournaments }: LandingProps) {
                 {tournament.max_rank} - {tournament.min_rank}
             </td>
             <td className="border p-2">
-                {tournament.start_datetime.toString()} -{' '}
-                {tournament.end_datetime.toString()}
+                {tournament.start_datetime.toString()} - {tournament.end_datetime.toString()}
             </td>
             <td className="border p-2">{tournament.status}</td>
-            <td className="border p-2">{tournament.forum_post}</td>
         </Link>
     ));
     const ownTournamentItems = ownTournaments.map((tournament: Tournament) => (
@@ -44,11 +42,9 @@ export default function Landing({ tournaments, ownTournaments }: LandingProps) {
                 {tournament.max_rank} - {tournament.min_rank}
             </td>
             <td className="border p-2">
-                {tournament.start_datetime.toString()} -{' '}
-                {tournament.end_datetime.toString()}
+                {tournament.start_datetime.toString()} - {tournament.end_datetime.toString()}
             </td>
             <td className="border p-2">{tournament.status}</td>
-            <td className="border p-2">{tournament.forum_post}</td>
             <td className="border p-2 text-center">
                 <Link
                     href={edit(tournament.id)}
@@ -82,16 +78,13 @@ export default function Landing({ tournaments, ownTournaments }: LandingProps) {
                         <th className="border p-4">Rank Range</th>
                         <th className="border p-4">Period</th>
                         <th className="border p-4">Status</th>
-                        <th className="border p-4">Forum Post</th>
                     </tr>
                 </thead>
                 <tbody>{tournamentItems}</tbody>
             </table>
             {auth.user && ownTournaments.length > 0 && (
                 <>
-                    <h1 className="mt-12 text-3xl font-bold">
-                        Your Tournaments
-                    </h1>
+                    <h1 className="mt-12 text-3xl font-bold">Your Tournaments</h1>
                     <table className="border-2">
                         <thead>
                             <tr>
@@ -100,7 +93,6 @@ export default function Landing({ tournaments, ownTournaments }: LandingProps) {
                                 <th className="border p-4">Rank Range</th>
                                 <th className="border p-4">Period</th>
                                 <th className="border p-4">Status</th>
-                                <th className="border p-4">Forum Post</th>
                                 <th className="border p-4">Actions</th>
                             </tr>
                         </thead>
