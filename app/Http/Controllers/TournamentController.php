@@ -79,11 +79,20 @@ class TournamentController extends Controller
 
     public function players(Tournament $tournament)
     {
-        $members = $tournament->users;
+        $players = $tournament->users;
 
         return Inertia::render('admin/players', [
             'tournament' => $tournament,
-            'players' => $members
+            'players' => $players
+        ]);
+    }
+    public function teams(Tournament $tournament)
+    {
+        $tournament->load('teams.users');
+        
+        return Inertia::render('admin/teams', [
+            'tournament' => $tournament,
+            'teams' => $tournament->teams
         ]);
     }
     

@@ -7,15 +7,18 @@ import type { User } from '@/types/auth';
 import type { Tournament } from '@/types/tournament';
 
 
-
+type TeamsProp = {
+    id: number;
+    name: string;
+    users: User[]
+}
 
 interface Props {
     tournament: Tournament;
-    players: User[];
+    teams: TeamsProp[];
 }
 
-export default function Players({ tournament, players }: Props) {
-    console.log(players)
+export default function Players({ tournament, teams }: Props) {
 
     return (
         <Layout tournament={tournament}>
@@ -48,25 +51,28 @@ export default function Players({ tournament, players }: Props) {
 
                             <thead className="text-zinc-400 uppercase text-xs tracking-wider">
                                 <tr>
-                                    <th className="px-6 py-3">Osu ID</th>
-                                    <th className="px-6 py-3">Username</th>
-                                    <th className="px-6 py-3">Discord</th>
+                                    <th className="px-6 py-3">Team Id</th>
+                                    <th className="px-6 py-3">Name</th>
+                                    <th className="px-6 py-3">Members</th>
                                 </tr>
                             </thead>
-                        
+
                             <tbody className="divide-y divide-zinc-800">
-                                {players.map((player) => (
-                                    <tr key={player.id} className="hover:bg-zinc-800/50 transition">
+                                {teams.map((team) => (
+                                    <tr key={team.id} className="hover:bg-zinc-800/50 transition">
                                         <td className="px-6 py-4 text-zinc-300">
-                                            {player.id}
+                                            {team.id}
                                         </td>
 
                                         <td className="px-6 py-4 text-white font-medium">
-                                            {player.username}
+                                            {team.name}
                                         </td>
 
                                         <td className="px-6 py-4 text-zinc-300">
-                                            {player.discord}
+                                            {team.users[0].username}
+                                            {team.users.slice(1).map((user) => (
+                                                ", " + user.username
+                                            ))}
                                         </td>
                                     </tr>
                                 ))}
