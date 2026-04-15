@@ -2,7 +2,7 @@
 
 import { router } from '@inertiajs/react'
 import { useState } from 'react'
-import { Layout } from '@/pages/admin';
+import { Layout } from '@/pages/admin/admin';
 import type { User } from '@/types/auth';
 import type { Tournament } from '@/types/tournament';
 

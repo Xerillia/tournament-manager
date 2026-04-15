@@ -69,7 +69,7 @@ class TournamentController extends Controller
      */
     public function admin(Tournament $tournament)
     {
-        return Inertia::render('admin', [
+        return Inertia::render('admin/admin', [
             'tournament' => $tournament,
         ]);
     }
