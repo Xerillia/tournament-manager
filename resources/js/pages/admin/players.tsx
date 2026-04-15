@@ -53,7 +53,7 @@ export default function Players({ tournament, players }: Props) {
                                     <th className="px-6 py-3">Discord</th>
                                 </tr>
                             </thead>
-                        
+                            {/* Could add hyper links to the players */}
                             <tbody className="divide-y divide-zinc-800">
                                 {players.map((player) => (
                                     <tr key={player.id} className="hover:bg-zinc-800/50 transition">
