@@ -44,5 +44,10 @@ return [
         'allow_gif_avatars' => (bool) env('DISCORD_AVATAR_GIF', true),
         'avatar_default_extension' => env('DISCORD_EXTENSION_DEFAULT', 'png'), // only pick from jpg, png, webp
     ],
+    'osu' => [
+        'client_id' => env('OSU_CLIENT_ID'),
+        'client_secret' => env('OSU_CLIENT_SECRET'),
+        'redirect' => env('OSU_REDIRECT_URI'),
+    ],
 
 ];
