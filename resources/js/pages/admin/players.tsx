@@ -70,15 +70,6 @@ export default function Players({ tournament, players }: Props) {
                                         </td>
                                     </tr>
                                 ))}
-                                <tr className="hover:bg-zinc-800/50 transition">
-                                    <td className="px-6 py-4 text-zinc-300">123456</td>
-                                    <td className="px-6 py-4 text-white font-medium">
-                                        Maria Anders
-                                    </td>
-                                    <td className="px-6 py-4 text-zinc-300">
-                                        Germany
-                                    </td>
-                                </tr>
                             </tbody>
 
                         </table>
