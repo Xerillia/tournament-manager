@@ -27,7 +27,7 @@ export function AdminSidebar({ className = "", tournament }: { className?: strin
         <div className={`w-64 bg-zinc-800 min-h-screen flex flex-col p-4 gap-2 ${className}`}>
             {/* Maybe update hrefs to ude laravels built in routing names. */}
             <a href={`/tournaments/${tournament.id}/admin`} className="text-white hover:text-orange-400">Dashboard</a>
-            <a href={`/tournaments/${tournament.id}/settings`} className="text-white hover:text-orange-400">Settings</a>
+            <a href={`/tournaments/${tournament.id}/admin/settings`} className="text-white hover:text-orange-400">Settings</a>
             <a href={`/tournaments/${tournament.id}/admin/players`} className="text-white hover:text-orange-400">Players</a>
             <a href={`/tournaments/${tournament.id}/admin/teams`}  className="text-white hover:text-orange-400">Teams</a>
         </div>

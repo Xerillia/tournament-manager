@@ -95,6 +95,12 @@ class TournamentController extends Controller
             'teams' => $tournament->teams
         ]);
     }
+    public function settings(Tournament $tournament)
+    {        
+        return Inertia::render('admin/settings', [
+            'tournament' => $tournament,
+        ]);
+    }
     
 
     /**

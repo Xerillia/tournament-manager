@@ -13,6 +13,8 @@ Route::prefix('tournaments')->name('tournaments.')->group(function () {
         Route::get('/{tournament}/admin', [TournamentController::class, 'admin'])->name('admin');
         Route::get('/{tournament}/admin/players', [TournamentController::class, 'players'])->name('adminPlayers');
         Route::get('/{tournament}/admin/teams', [TournamentController::class, 'teams'])->name('adminTeams');
+        // /settings/teams could be replaced with /edit or vice versa
+        Route::get('/{tournament}/admin/settings', [TournamentController::class, 'settings'])->name('adminSettings');
         Route::put('/{tournament}', [TournamentController::class, 'update'])->middleware([HandlePrecognitiveRequests::class])->name('update');
         Route::delete('/{tournament}', [TournamentController::class, 'destroy'])->name('destroy');
     });
