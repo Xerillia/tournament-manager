@@ -24,19 +24,20 @@ Route::get('/', function () {
 })->name('landing');
 
 Route::get('/beatmap/{id}', function (int $id) {
+    // load queries
     $mods = request()->query('mods');
+    $refresh = request()->has('refresh');
 
+    // array manipulation
     $array_mods = explode(' ', $mods);
     sort($array_mods);
-
     $mods = implode(' ', $array_mods);
 
-    $beatmap = Beatmap::whereBeatmapId($id)->where('mods', $mods)->first();
-
+    $beatmap = $refresh ? null : Beatmap::whereBeatmapId($id)->where('mods', $mods)->first();
     if (! $beatmap) {
         $accessToken = Auth::user()->getAccessToken();
         $beatmapObject = (new OsuService)->getBeatmap($accessToken, $id, $array_mods);
-        $beatmap = Beatmap::create($beatmapObject->toArray());
+        $beatmap = Beatmap::updateOrCreate($beatmapObject->toArray());
     }
 
     dd($beatmap);
