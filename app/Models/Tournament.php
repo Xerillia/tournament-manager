@@ -8,10 +8,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-#[Fillable(['user_id', 'name', 'caption', 'gamemode', 'max_rank', 'min_rank', 'start_datetime',
-    'end_datetime', 'status', 'automatic_status_update', 'forum_post', 'groupchat',
-    'groupchat_platform', 'livestream', 'livestream_platform', 'vod', 'vod_platform',
-    'rules'])]
+#[Fillable(['user_id', 'name', 'caption', 'mode', 'max_rank', 'min_rank', 'start_datetime', 'end_datetime', 'status', 'automatic_status_update', 'rules'])]
 class Tournament extends Model
 {
     use SoftDeletes;

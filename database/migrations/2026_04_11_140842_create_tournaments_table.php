@@ -1,6 +1,6 @@
 <?php
 
-use App\Enums\Gamemode;
+use App\Enums\Mode;
 use App\Enums\TournamentStatus;
 use App\Models\User;
 use Illuminate\Database\Migrations\Migration;
@@ -21,7 +21,7 @@ return new class extends Migration
             $table->string('name');
             $table->tinytext('caption')->nullable();
 
-            $table->enum('gamemode', Gamemode::cases());
+            $table->enum('gamemode', Mode::cases());
 
             $table->integer('max_rank');
             $table->integer('min_rank');

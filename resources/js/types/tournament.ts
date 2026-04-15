@@ -1,4 +1,4 @@
-import { Gamemode, TournamentStatus } from '@/enums';
+import { Mode, TournamentStatus } from '@/enums';
 import { User } from './auth';
 
 export type Tournament = {
@@ -6,7 +6,7 @@ export type Tournament = {
     host: User;
     name: string;
     caption: string;
-    gamemode: Gamemode;
+    mode: Mode;
     max_rank: number;
     min_rank: number;
     start_datetime: Date;

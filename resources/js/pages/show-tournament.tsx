@@ -21,7 +21,7 @@ export default function ShowTournament({ tournament }: ShowTournamentProps) {
             <h1 className="text-4xl font-bold">Tournament Name: {tournament.name}</h1>
             {tournament.caption && <p>{tournament.caption}</p>}
             <p>Host: {tournament.host.username}</p>
-            <p>Gamemode: {tournament.gamemode}</p>
+            <p>Mode: {tournament.mode}</p>
             <p>
                 Rank range: {tournament.max_rank} - {tournament.min_rank}
             </p>
