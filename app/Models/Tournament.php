@@ -47,6 +47,7 @@ class Tournament extends Model
     public function teams()
     {
         return $this->hasMany(Team::class);
+    }
     /**
      * Get the external links of the tournament.
      */
