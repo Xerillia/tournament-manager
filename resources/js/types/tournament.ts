@@ -1,5 +1,6 @@
 import { Mode, TournamentStatus } from '@/enums';
 import { User } from './auth';
+import { Mappool } from './mappools';
 
 export type Tournament = {
     id: number;
@@ -13,6 +14,7 @@ export type Tournament = {
     end_datetime: Date;
     status: TournamentStatus;
     links: Link[];
+    mappools: Mappool[];
 };
 
 export type Link = {
