@@ -96,6 +96,31 @@ You can use Laragon, XAMPP, or anything you like.
 6. Have the [dev environment running](#development-environment) (recommended) or [app built](#building-application).
 7. Open `http://<project_name>.test/` (e.g. `http://project-manager.test/`).
 
+## Xampp
+
+1. [Install Xampp](https://www.apachefriends.org/).
+2. Clone the repository inside the `/htdocs` folder.
+3. Go to `\apache\conf\extra` and edit `httpd-vhosts.conf` and add below with your own `project_name` and path
+```
+<VirtualHost *:80>
+    DocumentRoot "E:\XAMPP Projects\htdocs\tournament-manager\public"
+    ServerName http://<project_name>.test/
+    <Directory "E:\XAMPP Projects\htdocs\tournament-manager\public">
+        AllowOverride All
+        Require all granted
+    </Directory>
+</VirtualHost>
+``` 
+4. Go to `C:\WINDOWS\system32\drivers\etc\`, open the "hosts" file as administrator, and add
+```
+   127.0.0.1       http://<project_name>.test/
+``` 
+6. Run the `XAMPP Control Panel` as administrator.
+7. Start Apache and MySQL. (Can be set to autofire in config).
+8. Run the [migrations](#running-migrations).
+9. Have the [dev environment running](#development-environment) (recommended) or [app built](#building-application).
+10. Open `http://<project_name>.test/` (e.g. `http://project-manager.test/`).
+
 # Development environment
 
 Always have this command running while developing the application:
