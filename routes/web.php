@@ -25,11 +25,11 @@ Route::get('/', function () {
 
 Route::get('/beatmap/{id}', function (int $id) {
     // load queries
-    $mods = request()->query('mods');
+    $mods = request()->has('mods') ? request()->query('mods') : null;
     $refresh = request()->has('refresh');
 
     // array manipulation
-    $array_mods = explode(' ', $mods);
+    $array_mods = $mods ? explode(' ', $mods) : [];
     sort($array_mods);
     $mods = implode(' ', $array_mods);
 
