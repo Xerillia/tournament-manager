@@ -6,8 +6,9 @@ use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
-#[Fillable('tournament_id')]
+#[Fillable(['tournament_id', 'round'])]
 class Mappool extends Model
 {
     /**
@@ -24,5 +25,13 @@ class Mappool extends Model
     public function beatmaps(): BelongsToMany
     {
         return $this->belongsToMany(Beatmap::class)->withPivot(['round', 'slot', 'status']);
+    }
+
+    /**
+     * Get the formats of the mappool
+     */
+    public function formats(): HasMany
+    {
+        return $this->hasMany(MappoolFormat::class);
     }
 }
