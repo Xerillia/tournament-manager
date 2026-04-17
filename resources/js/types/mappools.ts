@@ -1,21 +1,15 @@
+import { Beatmap } from './beatmaps';
+
 export type Mappool = {
     id: number;
     round: string;
+    formats: Format[];
+    beatmaps: Beatmap[];
 };
 
-export type MappoolFormat = {
+export type Format = {
     id: number;
-    rounds: Round[];
-};
-
-export type Round = {
-    id: number;
-    round: string;
-    slots: Slot[];
-};
-
-export type Slot = {
-    id: number;
+    mappool_id: number;
     slot: string;
     count: number;
 };
