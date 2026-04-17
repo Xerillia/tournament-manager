@@ -24,7 +24,7 @@ class Mappool extends Model
      */
     public function beatmaps(): BelongsToMany
     {
-        return $this->belongsToMany(Beatmap::class)->withPivot(['round', 'slot', 'status']);
+        return $this->belongsToMany(Beatmap::class)->withPivot(['slot', 'status']);
     }
 
     /**
