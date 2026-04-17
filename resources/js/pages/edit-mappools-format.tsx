@@ -14,7 +14,7 @@ export default function EditMappoolFormat({ mappools }: EditMappoolFormatProps) 
     const indexOf = (mappool: Mappool) => getMappools.findIndex((obj) => obj.id === mappool.id);
     const filteredOut = (mappool: Mappool) => getMappools.filter((obj) => obj.id !== mappool.id);
 
-    const addRound = () => setMappools([...getMappools, { id: nextMappoolId++, round: '', formats: [], beatmaps: [] }]);
+    const addRound = () => setMappools([...getMappools, { id: nextMappoolId++, round: '', formats: [], suggestions: [] }]);
 
     function removeMappool(mappool: Mappool) {
         setMappools(filteredOut(mappool));
