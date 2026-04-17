@@ -41,7 +41,7 @@ export default function Suggestions({ tournament, mappools, suggestions }: Sugge
             >
                 <td className="border-2 p-2">{beatmap.beatmap_id}</td>
                 <td className="border-2 p-2">{beatmap.mods}</td>
-                <td className="border-2 p-2">round</td>
+                <td className="border-2 p-2">{suggestion.mappool.round}</td>
                 <td className="w-48 border-2">
                     <img src={'https://assets.ppy.sh/beatmaps/' + beatmap.beatmapset_id + '/covers/cover.jpg'} />
                 </td>
@@ -49,7 +49,7 @@ export default function Suggestions({ tournament, mappools, suggestions }: Sugge
                     <a
                         href={'https://osu.ppy.sh/beatmapsets/' + beatmap.beatmapset_id + '#' + beatmap.mode + '/' + beatmap.beatmap_id}
                         target="_blank"
-                        className="hover:text-blue-800"
+                        className="hover:text-blue-800 hover:underline"
                     >
                         {beatmap.artist} - {beatmap.title} [{beatmap.version}]
                     </a>

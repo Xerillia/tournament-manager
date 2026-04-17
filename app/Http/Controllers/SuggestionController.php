@@ -15,7 +15,7 @@ class SuggestionController extends Controller
 {
     public function index(Tournament $tournament)
     {
-        $tournament->load(['mappools.suggestions.beatmap', 'suggestions.beatmap']);
+        $tournament->load(['mappools.suggestions.beatmap', 'suggestions.beatmap', 'suggestions.mappool']);
 
         return Inertia::render('suggestions', [
             'tournament' => $tournament,

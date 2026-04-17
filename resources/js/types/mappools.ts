@@ -17,6 +17,7 @@ export type Format = {
 export type Suggestion = {
     id: number;
     mappool_id: number;
+    mappool: Mappool;
     beatmap_id: number;
     beatmap: Beatmap;
     mods: string;
