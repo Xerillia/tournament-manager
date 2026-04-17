@@ -28,7 +28,57 @@ export default function Suggestions({ tournament, mappools, suggestions }: Sugge
 
     const roundLists = mappools.map((mappool) => (
         <Fragment key={mappool.id}>
-            <h2 className="text-xl font-bold">{mappool.round}</h2>
+            <h2 className="mt-4 text-xl font-bold">{mappool.round} Suggestions</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th className="border-2 p-2">Beatmap ID</th>
+                        <th className="w-24 border-2 p-2">Mods</th>
+                        <th className="border-2 p-2">Cover</th>
+                        <th className="border-2 p-2">Beatmap</th>
+                        <th className="border-2 p-2">SR</th>
+                        <th className="border-2 p-2">BPM</th>
+                        <th className="border-2 p-2">CS</th>
+                        <th className="border-2 p-2">AR</th>
+                        <th className="border-2 p-2">OD</th>
+                        <th className="border-2 p-2">Drain</th>
+                        <th className="border-2 p-2">Max Combo</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {mappool.suggestions.map((suggestion) => {
+                        const beatmap = suggestion.beatmap;
+                        return (
+                            <tr
+                                key={beatmap.beatmap_id}
+                                className="p-2 text-center"
+                            >
+                                <td className="border-2 p-2">{beatmap.beatmap_id}</td>
+                                <td className="border-2 p-2">{beatmap.mods}</td>
+                                <td className="w-48 border-2">
+                                    <img src={'https://assets.ppy.sh/beatmaps/' + beatmap.beatmapset_id + '/covers/cover.jpg'} />
+                                </td>
+                                <td className="border-2 p-2">
+                                    <a
+                                        href={'https://osu.ppy.sh/beatmapsets/' + beatmap.beatmapset_id + '#' + beatmap.mode + '/' + beatmap.beatmap_id}
+                                        target="_blank"
+                                        className="hover:text-blue-800 hover:underline"
+                                    >
+                                        {beatmap.artist} - {beatmap.title} [{beatmap.version}]
+                                    </a>
+                                </td>
+                                <td className="border-2 p-2">{beatmap.star_rating.toFixed(2)} ★</td>
+                                <td className="border-2 p-2">{+beatmap.bpm.toFixed(2)}</td>
+                                <td className="border-2 p-2">{+beatmap.cs.toFixed(2)}</td>
+                                <td className="border-2 p-2">{+beatmap.ar.toFixed(2)}</td>
+                                <td className="border-2 p-2">{+beatmap.od.toFixed(2)}</td>
+                                <td className="border-2 p-2">{secondToTime(beatmap.drain)}</td>
+                                <td className="border-2 p-2">{beatmap.max_combo}</td>
+                            </tr>
+                        );
+                    })}
+                </tbody>
+            </table>
         </Fragment>
     ));
 
@@ -84,8 +134,8 @@ export default function Suggestions({ tournament, mappools, suggestions }: Sugge
                     <thead>
                         <tr>
                             <th className="border-2 p-2">Beatmap ID</th>
-                            <th className="border-2">Mods</th>
-                            <th className="border-2">Round</th>
+                            <th className="border-2 p-2">Mods</th>
+                            <th className="border-2 p-2">Round</th>
                         </tr>
                     </thead>
                     <tbody>
