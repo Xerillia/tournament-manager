@@ -34,4 +34,12 @@ class Mappool extends Model
     {
         return $this->hasMany(MappoolFormat::class);
     }
+
+    /**
+     * Get the suggestions for the mappool
+     */
+    public function suggestions(): HasMany
+    {
+        return $this->hasMany(MappoolSuggestion::class);
+    }
 }
