@@ -6,7 +6,6 @@ use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 #[Fillable(['user_id', 'name', 'caption', 'mode', 'max_rank', 'min_rank', 'start_datetime', 'end_datetime', 'status', 'automatic_status_update', 'rules'])]
@@ -36,13 +35,5 @@ class Tournament extends Model
     public function mappools(): HasMany
     {
         return $this->hasMany(Mappool::class);
-    }
-
-    /**
-     * Get all the suggestions in tournament's mappools
-     */
-    public function suggestions(): HasManyThrough
-    {
-        return $this->hasManyThrough(MappoolSuggestion::class, Mappool::class);
     }
 }
