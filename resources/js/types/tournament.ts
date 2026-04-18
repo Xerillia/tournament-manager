@@ -1,18 +1,20 @@
-import { Gamemode, TournamentStatus } from '@/enums';
+import { Mode, TournamentStatus } from '@/enums';
 import { User } from './auth';
+import { Mappool } from './mappools';
 
 export type Tournament = {
     id: number;
     host: User;
     name: string;
     caption: string;
-    gamemode: Gamemode;
+    mode: Mode;
     max_rank: number;
     min_rank: number;
     start_datetime: Date;
     end_datetime: Date;
     status: TournamentStatus;
     links: Link[];
+    mappools: Mappool[];
 };
 
 export type Link = {

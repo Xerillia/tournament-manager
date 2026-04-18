@@ -1,3 +1,4 @@
+import { Mode, ModeUtils } from '@/enums';
 import { update } from '@/routes/tournaments';
 import { Link, Tournament } from '@/types/tournament';
 import { Form, Head } from '@inertiajs/react';
@@ -131,25 +132,25 @@ export default function EditTournament({ tournament }: EditTournamentProps) {
                         {invalid('caption') && <p className="text-red-600">{errors.caption}</p>}
 
                         <label
-                            htmlFor="gamemode"
+                            htmlFor="mode"
                             className="mt-4 text-lg font-bold"
                         >
-                            Gamemode<span className="text-red-600">*</span>
+                            Mode<span className="text-red-600">*</span>
                         </label>
                         <select
-                            name="gamemode"
-                            id="gamemode"
+                            name="mode"
+                            id="mode"
                             className="rounded-md border border-slate-800 p-2"
-                            defaultValue={tournament.gamemode}
+                            defaultValue={tournament.mode}
                             required
-                            onBlur={() => validate('gamemode')}
+                            onBlur={() => validate('mode')}
                         >
-                            <option value="std">Standard</option>
-                            <option value="mania">Mania</option>
-                            <option value="taiko">Taiko</option>
-                            <option value="ctb">Catch the Beat</option>
+                            <option value={Mode.STANDARD}>{ModeUtils.label(Mode.STANDARD)}</option>
+                            <option value={Mode.MANIA}>{ModeUtils.label(Mode.MANIA)}</option>
+                            <option value={Mode.TAIKO}>{ModeUtils.label(Mode.TAIKO)}</option>
+                            <option value={Mode.CATCH}>{ModeUtils.label(Mode.CATCH)}</option>
                         </select>
-                        {invalid('gamemode') && <p className="text-red-600">{errors.gamemode}</p>}
+                        {invalid('mode') && <p className="text-red-600">{errors.mode}</p>}
 
                         <div className="flex gap-4">
                             <div className="flex flex-1 flex-col">

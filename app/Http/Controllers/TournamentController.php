@@ -69,7 +69,7 @@ class TournamentController extends Controller
      */
     public function show(Tournament $tournament)
     {
-        $tournament->load(['host', 'links']);
+        $tournament->load(['host', 'links', 'mappools.formats']);
 
         return Inertia::render('show-tournament', [
             'tournament' => $tournament,

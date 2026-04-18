@@ -1,5 +1,6 @@
 import { Tournament } from '@/types/tournament';
 import { Head } from '@inertiajs/react';
+import EditMappoolFormat from './edit-mappools-format';
 
 interface ShowTournamentProps {
     tournament: Tournament;
@@ -21,7 +22,7 @@ export default function ShowTournament({ tournament }: ShowTournamentProps) {
             <h1 className="text-4xl font-bold">Tournament Name: {tournament.name}</h1>
             {tournament.caption && <p>{tournament.caption}</p>}
             <p>Host: {tournament.host.username}</p>
-            <p>Gamemode: {tournament.gamemode}</p>
+            <p>Mode: {tournament.mode}</p>
             <p>
                 Rank range: {tournament.max_rank} - {tournament.min_rank}
             </p>
@@ -31,6 +32,9 @@ export default function ShowTournament({ tournament }: ShowTournamentProps) {
             <p>Status: {tournament.status}</p>
             <p>Links:</p>
             {linkItems}
+
+            <h1 className="mt-8 text-4xl font-bold">Mappools</h1>
+            <EditMappoolFormat mappools={tournament.mappools} />
         </>
     );
 }

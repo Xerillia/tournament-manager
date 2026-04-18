@@ -19,7 +19,7 @@ export default function Landing({ tournaments, ownTournaments }: LandingProps) {
         >
             <td className="border p-2">{tournament.name}</td>
             <td className="border p-2">{tournament.host.username}</td>
-            <td className="border p-2">{tournament.gamemode}</td>
+            <td className="border p-2">{tournament.mode}</td>
             <td className="border p-2">
                 {tournament.max_rank} - {tournament.min_rank}
             </td>
@@ -37,7 +37,7 @@ export default function Landing({ tournaments, ownTournaments }: LandingProps) {
             className="hover:cursor-pointer hover:bg-black/5"
         >
             <td className="border p-2">{tournament.name}</td>
-            <td className="border p-2">{tournament.gamemode}</td>
+            <td className="border p-2">{tournament.mode}</td>
             <td className="border p-2">
                 {tournament.max_rank} - {tournament.min_rank}
             </td>
@@ -74,7 +74,7 @@ export default function Landing({ tournaments, ownTournaments }: LandingProps) {
                     <tr>
                         <th className="border p-4">Tournament Name</th>
                         <th className="border p-4">Host</th>
-                        <th className="border p-4">Gamemode</th>
+                        <th className="border p-4">Mode</th>
                         <th className="border p-4">Rank Range</th>
                         <th className="border p-4">Period</th>
                         <th className="border p-4">Status</th>
@@ -89,7 +89,7 @@ export default function Landing({ tournaments, ownTournaments }: LandingProps) {
                         <thead>
                             <tr>
                                 <th className="border p-4">Tournament Name</th>
-                                <th className="border p-4">Gamemode</th>
+                                <th className="border p-4">Mode</th>
                                 <th className="border p-4">Rank Range</th>
                                 <th className="border p-4">Period</th>
                                 <th className="border p-4">Status</th>

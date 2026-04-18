@@ -2,7 +2,7 @@
 
 namespace App\Http\Requests;
 
-use App\Enums\Gamemode;
+use App\Enums\Mode;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
@@ -26,7 +26,7 @@ class StoreTournamentRequest extends FormRequest
         return [
             'name' => ['required', Rule::unique('tournaments', 'name')->whereNull('deleted_at')],
             'caption' => ['nullable', 'max:255'],
-            'gamemode' => ['required', Rule::enum(Gamemode::class)],
+            'mode' => ['required', Rule::enum(Mode::class)],
             'max_rank' => ['required', 'numeric', 'min:1'],
             'min_rank' => ['required', 'numeric', 'gt:max_rank'],
             'start_datetime' => ['required', 'date'],

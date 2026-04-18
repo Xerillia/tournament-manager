@@ -63,7 +63,7 @@ class OsuController extends Controller
             }
         }
 
-        // Commiting the transaction
+        // Committing the transaction
         DB::commit();
 
         // Authenticating the user if the user is not logged in

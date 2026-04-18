@@ -1,7 +1,9 @@
 <?php
 
 use App\Enums\TournamentStatus;
+use App\Models\Beatmap;
 use App\Models\Tournament;
+use App\Services\OsuService;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -20,6 +22,26 @@ Route::get('/', function () {
         'ownTournaments' => $ownTournaments,
     ]);
 })->name('landing');
+
+Route::get('/beatmap/{id}', function (int $id) {
+    // load queries
+    $mods = request()->has('mods') ? request()->query('mods') : null;
+    $refresh = request()->has('refresh');
+
+    // array manipulation
+    $array_mods = $mods ? explode(' ', $mods) : [];
+    sort($array_mods);
+    $mods = implode(' ', $array_mods);
+
+    $beatmap = $refresh ? null : Beatmap::whereBeatmapId($id)->where('mods', $mods)->first();
+    if (! $beatmap) {
+        $accessToken = Auth::user()->getAccessToken();
+        $beatmapObject = (new OsuService)->getBeatmap($accessToken, $id, $array_mods);
+        $beatmap = Beatmap::updateOrCreate($beatmapObject->toArray());
+    }
+
+    dd($beatmap);
+});
 
 // Route::middleware(['auth', 'verified'])->group(function () {
 //     Route::inertia('dashboard', 'dashboard')->name('dashboard');
