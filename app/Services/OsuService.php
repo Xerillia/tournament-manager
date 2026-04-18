@@ -147,6 +147,10 @@ class OsuService
      */
     public function getBeatmap(AccessToken $accessToken, int $id, array $mods, Mode $mode = Mode::STANDARD): Beatmap
     {
+        $mods = array_filter($mods, function ($value) {
+            return $value != 'NM'; // osu api endpoint does not cast NM as no mod, so it needs to be filtered
+        });
+
         $beatmapAttributes = Http::withToken($accessToken->access_token)->get($this->baseApi.'/beatmaps/'.$id);
         $beatmapAttributes->throw();
 
@@ -200,7 +204,7 @@ class OsuService
      * Calibrate beatmap attributes based on mod being put
      *
      * @var string[] ['cs' => string, 'ar' => string, 'od' => string, 'bpm' => float, 'drain' => float]
-     * @var string[] ['DT']
+     * @var string[] ['HD', 'HR', ...]
      */
     private function getCalibratedBeatmapAttributes(array $attributes, array $mods): array
     {

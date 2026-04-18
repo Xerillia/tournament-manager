@@ -16,7 +16,7 @@ return new class extends Migration
             $table->unsignedInteger('beatmap_id');
             $table->unsignedInteger('beatmapset_id'); // useful for hyperlinking map
             $table->string('mode', 6); // enum(osu, mania, taiko, fruits). Validation will be through FormRequest.
-            $table->string('mods')->nullable();
+            $table->string('mods')->default('NM');
             $table->float('star_rating');
             $table->float('bpm');
             $table->float('cs');

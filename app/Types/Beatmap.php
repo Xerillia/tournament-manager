@@ -98,7 +98,7 @@ class Beatmap
         $this->beatmap_id = $data->beatmap_id;
         $this->beatmapset_id = $data->beatmapset_id;
         $this->mode = $data->mode;
-        $this->mods = $data->mods;
+        $this->mods = count($data->mods) != 0 ? $data->mods : ['NM'];
         $this->star_rating = $data->star_rating;
         $this->bpm = $data->bpm;
         $this->cs = $data->cs;

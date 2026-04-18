@@ -31,12 +31,10 @@ class SuggestionController extends Controller
         $mods = $validated['mods'];
         $round = $validated['round'];
 
-        // manipulate string using array
-        $array_mods = array_filter(str_split($mods, 2), function ($value) {
-            return $value != 'NM'; // osu api endpoint does not cast NM as no mod, so it needs to be filtered
-        });
+        // manipulate string with array methods
+        $array_mods = str_split($mods, 2);
         sort($array_mods);
-        $mods = implode(' ', $array_mods);
+        $mods = implode(' ', $array_mods); // 'DT HD', 'HD HR', ...
 
         // loading beatmap
         $beatmap = Beatmap::whereId($beatmapId)->whereMods($mods)->first();
