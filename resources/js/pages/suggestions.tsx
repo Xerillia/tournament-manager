@@ -1,7 +1,7 @@
-import { store } from '@/actions/App/Http/Controllers/SuggestionController';
+import { store, destroy } from '@/actions/App/Http/Controllers/SuggestionController';
 import { Mappool } from '@/types/mappools';
 import { Tournament } from '@/types/tournament';
-import { useForm } from '@inertiajs/react';
+import { Link, useForm } from '@inertiajs/react';
 import { Fragment } from 'react/jsx-runtime';
 
 interface SuggestionsProps {
@@ -31,12 +31,14 @@ export default function Suggestions({ tournament, mappools }: SuggestionsProps) 
                 <table>
                     <thead>
                         <tr>
+                            <th></th>
                             <th className="border-2 p-2">Beatmap ID</th>
                             <th className="w-24 border-2 p-2">Mods</th>
                         </tr>
                     </thead>
                     <tbody>
                         <tr>
+                            <td></td>
                             <td className="border-2">
                                 <input
                                     type="number"
@@ -88,6 +90,17 @@ export default function Suggestions({ tournament, mappools }: SuggestionsProps) 
                                     key={suggestion.id}
                                     className="p-2 text-center"
                                 >
+                                    <td>
+                                        <Link
+                                            as="button"
+                                            type="button"
+                                            className="mx-2 rounded-md bg-red-200 p-2 hover:cursor-pointer hover:bg-red-300"
+                                            method="delete"
+                                            href={destroy([tournament, suggestion])}
+                                        >
+                                            Del
+                                        </Link>
+                                    </td>
                                     <td className="border-2 p-2">{beatmap.beatmap_id}</td>
                                     <td className="border-2 p-2">{beatmap.mods}</td>
                                     <td className="border-2 p-2">{suggestion.user.username}</td>

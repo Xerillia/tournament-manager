@@ -52,7 +52,13 @@ class SuggestionController extends Controller
             'user_id' => Auth::id(),
         ]);
 
-        // should not move anywhere
-        return $this->index($tournament);
+        return to_route('tournaments.suggestions.index', $tournament);
+    }
+
+    public function destroy(Tournament $tournament, MappoolSuggestion $suggestion)
+    {
+        $suggestion->delete();
+
+        return to_route('tournaments.suggestions.index', $tournament);
     }
 }
