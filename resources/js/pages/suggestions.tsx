@@ -70,6 +70,7 @@ export default function Suggestions({ tournament, mappools }: SuggestionsProps) 
                                 />
                                 {invalid('mods') && <p className="max-w-40 self-center text-center wrap-break-word text-red-500">{errors.mods}</p>}
                             </td>
+                            <th className="border-2 p-2">Suggested by</th>
                             <th className="border-2 p-2">Cover</th>
                             <th className="border-2 p-2">Beatmap</th>
                             <th className="border-2 p-2">SR</th>
@@ -88,7 +89,8 @@ export default function Suggestions({ tournament, mappools }: SuggestionsProps) 
                                     className="p-2 text-center"
                                 >
                                     <td className="border-2 p-2">{beatmap.beatmap_id}</td>
-                                    <td className="border-2 p-2">{beatmap.mods === '' ? 'NM' : beatmap.mods}</td>
+                                    <td className="border-2 p-2">{beatmap.mods}</td>
+                                    <td className="border-2 p-2">{suggestion.user.username}</td>
                                     <td className="w-48 border-2">
                                         <img src={'https://assets.ppy.sh/beatmaps/' + beatmap.beatmapset_id + '/covers/cover.jpg'} />
                                     </td>

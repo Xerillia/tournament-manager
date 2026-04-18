@@ -1,3 +1,4 @@
+import { User } from './auth';
 import { Beatmap } from './beatmaps';
 
 export type Mappool = {
@@ -20,6 +21,7 @@ export type Suggestion = {
     mappool: Mappool;
     beatmap_id: number;
     beatmap: Beatmap;
-    mods: string;
+    user: User;
     tags: string;
+    notes: string;
 };

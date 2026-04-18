@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
-#[Fillable(['mappool_id', 'beatmap_id', 'mods', 'tags'])]
+#[Fillable(['mappool_id', 'beatmap_id', 'user_id', 'tags'])]
 class MappoolSuggestion extends Model
 {
     /**
@@ -23,5 +23,13 @@ class MappoolSuggestion extends Model
     public function beatmap(): BelongsTo
     {
         return $this->belongsTo(Beatmap::class);
+    }
+
+    /**
+     * Get the user who made this suggestion
+     */
+    public function user(): BelongsTo
+    {
+        return $this->belongsTo(User::class);
     }
 }

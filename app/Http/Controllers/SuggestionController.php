@@ -15,7 +15,7 @@ class SuggestionController extends Controller
 {
     public function index(Tournament $tournament)
     {
-        $tournament->load(['mappools.suggestions.beatmap']);
+        $tournament->load(['mappools.suggestions.beatmap', 'mappools.suggestions.user']);
 
         return Inertia::render('suggestions', [
             'tournament' => $tournament,
@@ -49,8 +49,7 @@ class SuggestionController extends Controller
         MappoolSuggestion::create([
             'mappool_id' => $mappool->id,
             'beatmap_id' => $beatmap->id,
-            'mods' => $mods,
-            // 'tags' => $validated['tags'] ?? null,
+            'user_id' => Auth::id(),
         ]);
 
         // should not move anywhere

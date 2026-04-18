@@ -22,4 +22,12 @@ class User extends Authenticatable
     {
         return $this->hasMany(Tournament::class);
     }
+
+    /**
+     * Get the suggestions this user has made
+     */
+    public function suggestions(): HasMany
+    {
+        return $this->hasMany(MappoolSuggestion::class);
+    }
 }
