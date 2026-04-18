@@ -37,7 +37,7 @@ class SuggestionController extends Controller
         $mods = implode(' ', $array_mods); // 'DT HD', 'HD HR', ...
 
         // loading beatmap
-        $beatmap = Beatmap::whereId($beatmapId)->whereMods($mods)->first();
+        $beatmap = Beatmap::whereBeatmapId($beatmapId)->whereMods($mods)->first();
         if (! $beatmap) {
             $accessToken = Auth::user()->getAccessToken();
             $beatmapObject = (new OsuService)->getBeatmap($accessToken, $beatmapId, $array_mods);
