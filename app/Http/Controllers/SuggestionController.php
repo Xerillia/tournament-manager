@@ -49,9 +49,9 @@ class SuggestionController extends Controller
 
         // create suggestion
         $mappool = Mappool::whereTournamentId($tournament->id)->whereRound($round)->first();
-        $mappoolSuggestion = MappoolSuggestion::create([
+        MappoolSuggestion::create([
             'mappool_id' => $mappool->id,
-            'beatmap_id' => $beatmap->beatmap_id,
+            'beatmap_id' => $beatmap->id,
             'mods' => $mods,
             // 'tags' => $validated['tags'] ?? null,
         ]);

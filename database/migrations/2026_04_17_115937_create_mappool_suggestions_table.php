@@ -1,5 +1,6 @@
 <?php
 
+use App\Models\Beatmap;
 use App\Models\Mappool;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
@@ -14,13 +15,11 @@ return new class extends Migration
     {
         Schema::create('mappool_suggestions', function (Blueprint $table) {
             $table->id();
-            $table->foreignIdFor(Mappool::class)->nullable()->constrained()->nullOnDelete();
-            $table->unsignedInteger('beatmap_id');
+            $table->foreignIdFor(Mappool::class)->constrained()->cascadeOnDelete();
+            $table->foreignIdFor(Beatmap::class)->constrained()->restrictOnDelete();
             $table->string('mods');
             $table->string('tags')->nullable();
             $table->timestamps();
-
-            $table->foreign(['beatmap_id', 'mods'])->references(['beatmap_id', 'mods'])->on('beatmaps')->onDelete('restrict');
         });
     }
 

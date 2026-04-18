@@ -22,6 +22,6 @@ class MappoolSuggestion extends Model
      */
     public function beatmap(): BelongsTo
     {
-        return $this->belongsTo(Beatmap::class, 'beatmap_id', 'beatmap_id');
+        return $this->belongsTo(Beatmap::class);
     }
 }
