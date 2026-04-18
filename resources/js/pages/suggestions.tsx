@@ -48,13 +48,9 @@ export default function Suggestions({ tournament, mappools }: SuggestionsProps) 
                                     placeholder="12345678"
                                     value={data.beatmap_id}
                                     onChange={(e) => setData('beatmap_id', e.target.value)}
-                                    onBlur={() => {
-                                        validate('beatmap_id');
-                                        attemptSubmission();
-                                    }}
+                                    onBlur={() => attemptSubmission()}
                                     disabled={processing}
                                 />
-                                {invalid('beatmap_id') && <p className="max-w-40 self-center text-center wrap-break-word text-red-500">{errors.beatmap_id}</p>}
                             </td>
                             <td className="border-2">
                                 <input
