@@ -1,5 +1,7 @@
 import { store, destroy } from '@/actions/App/Http/Controllers/SuggestionController';
+import { MappoolSuggestionTable } from '@/components/xeril/mappoolsuggestion-table';
 import { Mappool } from '@/types/mappools';
+import { columns } from '@/types/suggestion';
 import { Tournament } from '@/types/tournament';
 import { Link, useForm } from '@inertiajs/react';
 import { Fragment } from 'react/jsx-runtime';
@@ -139,5 +141,21 @@ export default function Suggestions({ tournament, mappools }: SuggestionsProps) 
         return m + ':' + s;
     }
 
-    return <>{roundLists}</>;
+    const mappoolSuggestion = mappools.map((mappool) => {
+        const data = mappool.suggestions;
+
+        return (
+            <div
+                key={mappool.id}
+                className="container mx-auto py-10"
+            >
+                <MappoolSuggestionTable
+                    columns={columns}
+                    data={data}
+                />
+            </div>
+        );
+    });
+
+    return <>{mappoolSuggestion}</>;
 }
