@@ -9,6 +9,7 @@
 - [Running migrations](#running-migrations)
 - [Setting up local platform](#setting-up-local-platform)
     - [Laragon](#laragon)
+    - [XAMPP](#xampp)
 - [Development environment](#development-environment)
 - [Building application](#building-application)
 - [FAQ and Troubleshooting](#faq-and-troubleshooting)
@@ -69,7 +70,7 @@ php artisan key:generate
 2. Click `New Application`
 3. Set `Name` to anything then create the app.
 4. Navigate to the `OAuth2` tab through the side panel on the left side.
-5. Click `Add Redirect` then set it to `http://<project_name>test./discord/callback` (e.g. `http://project-manager.test/discord/callback`).
+5. Click `Add Redirect` then set it to `http://<project_name>.test/discord/callback` (e.g. `http://project-manager.test/discord/callback`).
     > The path must be `<domain>/discord/callback` if you use different domain.
 6. Copy the `Client ID` value and paste it to `DISCORD_CLIENT_ID` in the `.env` file.
 7. Click `Reset Secret` to generate a new `Client Secret`, then copy the value and insert it to `DISCORD_CLIENT_SECRET`.
@@ -96,9 +97,9 @@ You can use Laragon, XAMPP, or anything you like.
 6. Have the [dev environment running](#development-environment) (recommended) or [app built](#building-application).
 7. Open `http://<project_name>.test/` (e.g. `http://project-manager.test/`).
 
-## Xampp
+## XAMPP
 
-1. [Install Xampp](https://www.apachefriends.org/).
+1. [Install XAMPP](https://www.apachefriends.org/).
 2. Clone the repository inside the `/htdocs` folder.
 3. Go to `\apache\conf\extra` and edit `httpd-vhosts.conf` and add below with your own `project_name` and path
 ```
