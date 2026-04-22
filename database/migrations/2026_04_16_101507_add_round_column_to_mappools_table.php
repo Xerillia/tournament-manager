@@ -13,7 +13,6 @@ return new class extends Migration
     {
         Schema::table('mappools', function (Blueprint $table) {
             $table->string('round')->after('tournament_id');
-            $table->unique('round');
         });
     }
 
