@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\PoolingController;
 use App\Http\Controllers\SuggestionController;
 use App\Http\Controllers\TournamentController;
 use Illuminate\Foundation\Http\Middleware\HandlePrecognitiveRequests;
@@ -18,6 +19,10 @@ Route::prefix('tournaments')->name('tournaments.')->group(function () {
             Route::get('/', [SuggestionController::class, 'index'])->name('index');
             Route::post('/', [SuggestionController::class, 'store'])->middleware([HandlePrecognitiveRequests::class])->name('store');
             Route::delete('/{suggestion}', [SuggestionController::class, 'destroy'])->name('destroy');
+        });
+
+        Route::prefix('{tournament}/pooling/')->group(function () {
+            Route::get('/', [PoolingController::class, 'index'])->name('index');
         });
     });
 });
