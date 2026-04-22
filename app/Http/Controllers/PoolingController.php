@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\UpdateMappoolFormatRequest;
 use App\Models\Mappool;
 use App\Models\Tournament;
+use Illuminate\Support\Arr;
 use Inertia\Inertia;
 
 class PoolingController extends Controller
@@ -20,13 +21,14 @@ class PoolingController extends Controller
 
     public function update(UpdateMappoolFormatRequest $request, Tournament $tournament)
     {
-        foreach ($request->safe()->all()['mappools'] as $mappool) {
-            Mappool::upsert([
-                'id' => $mappool['id'],
-                'round' => $mappool['round'],
-                'tournament_id' => $tournament->id,
-            ], uniqueBy: ['id'], update: ['round', 'tournament_id']);
+        $filtered = [];
+        foreach ($request->mappools as $mappool) {
+            $filter = Arr::only($mappool, ['id', 'round']);
+            $filter = Arr::add($filter, 'tournament_id', $tournament->id);
+            $filtered[] = $filter;
         }
+
+        Mappool::upsert($filtered, uniqueBy: ['id', 'tournament_id'], update: ['round']);
 
         return to_route('tournaments.pooling.index', [$tournament]);
     }
