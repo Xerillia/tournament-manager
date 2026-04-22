@@ -23,9 +23,11 @@ class UpdateMappoolFormatRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'mappool.*.round' => ['required', 'string'],
-            'mappool.*.format.*.slot' => ['required', 'string'],
-            'mappool.*.format.*.count' => ['required', 'number'],
+            'mappools.*.id' => ['required', 'integer'],
+            'mappools.*.round' => ['required', 'string'],
+            'mappools.*.formats.*.id' => ['required', 'integer'],
+            'mappools.*.formats.*.slot' => ['required', 'string'],
+            'mappools.*.formats.*.count' => ['required', 'integer'],
         ];
     }
 }

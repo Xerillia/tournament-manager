@@ -71,9 +71,24 @@ export default function EditMappoolFormat({ tournament_id, mappools }: EditMappo
         setEditMode(false);
     }
 
+    function formatLeftAndRight(format: Format, mappool: Mappool, left: boolean = false) {
+        const index = mappool.formats.findIndex((obj) => obj.id === format.id);
+
+        let offset = 1;
+        if (left) offset = -1;
+
+        [mappool.formats[index], mappool.formats[index + offset]] = [mappool.formats[index + offset], mappool.formats[index]];
+        [mappool.formats[index].id, mappool.formats[index + offset].id] = [mappool.formats[index + offset].id, mappool.formats[index].id];
+
+        updateOrInsertMappool(mappool);
+    }
+
     return (
         <>
-            <Form action={update(tournament_id)}>
+            <Form
+                action={update(tournament_id)}
+                onSuccess={() => setEditMode(false)}
+            >
                 {({ errors }) => (
                     <>
                         {!editMode && (
@@ -119,11 +134,16 @@ export default function EditMappoolFormat({ tournament_id, mappools }: EditMappo
                                     )}
                                 </div>
                                 <div className="flex flex-1 gap-4">
+                                    <input
+                                        type="hidden"
+                                        name={'mappools[' + mappool.id + '][id]'}
+                                        value={mappool.id}
+                                    />
                                     <label className="self-center">
                                         Round
                                         <input
                                             type="text"
-                                            name={'mappool[' + mappool.id + '][round]'}
+                                            name={'mappools[' + mappool.id + '][round]'}
                                             placeholder="Round of ..."
                                             className="block w-full rounded-md border border-slate-800 p-2"
                                             value={mappool.round}
@@ -147,6 +167,7 @@ export default function EditMappoolFormat({ tournament_id, mappools }: EditMappo
                                                         <button
                                                             type="button"
                                                             className="aspect-square rounded-sm border hover:cursor-pointer"
+                                                            onClick={() => formatLeftAndRight(format, mappool, true)}
                                                         >
                                                             &lt;
                                                         </button>
@@ -155,6 +176,7 @@ export default function EditMappoolFormat({ tournament_id, mappools }: EditMappo
                                                         <button
                                                             type="button"
                                                             className="aspect-square rounded-sm border hover:cursor-pointer"
+                                                            onClick={() => formatLeftAndRight(format, mappool, false)}
                                                         >
                                                             &gt;
                                                         </button>
@@ -162,8 +184,13 @@ export default function EditMappoolFormat({ tournament_id, mappools }: EditMappo
                                                 </div>
                                             )}
                                             <input
+                                                type="hidden"
+                                                name={'mappools[' + mappool.id + '][formats][' + format.id + '][id]'}
+                                                value={format.id}
+                                            />
+                                            <input
                                                 type="text"
-                                                name={'mappool[' + mappool.id + '][formats][' + format.id + '][slot]'}
+                                                name={'mappools[' + mappool.id + '][formats][' + format.id + '][slot]'}
                                                 className="w-12 rounded-md border border-slate-800 p-2 text-center"
                                                 placeholder="NM"
                                                 value={format.slot}
@@ -172,7 +199,7 @@ export default function EditMappoolFormat({ tournament_id, mappools }: EditMappo
                                             />
                                             <input
                                                 type="number"
-                                                name={'mappool[' + mappool.id + '][formats][' + format.id + '][count]'}
+                                                name={'mappools[' + mappool.id + '][formats][' + format.id + '][count]'}
                                                 className="w-12 rounded-md border border-slate-800 p-2 text-center"
                                                 placeholder="6"
                                                 value={format.count}
