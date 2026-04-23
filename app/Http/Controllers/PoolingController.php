@@ -5,7 +5,9 @@ namespace App\Http\Controllers;
 use App\Http\Requests\DeleteMappoolFormatRequest;
 use App\Http\Requests\UpdateMappoolFormatRequest;
 use App\Models\Mappool;
+use App\Models\MappoolFormat;
 use App\Models\Tournament;
+use Illuminate\Support\Arr;
 use Inertia\Inertia;
 
 class PoolingController extends Controller
@@ -25,14 +27,26 @@ class PoolingController extends Controller
     public function update(UpdateMappoolFormatRequest $request, Tournament $tournament)
     {
         foreach ($request->mappools as $mappool) {
-
-            Mappool::updateOrCreate([
+            $retrieved_mappool = Mappool::updateOrCreate([
                 'id' => $mappool['id'],
                 'tournament_id' => $tournament->id,
             ],
                 [
                     'round' => $mappool['round'],
                 ]);
+
+            $formats = Arr::has($mappool, 'formats') ? $mappool['formats'] : [];
+            foreach ($formats as $format) {
+                MappoolFormat::updateOrCreate([
+                    'id' => $format['id'],
+                    'mappool_id' => $retrieved_mappool->id,
+                ],
+                    [
+                        'slot' => $format['slot'],
+                        'count' => $format['count'],
+                    ]);
+            }
+
         }
 
         return to_route('tournaments.pooling.index', [$tournament]);

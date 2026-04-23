@@ -10,6 +10,7 @@ interface EditMappoolFormatProps {
 }
 
 let nextMappoolId = 0; // prevent arbitrary update or delete because database ids are unsigned integer
+let nextFormatId = 0; // ^
 
 export default function EditMappoolFormat({ tournament_id, mappools }: EditMappoolFormatProps) {
     const [getMappools, setMappools] = useState<Mappool[]>(cloneDeep(mappools));
@@ -42,9 +43,7 @@ export default function EditMappoolFormat({ tournament_id, mappools }: EditMappo
     }
 
     function addFormat(mappool: Mappool) {
-        const nextFormatId = mappool.formats.length > 0 ? Math.max(...mappool.formats.map((obj) => obj.id)) + 1 : 0;
-
-        mappool.formats = [...mappool.formats, { id: nextFormatId, mappool_id: mappool.id, slot: '', count: 0 }];
+        mappool.formats = [...mappool.formats, { id: nextFormatId--, mappool_id: mappool.id, slot: '', count: 0 }];
 
         updateOrInsertMappool(mappool);
     }
