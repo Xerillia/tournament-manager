@@ -21,14 +21,18 @@ class PoolingController extends Controller
 
     public function update(UpdateMappoolFormatRequest $request, Tournament $tournament)
     {
-        $filtered = [];
         foreach ($request->mappools as $mappool) {
-            $filter = Arr::only($mappool, ['id', 'round']);
-            $filter = Arr::add($filter, 'tournament_id', $tournament->id);
-            $filtered[] = $filter;
+
+            Mappool::updateOrCreate([
+                'id' => $mappool['id'],
+                'tournament_id' => $tournament->id,
+            ],
+                [
+                    'round' => $mappool['round'],
+                ]);
         }
 
-        Mappool::upsert($filtered, uniqueBy: ['id', 'tournament_id'], update: ['round']);
+        
 
         return to_route('tournaments.pooling.index', [$tournament]);
     }
