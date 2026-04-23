@@ -59,14 +59,28 @@ class PoolingController extends Controller
     {
         $collected = $request->safe()->collect();
 
-        if ($collected->has('delete')) {
-            $collected = collect($collected->get('delete'));
+        if ($collected->has('delete_queue')) {
+            $collected_delete_queue = collect($collected->get('delete_queue'));
 
-            $filtered = $collected->filter(function (int $value, int $key) {
+            $filtered = $collected_delete_queue->filter(function (int $value) {
                 return $value > 0;
             });
 
             Mappool::destroy($filtered->toArray());
+        }
+
+        if ($collected->has('delete_format_queue')) {
+            $collected_delete_format_queue = collect($collected->get('delete_format_queue'));
+
+            $filtered = $collected_delete_format_queue->filter(function (array $values) {
+                return $values['format_id'] > 0;
+            });
+
+            $flatMapped = $filtered->flatMap(function (array $values) {
+                return [$values['format_id']];
+            });
+
+            MappoolFormat::destroy($flatMapped->toArray());
         }
 
         return to_route('tournaments.pooling.index', [$tournament]);

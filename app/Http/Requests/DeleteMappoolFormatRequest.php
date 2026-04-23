@@ -23,7 +23,9 @@ class DeleteMappoolFormatRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'delete.*' => ['required', 'integer'],
+            'delete_queue.*' => ['required', 'integer'],
+            'delete_format_queue.*.format_id' => ['required', 'exists:mappool_formats,id'],
+            'delete_format_queue.*.mappool_id' => ['required', 'exists:mappool_formats,mappool_id'],
         ];
     }
 }

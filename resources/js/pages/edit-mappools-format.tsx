@@ -86,26 +86,40 @@ export default function EditMappoolFormat({ tournament_id, mappools }: EditMappo
 
     const [deleteQueue, setDeleteQueue] = useState<number[]>([]);
 
-    function handleCancel() {
-        setMappools(cloneDeep(originalMappools));
-        setEditMode(false);
-        setDeleteQueue([]);
-    }
-
     function handleDeleteMappool(mappool: Mappool) {
         setDeleteQueue([...deleteQueue, mappool.id]);
+
+        setDeleteFormatQueue([...deleteFormatQueue.filter((obj) => obj.mappool_id !== mappool.id)]);
 
         removeMappool(mappool);
     }
 
+    const [deleteFormatQueue, setDeleteFormatQueue] = useState<{ format_id: number; mappool_id: number }[]>([]);
+
+    function handleDeleteFormat(format: Format, mappool: Mappool) {
+        setDeleteFormatQueue([...deleteFormatQueue, { format_id: format.id, mappool_id: mappool.id }]);
+
+        removeFormat(format, mappool);
+    }
+
     function handleSuccess() {
-        if (deleteQueue.length > 0) {
+        if (deleteQueue.length > 0 || deleteFormatQueue.length > 0) {
             router.delete(destroy(tournament_id).url, {
                 data: {
-                    delete: deleteQueue,
+                    delete_queue: deleteQueue,
+                    delete_format_queue: deleteFormatQueue,
                 },
             });
         }
+
+        setEditMode(false);
+    }
+
+    function handleCancel() {
+        setMappools(cloneDeep(originalMappools));
+
+        setDeleteQueue([]);
+        setDeleteFormatQueue([]);
 
         setEditMode(false);
     }
@@ -238,7 +252,7 @@ export default function EditMappoolFormat({ tournament_id, mappools }: EditMappo
                                                 <button
                                                     type="button"
                                                     className="w-12 self-end rounded-md bg-red-200 hover:cursor-pointer hover:bg-red-300"
-                                                    onClick={() => removeFormat(format, mappool)}
+                                                    onClick={() => handleDeleteFormat(format, mappool)}
                                                 >
                                                     Del
                                                 </button>
