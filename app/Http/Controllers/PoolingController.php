@@ -57,10 +57,16 @@ class PoolingController extends Controller
      */
     public function destroy(DeleteMappoolFormatRequest $request, Tournament $tournament)
     {
-        $validated = $request->validated();
+        $collected = $request->safe()->collect();
 
-        if ($validated && $validated['delete']) {
-            Mappool::destroy($validated['delete']);
+        if ($collected->has('delete')) {
+            $collected = collect($collected->get('delete'));
+
+            $filtered = $collected->filter(function (int $value, int $key) {
+                return $value > 0;
+            });
+
+            Mappool::destroy($filtered->toArray());
         }
 
         return to_route('tournaments.pooling.index', [$tournament]);
