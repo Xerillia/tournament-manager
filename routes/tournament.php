@@ -24,6 +24,7 @@ Route::prefix('tournaments')->name('tournaments.')->group(function () {
         Route::prefix('{tournament}/pooling/')->name('pooling.')->group(function () {
             Route::get('/', [PoolingController::class, 'index'])->name('index');
             Route::put('/', [PoolingController::class, 'update'])->name('update');
+            Route::delete('/', [PoolingController::class, 'destroy'])->name('destroy');
         });
     });
 });

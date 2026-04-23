@@ -1,24 +1,31 @@
-import { update } from '@/actions/App/Http/Controllers/PoolingController';
+import { update, destroy } from '@/actions/App/Http/Controllers/PoolingController';
 import { Format, Mappool } from '@/types/mappools';
-import { Form } from '@inertiajs/react';
+import { Form, router } from '@inertiajs/react';
 import { useState } from 'react';
+import { isEqual, cloneDeep } from 'lodash';
 
 interface EditMappoolFormatProps {
     tournament_id: number;
     mappools: Mappool[];
 }
 
+let nextMappoolId = 0; // prevent arbitrary update or delete because database ids are unsigned integer
+
 export default function EditMappoolFormat({ tournament_id, mappools }: EditMappoolFormatProps) {
-    const [getMappools, setMappools] = useState<Mappool[]>(mappools);
-    const [originalMappools, setOriginalMappools] = useState<Mappool[]>(JSON.parse(JSON.stringify(mappools)));
+    const [getMappools, setMappools] = useState<Mappool[]>(cloneDeep(mappools));
+    const [originalMappools, setOriginalMappools] = useState<Mappool[]>(cloneDeep(mappools));
     const [editMode, setEditMode] = useState<boolean>(false);
 
-    let nextMappoolId = getMappools.length > 0 ? Math.max(...getMappools.map((obj) => obj.id)) + 1 : 0;
+    if (!isEqual(originalMappools, mappools)) {
+        // prop has changed
+        setMappools(mappools);
+        setOriginalMappools(cloneDeep(mappools));
+    }
 
     const indexOf = (mappool: Mappool) => getMappools.findIndex((obj) => obj.id === mappool.id);
     const filteredOut = (mappool: Mappool) => getMappools.filter((obj) => obj.id !== mappool.id);
 
-    const addRound = () => setMappools([...getMappools, { id: nextMappoolId++, round: '', formats: [], suggestions: [] }]);
+    const addRound = () => setMappools([...getMappools, { id: nextMappoolId--, round: '', formats: [], suggestions: [] }]);
 
     function removeMappool(mappool: Mappool) {
         setMappools(filteredOut(mappool));
@@ -66,11 +73,6 @@ export default function EditMappoolFormat({ tournament_id, mappools }: EditMappo
         updateOrInsertMappool(mappool);
     }
 
-    function handleCancel() {
-        setMappools(JSON.parse(JSON.stringify(originalMappools)));
-        setEditMode(false);
-    }
-
     function formatLeftAndRight(format: Format, mappool: Mappool, left: boolean = false) {
         const index = mappool.formats.findIndex((obj) => obj.id === format.id);
 
@@ -83,11 +85,38 @@ export default function EditMappoolFormat({ tournament_id, mappools }: EditMappo
         updateOrInsertMappool(mappool);
     }
 
+    const [deleteQueue, setDeleteQueue] = useState<number[]>([]);
+
+    function handleCancel() {
+        setMappools(cloneDeep(originalMappools));
+        setEditMode(false);
+        setDeleteQueue([]);
+    }
+
+    function handleDeleteMappool(mappool: Mappool) {
+        setDeleteQueue([...deleteQueue, mappool.id]);
+
+        removeMappool(mappool);
+    }
+
+    function handleSuccess() {
+        if (deleteQueue.length > 0) {
+            router.delete(destroy(tournament_id).url, {
+                data: {
+                    delete: deleteQueue,
+                },
+            });
+        }
+
+        setEditMode(false);
+    }
+
     return (
         <>
             <Form
-                action={update(tournament_id)}
-                onSuccess={() => setEditMode(false)}
+                method="put"
+                onSubmit={() => update(tournament_id)}
+                onSuccess={handleSuccess}
             >
                 {({ errors }) => (
                     <>
@@ -127,7 +156,7 @@ export default function EditMappoolFormat({ tournament_id, mappools }: EditMappo
                                         <button
                                             type="button"
                                             className="h-full rounded-md bg-red-200 p-2 hover:cursor-pointer hover:bg-red-300"
-                                            onClick={() => removeMappool(mappool)}
+                                            onClick={() => handleDeleteMappool(mappool)}
                                         >
                                             Del
                                         </button>
