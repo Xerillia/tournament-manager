@@ -292,7 +292,7 @@ export default function Suggestions({ tournament, mappool }: SuggestionsProps) {
 
     return (
         <>
-            <div className="mb-4">{suggestionPanel}</div>
+            <div className="grid place-items-center">{suggestionPanel}</div>
             <div className="container mx-auto py-10">
                 <h1 className="mb-2 text-center text-4xl font-bold">{mappool.round} Suggestions</h1>
                 <table>
