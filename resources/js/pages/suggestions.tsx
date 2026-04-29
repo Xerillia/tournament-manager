@@ -42,7 +42,7 @@ export default function Suggestions({ tournament, mappool }: SuggestionsProps) {
                             className="block border-2 border-blue-400 p-2 focus:outline-0"
                             placeholder="Beatmap ID"
                             required
-                            onChange={() => validate('beatmap_id')}
+                            onBlur={() => validate('beatmap_id')}
                         />
                         {invalid('beatmap_id') && <p className="text-red-400">{errors.beatmap_id}</p>}
                         <input
@@ -51,7 +51,7 @@ export default function Suggestions({ tournament, mappool }: SuggestionsProps) {
                             className="block border-2 border-blue-400 p-2 focus:outline-0"
                             placeholder="Mods"
                             required
-                            onChange={() => validate('mods')}
+                            onBlur={() => validate('mods')}
                         />
                         {invalid('mods') && <p className="text-red-400">{errors.mods}</p>}
                         <input
