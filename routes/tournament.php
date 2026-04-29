@@ -18,6 +18,7 @@ Route::prefix('tournaments')->name('tournaments.')->group(function () {
         Route::prefix('{tournament}/suggestions')->name('suggestions.')->group(function () {
             Route::get('/{round}', [SuggestionController::class, 'index'])->name('index');
             Route::post('/', [SuggestionController::class, 'store'])->middleware([HandlePrecognitiveRequests::class])->name('store');
+            Route::put('/{suggestion}', [SuggestionController::class, 'update'])->name('update');
             Route::delete('/{suggestion}', [SuggestionController::class, 'destroy'])->name('destroy');
         });
 
