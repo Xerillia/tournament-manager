@@ -143,14 +143,82 @@ export default function Suggestions({ tournament, mappool }: SuggestionsProps) {
                                 onKeyDown={(e) => handleKeyDown(e)}
                                 onBlur={updateBeatmapId}
                             />
-                            {error && <div className="relative -top-17 bg-red-200 px-2 text-sm font-bold whitespace-nowrap text-red-500">{error}</div>}
+                            {error && <div className="absolute -top-17 bg-red-200 px-2 text-sm font-bold whitespace-nowrap text-red-500">{error}</div>}
                         </>
                     );
                 },
             }),
             columnHelper.accessor('beatmap.mods', {
                 header: 'Mods',
-                size: 100,
+                cell: (props) => {
+                    const [value, setValue] = useState<string>(props.getValue());
+                    const [originalValue, setOriginalValue] = useState<string>(props.getValue());
+
+                    const [error, setError] = useState<string>('');
+
+                    useEffect(() => {
+                        if (!error) return;
+
+                        // Clear error after 3 seconds
+                        const timer = setTimeout(() => {
+                            setError('');
+                        }, 3000);
+
+                        return () => clearTimeout(timer);
+                    });
+
+                    function updateMod() {
+                        // don't update if there is no change
+                        if (value === originalValue) return;
+
+                        // prepare payload
+                        const data = {
+                            beatmap_id: props.row.original.beatmap.beatmap_id,
+                            mods: value,
+                        };
+
+                        // route param
+                        const suggestion_id = props.row.original.id;
+
+                        router.put(update([tournament, suggestion_id]), data, {
+                            onError: (error) => {
+                                setError(error.mods);
+                                setValue(originalValue);
+                            },
+                            onSuccess: () => {
+                                setOriginalValue(value);
+                            },
+                        });
+                    }
+
+                    function resetOrUnfocus(e: React.KeyboardEvent<HTMLInputElement>) {
+                        if (value === originalValue) {
+                            e.currentTarget.blur();
+                        }
+
+                        setValue(originalValue);
+                    }
+
+                    function handleKeyDown(e: React.KeyboardEvent<HTMLInputElement>) {
+                        if (e.key === 'Escape') resetOrUnfocus(e);
+                        if (e.key === 'Enter') e.currentTarget.blur();
+                    }
+
+                    return (
+                        <div className="relative h-full w-full">
+                            <input
+                                type="text"
+                                name={`mods[${props.row.original.id}]`}
+                                value={value}
+                                className="block h-full w-full text-center focus:outline-blue-500"
+                                onChange={(e) => setValue(e.target.value)}
+                                onKeyDown={(e) => handleKeyDown(e)}
+                                onBlur={updateMod}
+                            />
+                            {error && <div className="absolute -top-5.25 z-1 bg-red-200 px-2 text-sm font-bold whitespace-nowrap text-red-500">{error}</div>}
+                        </div>
+                    );
+                },
             }),
             columnHelper.accessor('user.username', {
                 header: 'Suggester',
