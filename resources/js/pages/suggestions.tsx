@@ -8,7 +8,7 @@ import { useEffect, useState } from 'react';
 
 interface SuggestionsProps {
     tournament: Tournament;
-    mappools: Mappool[];
+    mappool: Mappool;
 }
 
 function secondToTime(num: number) {
@@ -87,7 +87,7 @@ const columns = [
     }),
 ];
 
-export default function Suggestions({ tournament, mappools }: SuggestionsProps) {
+export default function Suggestions({ tournament, mappool }: SuggestionsProps) {
     const suggestionPanel = (
         <Form
             action={store(tournament)}
@@ -114,21 +114,10 @@ export default function Suggestions({ tournament, mappools }: SuggestionsProps) 
                         onChange={() => validate('mods')}
                     />
                     {invalid('mods') && <p className="text-red-400">{errors.mods}</p>}
-                    <select
-                        name="round"
-                        className="block border-2 border-blue-400 p-2 focus:outline-0"
-                        onChange={() => validate('round')}
-                    >
-                        {mappools.map((mappool) => (
-                            <option
-                                value={mappool.round}
-                                key={mappool.id}
-                            >
-                                {mappool.round}
-                            </option>
-                        ))}
-                    </select>
-                    {invalid('round') && <p className="text-red-400">{errors.round}</p>}
+                    <input
+                        type="hidden"
+                        value={mappool.round}
+                    />
                     <button
                         type="submit"
                         className="block bg-green-300 p-2 hover:cursor-pointer hover:bg-green-400"
@@ -140,81 +129,73 @@ export default function Suggestions({ tournament, mappools }: SuggestionsProps) 
         </Form>
     );
 
+    const [data, setData] = useState<Suggestion[]>(mappool.suggestions);
+
+    useEffect(() => {
+        setData(mappool.suggestions);
+    }, [mappool.suggestions]);
+
+    const table = useReactTable({
+        data,
+        columns,
+        getCoreRowModel: getCoreRowModel(),
+    });
+
     return (
         <>
             <div className="mb-4">{suggestionPanel}</div>
-
-            {mappools.map((mappool) => {
-                const [data, setData] = useState<Suggestion[]>(mappool.suggestions);
-
-                useEffect(() => {
-                    setData(mappool.suggestions);
-                }, [mappool.suggestions]);
-
-                const table = useReactTable({
-                    data,
-                    columns,
-                    getCoreRowModel: getCoreRowModel(),
-                });
-
-                return (
-                    <div
-                        className="container mx-auto py-10"
-                        key={mappool.id}
-                    >
-                        <table key={mappool.id}>
-                            <thead className="border-b bg-gray-300">
-                                {table.getHeaderGroups().map((headerGroup) => (
-                                    <tr key={headerGroup.id}>
-                                        {headerGroup.headers.map((header) => {
-                                            return (
-                                                <th
-                                                    key={header.id}
-                                                    className="py-2 text-center"
-                                                    style={{
-                                                        width: header.column.getSize(),
-                                                    }}
-                                                >
-                                                    {header.isPlaceholder ? null : flexRender(header.column.columnDef.header, header.getContext())}
-                                                </th>
-                                            );
-                                        })}
-                                    </tr>
-                                ))}
-                            </thead>
-                            <tbody>
-                                {table.getRowModel().rows?.length ? (
-                                    table.getRowModel().rows.map((row) => (
-                                        <tr
-                                            key={row.id}
-                                            data-state={row.getIsSelected() && 'selected'}
-                                            className="odd:bg-gray-100 hover:bg-black/20"
+            <div className="container mx-auto py-10">
+                <table>
+                    <thead className="border-b bg-gray-300">
+                        {table.getHeaderGroups().map((headerGroup) => (
+                            <tr key={headerGroup.id}>
+                                {headerGroup.headers.map((header) => {
+                                    return (
+                                        <th
+                                            key={header.id}
+                                            className="py-2 text-center"
+                                            style={{
+                                                width: header.column.getSize(),
+                                            }}
                                         >
-                                            {row.getVisibleCells().map((cell) => (
-                                                <td
-                                                    className="h-12 text-center"
-                                                    key={cell.id}
-                                                >
-                                                    {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                                                </td>
-                                            ))}
-                                        </tr>
-                                    ))
-                                ) : (
-                                    <tr>
+                                            {header.isPlaceholder ? null : flexRender(header.column.columnDef.header, header.getContext())}
+                                        </th>
+                                    );
+                                })}
+                            </tr>
+                        ))}
+                    </thead>
+                    <tbody>
+                        {table.getRowModel().rows?.length ? (
+                            table.getRowModel().rows.map((row) => (
+                                <tr
+                                    key={row.id}
+                                    data-state={row.getIsSelected() && 'selected'}
+                                    className="odd:bg-gray-100 hover:bg-black/20"
+                                >
+                                    {row.getVisibleCells().map((cell) => (
                                         <td
-                                            colSpan={columns.length}
-                                            className="h-24 text-center"
+                                            className="h-12 text-center"
+                                            key={cell.id}
                                         >
-                                            No results.
+                                            {flexRender(cell.column.columnDef.cell, cell.getContext())}
                                         </td>
-                                    </tr>
-                                )}
-                            </tbody>
-                        </table>
-                    </div>
-                );
-            })}
+                                    ))}
+                                </tr>
+                            ))
+                        ) : (
+                            <tr>
+                                <td
+                                    colSpan={columns.length}
+                                    className="h-24 text-center"
+                                >
+                                    No results.
+                                </td>
+                            </tr>
+                        )}
+                    </tbody>
+                </table>
+            </div>
         </>
     );
 }

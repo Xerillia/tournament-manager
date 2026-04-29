@@ -13,13 +13,19 @@ use Inertia\Inertia;
 
 class SuggestionController extends Controller
 {
-    public function index(Tournament $tournament)
+    public function index(Tournament $tournament, string $round)
     {
-        $tournament->load(['mappools.suggestions.beatmap', 'mappools.suggestions.user']);
+        $mappool = Mappool::whereTournamentId($tournament->id)->whereRound($round)->first();
+
+        if (! $mappool) {
+            return abort(404);
+        }
+
+        $mappool->load(['suggestions.beatmap', 'suggestions.user']);
 
         return Inertia::render('suggestions', [
             'tournament' => $tournament,
-            'mappools' => $tournament->mappools,
+            'mappool' => $mappool,
         ]);
     }
 
@@ -52,13 +58,13 @@ class SuggestionController extends Controller
             'user_id' => Auth::id(),
         ]);
 
-        return to_route('tournaments.suggestions.index', $tournament);
+        return to_route('tournaments.suggestions.index', [$tournament, $round]);
     }
 
-    public function destroy(Tournament $tournament, MappoolSuggestion $suggestion)
+    public function destroy(Tournament $tournament, MappoolSuggestion $suggestion, string $round)
     {
         $suggestion->delete();
 
-        return to_route('tournaments.suggestions.index', $tournament);
+        return to_route('tournaments.suggestions.index', [$tournament, $round]);
     }
 }
