@@ -120,13 +120,16 @@ export default function Suggestions({ tournament, mappool }: SuggestionsProps) {
                     }
 
                     function resetOrUnfocus(e: React.KeyboardEvent<HTMLInputElement>) {
-                        if (e.key !== 'Escape') return;
-
                         if (value === originalValue) {
                             e.currentTarget.blur();
                         }
 
                         setValue(originalValue);
+                    }
+
+                    function handleKeyDown(e: React.KeyboardEvent<HTMLInputElement>) {
+                        if (e.key === 'Escape') resetOrUnfocus(e);
+                        if (e.key === 'Enter') e.currentTarget.blur();
                     }
 
                     return (
@@ -137,7 +140,7 @@ export default function Suggestions({ tournament, mappool }: SuggestionsProps) {
                                 value={value}
                                 className="block h-full w-36 text-center focus:outline-blue-500"
                                 onChange={(e) => setValue(Number(e.target.value))}
-                                onKeyDown={(e) => resetOrUnfocus(e)}
+                                onKeyDown={(e) => handleKeyDown(e)}
                                 onBlur={updateBeatmapId}
                             />
                             {error && <div className="relative -top-17 bg-red-200 px-2 text-sm font-bold whitespace-nowrap text-red-500">{error}</div>}
