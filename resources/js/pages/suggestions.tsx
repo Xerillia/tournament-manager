@@ -4,7 +4,7 @@ import { Suggestion } from '@/types/suggestion';
 import { Tournament } from '@/types/tournament';
 import { Form } from '@inertiajs/react';
 import { createColumnHelper, flexRender, getCoreRowModel, useReactTable } from '@tanstack/react-table';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 interface SuggestionsProps {
     tournament: Tournament;
@@ -150,7 +150,11 @@ export default function Suggestions({ tournament, mappools }: SuggestionsProps) 
             <div className="mb-4">{suggestionPanel}</div>
 
             {mappools.map((mappool) => {
-                const [data] = useState<Suggestion[]>(mappool.suggestions);
+                const [data, setData] = useState<Suggestion[]>(mappool.suggestions);
+
+                useEffect(() => {
+                    setData(mappool.suggestions);
+                }, [mappool.suggestions]);
 
                 const table = useReactTable({
                     data,
