@@ -36,12 +36,7 @@ const columns = [
     columnHelper.accessor((row) => row.beatmap, {
         id: 'banner',
         header: 'Banner',
-        cell: (props) => (
-            <img
-                src={`https://assets.ppy.sh/beatmaps/${props.getValue().beatmapset_id}/covers/cover.jpg`}
-                className="w-auto"
-            />
-        ),
+        cell: (props) => <img src={`https://assets.ppy.sh/beatmaps/${props.getValue().beatmapset_id}/covers/cover.jpg`} />,
     }),
     columnHelper.accessor((row) => row.beatmap, {
         id: 'beatmap_name',
@@ -49,7 +44,7 @@ const columns = [
         cell: (props) => (
             <a
                 href={`https://osu.ppy.sh/beatmapsets/${props.getValue().beatmapset_id}#${props.getValue().mode}/${props.getValue().beatmap_id}`}
-                className="underline hover:cursor-pointer"
+                className="whitespace-nowrap underline hover:cursor-pointer"
             >
                 {`${props.getValue().artist} - ${props.getValue().title} [${props.getValue().version}]`}
             </a>
@@ -168,7 +163,7 @@ export default function Suggestions({ tournament, mappools }: SuggestionsProps) 
                         key={mappool.id}
                     >
                         <table key={mappool.id}>
-                            <thead className="border-b">
+                            <thead className="border-b bg-gray-300">
                                 {table.getHeaderGroups().map((headerGroup) => (
                                     <tr key={headerGroup.id}>
                                         {headerGroup.headers.map((header) => {
@@ -193,6 +188,7 @@ export default function Suggestions({ tournament, mappools }: SuggestionsProps) 
                                         <tr
                                             key={row.id}
                                             data-state={row.getIsSelected() && 'selected'}
+                                            className="odd:bg-gray-100 hover:bg-black/20"
                                         >
                                             {row.getVisibleCells().map((cell) => (
                                                 <td
