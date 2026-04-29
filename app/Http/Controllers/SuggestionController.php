@@ -45,18 +45,23 @@ class SuggestionController extends Controller
         // loading beatmap
         $beatmap = Beatmap::whereBeatmapId($beatmapId)->whereMods($mods)->first();
         if (! $beatmap) {
-            $accessToken = Auth::user()->getAccessToken();
-            $beatmapObject = (new OsuService)->getBeatmap($accessToken, $beatmapId, $array_mods);
-            $beatmap = Beatmap::updateOrCreate($beatmapObject->toArray());
+            try {
+                $accessToken = Auth::user()->getAccessToken();
+                $beatmapObject = (new OsuService)->getBeatmap($accessToken, $beatmapId, $array_mods);
+                $beatmap = Beatmap::updateOrCreate($beatmapObject->toArray());
+            } catch (\Exception $e) {
+                return to_route('tournaments.suggestions.index', [$tournament, $round])->with('beatmap_not_found', 'Beatmap not found!');
+            }
         }
-
-        // create suggestion
-        $mappool = Mappool::whereTournamentId($tournament->id)->whereRound($round)->first();
-        MappoolSuggestion::create([
-            'mappool_id' => $mappool->id,
-            'beatmap_id' => $beatmap->id,
-            'user_id' => Auth::id(),
-        ]);
+        // only create the suggestion if a valid beatmap is found
+        if ($beatmap) {
+            $mappool = Mappool::whereTournamentId($tournament->id)->whereRound($round)->first();
+            MappoolSuggestion::create([
+                'mappool_id' => $mappool->id,
+                'beatmap_id' => $beatmap->id,
+                'user_id' => Auth::id(),
+            ]);
+        }
 
         return to_route('tournaments.suggestions.index', [$tournament, $round]);
     }

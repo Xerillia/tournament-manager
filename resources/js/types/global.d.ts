@@ -7,6 +7,9 @@ declare module '@inertiajs/core' {
             auth: Auth;
             sidebarOpen: boolean;
             [key: string]: unknown;
+            flash: {
+                beatmap_not_found?: string;
+            };
         };
     }
 }
