@@ -87,8 +87,6 @@ class SuggestionController extends Controller
                 $beatmapObject = (new OsuService)->getBeatmap($accessToken, $beatmapId, $array_mods);
                 $beatmap = Beatmap::updateOrCreate($beatmapObject->toArray());
             } catch (\Exception $e) {
-                $suggestion->load('mappool');
-
                 return to_route('tournaments.suggestions.index', [$tournament, $suggestion->mappool->round])->withErrors(['beatmap_not_found' => 'Beatmap does not exist!']);
             }
         }
@@ -98,18 +96,15 @@ class SuggestionController extends Controller
             $suggestion->update([
                 'beatmap_id' => $beatmap->id,
             ]);
-
-            // load relation
-            $suggestion->load('mappool');
         }
 
         return to_route('tournaments.suggestions.index', [$tournament, $suggestion->mappool->round]);
     }
 
-    public function destroy(Tournament $tournament, MappoolSuggestion $suggestion, string $round)
+    public function destroy(Tournament $tournament, MappoolSuggestion $suggestion)
     {
         $suggestion->delete();
 
-        return to_route('tournaments.suggestions.index', [$tournament, $round]);
+        return to_route('tournaments.suggestions.index', [$tournament, $suggestion->mappool->round]);
     }
 }

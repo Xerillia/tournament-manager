@@ -1,9 +1,10 @@
-import { store, update } from '@/routes/tournaments/suggestions';
+import { destroy, store, update } from '@/routes/tournaments/suggestions';
 import { Mappool } from '@/types/mappools';
 import { Suggestion } from '@/types/suggestion';
 import { Tournament } from '@/types/tournament';
 import { Form, router, usePage } from '@inertiajs/react';
 import { createColumnHelper, flexRender, getCoreRowModel, useReactTable } from '@tanstack/react-table';
+import { Trash2Icon } from 'lucide-react';
 import { useEffect, useMemo, useState } from 'react';
 
 interface SuggestionsProps {
@@ -80,6 +81,18 @@ export default function Suggestions({ tournament, mappool }: SuggestionsProps) {
 
     const columns = useMemo(
         () => [
+            columnHelper.display({
+                id: 'delete_button',
+                cell: (props) => (
+                    <button
+                        type="button"
+                        className="rounded-md bg-red-200 p-1 align-middle hover:cursor-pointer hover:bg-red-300"
+                        onClick={() => router.delete(destroy([tournament, props.row.original.id]))}
+                    >
+                        <Trash2Icon className="hover:text-700 text-red-800" />
+                    </button>
+                ),
+            }),
             columnHelper.accessor('beatmap.beatmap_id', {
                 header: 'Beatmap ID',
                 cell: (props) => {
