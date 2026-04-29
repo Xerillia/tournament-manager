@@ -33,6 +33,10 @@ export default function Suggestions({ tournament, mappool }: SuggestionsProps) {
                 action={store(tournament)}
                 method="post"
                 resetOnSuccess
+                transform={(data) => ({
+                    ...data,
+                    mods: data.mods.replace(/\s+/g, ''),
+                })}
             >
                 {({ errors, invalid, validate }) => (
                     <>
@@ -174,7 +178,7 @@ export default function Suggestions({ tournament, mappool }: SuggestionsProps) {
                         // prepare payload
                         const data = {
                             beatmap_id: props.row.original.beatmap.beatmap_id,
-                            mods: value,
+                            mods: value.replace(/\s+/g, ''),
                         };
 
                         // route param
