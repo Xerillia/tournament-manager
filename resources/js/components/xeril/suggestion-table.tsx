@@ -227,6 +227,10 @@ export default function SuggestionTable<TData, TValue>({ mappool, tournament }: 
                             setBeingHeld(true);
                             submitComment();
                         }
+
+                        if (e.key === 'Escape') {
+                            setShow(false);
+                        }
                     }
 
                     function handleKeyUp() {
@@ -256,7 +260,7 @@ export default function SuggestionTable<TData, TValue>({ mappool, tournament }: 
                                             {props.row.original.comments.length > 0 ? (
                                                 props.row.original.comments.map((comment) => {
                                                     return (
-                                                        <p>
+                                                        <p key={comment.comment.id}>
                                                             {comment.comment.message} by {comment.comment.user.username}
                                                         </p>
                                                     );
