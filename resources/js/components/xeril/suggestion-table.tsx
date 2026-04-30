@@ -1,3 +1,4 @@
+import { store } from '@/actions/App/Http/Controllers/SuggestionCommentController';
 import { destroy, update } from '@/routes/tournaments/suggestions';
 import { Mappool } from '@/types/mappools';
 import { Suggestion } from '@/types/suggestion';
@@ -197,11 +198,20 @@ export default function SuggestionTable<TData, TValue>({ mappool, tournament }: 
                 cell: (props) => {
                     const [show, setShow] = useState<boolean>(false);
 
-                    const [comment, setComment] = useState<string>('');
+                    const [message, setMessage] = useState<string>('');
 
                     function submitComment() {
-                        if (!comment) return;
-                        console.log(`comment is: ${comment}`);
+                        if (!message) return;
+
+                        router.post(
+                            store(props.row.original.id),
+                            {
+                                message: message,
+                            },
+                            {
+                                onSuccess: () => setMessage(''),
+                            },
+                        );
                     }
 
                     const [beingHeld, setBeingHeld] = useState<boolean>(false);
@@ -254,11 +264,10 @@ export default function SuggestionTable<TData, TValue>({ mappool, tournament }: 
                                                     className="h-8 w-8 rounded-full"
                                                 />
                                                 <TextareaAutosize
-                                                    name="comment"
-                                                    value={comment}
+                                                    value={message}
                                                     placeholder="enter a comment..."
                                                     className="flex-1 resize-none self-center overflow-y-auto focus:outline-0"
-                                                    onChange={(e) => setComment(e.target.value)}
+                                                    onChange={(e) => setMessage(e.target.value)}
                                                     onKeyDownCapture={handleKeyDown}
                                                     onKeyUp={handleKeyUp}
                                                     autoFocus

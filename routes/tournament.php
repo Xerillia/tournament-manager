@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\PoolingController;
+use App\Http\Controllers\SuggestionCommentController;
 use App\Http\Controllers\SuggestionController;
 use App\Http\Controllers\TournamentController;
 use Illuminate\Foundation\Http\Middleware\HandlePrecognitiveRequests;
@@ -28,4 +29,8 @@ Route::prefix('tournaments')->name('tournaments.')->group(function () {
             Route::delete('/', [PoolingController::class, 'destroy'])->name('destroy');
         });
     });
+});
+
+Route::prefix('{suggestion}/comments')->name('suggestions.comments.')->group(function () {
+    Route::post('/', [SuggestionCommentController::class, 'store'])->name('store');
 });
