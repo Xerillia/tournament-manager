@@ -292,69 +292,67 @@ export default function SuggestionTable<TData, TValue>({ mappool, tournament }: 
                             {show && (
                                 <>
                                     <div
-                                        className="hover:cursor- absolute top-0 left-0 z-1 h-screen w-screen bg-black/30"
+                                        className="absolute top-0 left-0 z-1 h-screen w-screen bg-black/30"
                                         onClick={() => setShow(false)}
                                     />
-                                    <div className="relative">
-                                        <div className="absolute left-25 z-2 flex w-104 flex-col rounded-md border border-gray-600 bg-white">
-                                            <h2 className="my-2 border-b pb-2 text-2xl font-bold">Comments</h2>
-                                            {props.row.original.comments.length > 0 ? (
-                                                props.row.original.comments.map((value) => {
-                                                    const comment = value.comment;
-                                                    return (
-                                                        <div
-                                                            key={comment.id}
-                                                            className="m-2 flex place-items-center gap-2 text-left"
-                                                        >
-                                                            <img
-                                                                src={comment.user.avatar_url}
-                                                                className="h-10 w-10 rounded-full"
-                                                            />
-                                                            <div className="flex flex-col">
-                                                                <p className="font-bold">
-                                                                    {comment.user.username}{' '}
-                                                                    <span className="ml-1 text-sm font-normal text-black/80">
-                                                                        {formattedDate(comment.created_at)}
-                                                                    </span>
-                                                                </p>
-                                                                <p>{comment.message}</p>
-                                                            </div>
+                                    <div className="absolute top-1/2 left-1/2 z-2 flex w-180 -translate-1/2 flex-col rounded-md border border-gray-600 bg-white">
+                                        <h2 className="my-2 border-b pb-2 text-2xl font-bold">Comments</h2>
+                                        {props.row.original.comments.length > 0 ? (
+                                            props.row.original.comments.map((value) => {
+                                                const comment = value.comment;
+                                                return (
+                                                    <div
+                                                        key={comment.id}
+                                                        className="flex place-items-center gap-2 p-2 text-left hover:bg-black/5"
+                                                    >
+                                                        <img
+                                                            src={comment.user.avatar_url}
+                                                            className="h-10 w-10 rounded-full"
+                                                        />
+                                                        <div className="flex flex-col">
+                                                            <p className="font-bold">
+                                                                {comment.user.username}{' '}
+                                                                <span className="ml-1 text-sm font-normal text-black/80">
+                                                                    {formattedDate(comment.created_at)}
+                                                                </span>
+                                                            </p>
+                                                            <p>{comment.message}</p>
                                                         </div>
-                                                    );
-                                                })
-                                            ) : (
-                                                <p className="my-12 text-gray-400">
-                                                    No comments found. <br />
-                                                    Start commenting!
-                                                </p>
-                                            )}
-                                            <div className="mt-2 flex items-end-safe gap-2 border-t p-2">
-                                                <img
-                                                    src={props.row.original.user.avatar_url}
-                                                    className="h-8 w-8 rounded-full"
+                                                    </div>
+                                                );
+                                            })
+                                        ) : (
+                                            <p className="my-12 text-gray-400">
+                                                No comments found. <br />
+                                                Start commenting!
+                                            </p>
+                                        )}
+                                        <div className="mt-2 flex items-end-safe gap-2 border-t p-2">
+                                            <img
+                                                src={props.row.original.user.avatar_url}
+                                                className="h-8 w-8 rounded-full"
+                                            />
+                                            <TextareaAutosize
+                                                value={message}
+                                                placeholder="enter a comment..."
+                                                className="flex-1 resize-none self-center overflow-y-auto focus:outline-0"
+                                                onChange={(e) => setMessage(e.target.value)}
+                                                onKeyDownCapture={handleKeyDown}
+                                                onKeyUp={handleKeyUp}
+                                                autoFocus
+                                                onFocus={handleFocus}
+                                                maxRows={8}
+                                            />
+                                            <button
+                                                type="button"
+                                                className="grid h-8 w-8 place-items-center rounded-sm bg-blue-400 p-0.5 hover:cursor-pointer hover:bg-blue-300"
+                                                onClick={submitComment}
+                                            >
+                                                <SendIcon
+                                                    className="size-5"
+                                                    color="#fff"
                                                 />
-                                                <TextareaAutosize
-                                                    value={message}
-                                                    placeholder="enter a comment..."
-                                                    className="flex-1 resize-none self-center overflow-y-auto focus:outline-0"
-                                                    onChange={(e) => setMessage(e.target.value)}
-                                                    onKeyDownCapture={handleKeyDown}
-                                                    onKeyUp={handleKeyUp}
-                                                    autoFocus
-                                                    onFocus={handleFocus}
-                                                    maxRows={8}
-                                                />
-                                                <button
-                                                    type="button"
-                                                    className="grid h-8 w-8 place-items-center rounded-sm bg-blue-400 p-0.5 hover:cursor-pointer hover:bg-blue-300"
-                                                    onClick={submitComment}
-                                                >
-                                                    <SendIcon
-                                                        className="size-5"
-                                                        color="#fff"
-                                                    />
-                                                </button>
-                                            </div>
+                                            </button>
                                         </div>
                                     </div>
                                 </>
