@@ -296,7 +296,9 @@ export default function SuggestionTable<TData, TValue>({ mappool, tournament }: 
                                         onClick={() => setShow(false)}
                                     />
                                     <div className="absolute top-1/2 left-1/2 z-2 flex w-180 -translate-1/2 flex-col rounded-md border border-gray-600 bg-white">
-                                        <h2 className="my-2 border-b pb-2 text-2xl font-bold">Comments</h2>
+                                        <h2 className="my-2 border-b pb-2 text-2xl font-bold">
+                                            Comments in: {props.row.original.beatmap.beatmap_id} - {props.row.original.beatmap.mods}
+                                        </h2>
                                         {props.row.original.comments.length > 0 ? (
                                             props.row.original.comments.map((value) => {
                                                 const comment = value.comment;
