@@ -237,6 +237,12 @@ export default function SuggestionTable<TData, TValue>({ mappool, tournament }: 
                         setBeingHeld(false);
                     }
 
+                    function handleFocus(e: React.FocusEvent<HTMLTextAreaElement>) {
+                        const value = e.target.value;
+                        e.target.value = '';
+                        e.target.value = value;
+                    }
+
                     return (
                         <>
                             <button
@@ -284,6 +290,7 @@ export default function SuggestionTable<TData, TValue>({ mappool, tournament }: 
                                                     onKeyDownCapture={handleKeyDown}
                                                     onKeyUp={handleKeyUp}
                                                     autoFocus
+                                                    onFocus={handleFocus}
                                                     maxRows={8}
                                                 />
                                                 <button
