@@ -232,7 +232,7 @@ export default function SuggestionTable<TData, TValue>({ mappool, tournament }: 
                                         onClick={() => setShow(false)}
                                     />
                                     <div className="relative">
-                                        <div className="absolute left-25 z-2 flex max-h-125 w-104 flex-col rounded-md border border-gray-600 bg-white">
+                                        <div className="absolute left-25 z-2 flex w-104 flex-col rounded-md border border-gray-600 bg-white">
                                             <h2 className="my-2 border-b pb-2 text-2xl font-bold">Comments</h2>
                                             {props.row.original.comments ? (
                                                 props.row.original.comments.map((comment) => {
@@ -262,7 +262,7 @@ export default function SuggestionTable<TData, TValue>({ mappool, tournament }: 
                                                     onKeyDownCapture={handleKeyDown}
                                                     onKeyUp={handleKeyUp}
                                                     autoFocus
-                                                    maxRows={12}
+                                                    maxRows={8}
                                                 />
                                                 <button
                                                     type="button"
