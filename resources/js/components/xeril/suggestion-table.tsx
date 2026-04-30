@@ -6,6 +6,7 @@ import { router } from '@inertiajs/react';
 import { createColumnHelper, flexRender, getCoreRowModel, useReactTable } from '@tanstack/react-table';
 import { SendIcon, Trash2Icon } from 'lucide-react';
 import { useEffect, useMemo, useState } from 'react';
+import TextareaAutosize from 'react-textarea-autosize';
 
 interface SuggestionTableProps<TData, TValue> {
     mappool: Mappool;
@@ -198,6 +199,30 @@ export default function SuggestionTable<TData, TValue>({ mappool, tournament }: 
 
                     const [comment, setComment] = useState<string>('');
 
+                    function submitComment() {
+                        if (!comment) return;
+                        console.log(`comment is: ${comment}`);
+                    }
+
+                    const [beingHeld, setBeingHeld] = useState<boolean>(false);
+                    function handleKeyDown(e: React.KeyboardEvent<HTMLTextAreaElement>) {
+                        if (!e.shiftKey && e.key === 'Enter') {
+                            e.preventDefault(); // do not insert linebreak unless Shift + Enter is pressed
+                        }
+
+                        if (beingHeld) return;
+
+                        // enter
+                        if (!e.shiftKey && e.key === 'Enter') {
+                            setBeingHeld(true);
+                            submitComment();
+                        }
+                    }
+
+                    function handleKeyUp() {
+                        setBeingHeld(false);
+                    }
+
                     return (
                         <>
                             {show && (
@@ -218,29 +243,37 @@ export default function SuggestionTable<TData, TValue>({ mappool, tournament }: 
                                                     );
                                                 })
                                             ) : (
-                                                <p className="text-gray-400">
+                                                <p className="my-12 text-gray-400">
                                                     No comments found. <br />
                                                     Start commenting!
                                                 </p>
                                             )}
-                                            <div className="mt-2 flex w-full flex-row gap-2 border-t p-2">
+                                            <div className="mt-2 flex flex-row items-end-safe gap-2 border-t p-2">
                                                 <img
                                                     src={props.row.original.user.avatar_url}
                                                     className="h-8 w-8 rounded-full"
                                                 />
-                                                <textarea
-                                                    name={`comments[${props.row.original.id}]`}
+                                                <TextareaAutosize
+                                                    name="comment"
                                                     value={comment}
-                                                    onChange={(e) => setComment(e.target.value)}
                                                     placeholder="enter a comment..."
-                                                    className="h-8 flex-1 resize-none focus:outline-0"
+                                                    className="flex-1 resize-none self-center overflow-y-auto focus:outline-0"
+                                                    onChange={(e) => setComment(e.target.value)}
+                                                    onKeyDownCapture={handleKeyDown}
+                                                    onKeyUp={handleKeyUp}
+                                                    autoFocus
+                                                    maxRows={12}
                                                 />
-                                                <div className="grid h-8 w-8 place-items-center rounded-sm bg-blue-400 p-0.5 hover:cursor-pointer hover:bg-blue-300">
+                                                <button
+                                                    type="button"
+                                                    className="grid h-8 w-8 place-items-center rounded-sm bg-blue-400 p-0.5 hover:cursor-pointer hover:bg-blue-300"
+                                                    onClick={submitComment}
+                                                >
                                                     <SendIcon
                                                         className="size-5"
                                                         color="#fff"
                                                     />
-                                                </div>
+                                                </button>
                                             </div>
                                         </div>
                                     </div>
