@@ -243,6 +243,41 @@ export default function SuggestionTable<TData, TValue>({ mappool, tournament }: 
                         e.target.value = value;
                     }
 
+                    const formattedDate = (datetime: string) => {
+                        const date = new Date(datetime);
+
+                        const today = new Date();
+                        const isToday = today.toDateString() === date.toDateString();
+
+                        today.setDate(today.getDate() - 1); // yesterday
+                        const isYesterday = today.toDateString() === date.toDateString();
+
+                        if (isToday) {
+                            return date.toLocaleString('en-GB', {
+                                hour: '2-digit',
+                                minute: '2-digit',
+                            });
+                        }
+
+                        if (isYesterday) {
+                            return (
+                                'Yesterday at ' +
+                                date.toLocaleString('en-GB', {
+                                    hour: '2-digit',
+                                    minute: '2-digit',
+                                })
+                            );
+                        }
+
+                        return date.toLocaleString('en-GB', {
+                            day: 'numeric',
+                            month: 'short',
+                            year: 'numeric',
+                            hour: '2-digit',
+                            minute: '2-digit',
+                        });
+                    };
+
                     return (
                         <>
                             <button
@@ -264,11 +299,27 @@ export default function SuggestionTable<TData, TValue>({ mappool, tournament }: 
                                         <div className="absolute left-25 z-2 flex w-104 flex-col rounded-md border border-gray-600 bg-white">
                                             <h2 className="my-2 border-b pb-2 text-2xl font-bold">Comments</h2>
                                             {props.row.original.comments.length > 0 ? (
-                                                props.row.original.comments.map((comment) => {
+                                                props.row.original.comments.map((value) => {
+                                                    const comment = value.comment;
                                                     return (
-                                                        <p key={comment.comment.id}>
-                                                            {comment.comment.message} by {comment.comment.user.username}
-                                                        </p>
+                                                        <div
+                                                            key={comment.id}
+                                                            className="m-2 flex place-items-center gap-2 text-left"
+                                                        >
+                                                            <img
+                                                                src={comment.user.avatar_url}
+                                                                className="h-10 w-10 rounded-full"
+                                                            />
+                                                            <div className="flex flex-col">
+                                                                <p className="font-bold">
+                                                                    {comment.user.username}{' '}
+                                                                    <span className="ml-1 text-sm font-normal text-black/80">
+                                                                        {formattedDate(comment.created_at)}
+                                                                    </span>
+                                                                </p>
+                                                                <p>{comment.message}</p>
+                                                            </div>
+                                                        </div>
                                                     );
                                                 })
                                             ) : (
@@ -277,7 +328,7 @@ export default function SuggestionTable<TData, TValue>({ mappool, tournament }: 
                                                     Start commenting!
                                                 </p>
                                             )}
-                                            <div className="mt-2 flex flex-row items-end-safe gap-2 border-t p-2">
+                                            <div className="mt-2 flex items-end-safe gap-2 border-t p-2">
                                                 <img
                                                     src={props.row.original.user.avatar_url}
                                                     className="h-8 w-8 rounded-full"
