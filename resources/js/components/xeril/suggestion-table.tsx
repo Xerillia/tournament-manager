@@ -4,7 +4,7 @@ import { Suggestion } from '@/types/suggestion';
 import { Tournament } from '@/types/tournament';
 import { router } from '@inertiajs/react';
 import { createColumnHelper, flexRender, getCoreRowModel, useReactTable } from '@tanstack/react-table';
-import { Trash2Icon } from 'lucide-react';
+import { SendIcon, Trash2Icon } from 'lucide-react';
 import { useEffect, useMemo, useState } from 'react';
 
 interface SuggestionTableProps<TData, TValue> {
@@ -189,6 +189,73 @@ export default function SuggestionTable<TData, TValue>({ mappool, tournament }: 
             columnHelper.accessor('user.username', {
                 header: 'Suggester',
                 size: 200,
+            }),
+            columnHelper.display({
+                id: 'comments',
+                header: 'Comments',
+                cell: (props) => {
+                    const [show, setShow] = useState<boolean>(false);
+
+                    const [comment, setComment] = useState<string>('');
+
+                    return (
+                        <>
+                            {show && (
+                                <>
+                                    <div
+                                        className="hover:cursor- absolute top-0 left-0 z-1 h-screen w-screen bg-black/30"
+                                        onClick={() => setShow(false)}
+                                    />
+                                    <div className="relative">
+                                        <div className="absolute left-25 z-2 flex max-h-125 w-104 flex-col rounded-md border border-gray-600 bg-white">
+                                            <h2 className="my-2 border-b pb-2 text-2xl font-bold">Comments</h2>
+                                            {props.row.original.comments ? (
+                                                props.row.original.comments.map((comment) => {
+                                                    return (
+                                                        <p>
+                                                            {comment.message} by {comment.user.username}
+                                                        </p>
+                                                    );
+                                                })
+                                            ) : (
+                                                <p className="text-gray-400">
+                                                    No comments found. <br />
+                                                    Start commenting!
+                                                </p>
+                                            )}
+                                            <div className="mt-2 flex w-full flex-row gap-2 border-t p-2">
+                                                <img
+                                                    src={props.row.original.user.avatar_url}
+                                                    className="h-8 w-8 rounded-full"
+                                                />
+                                                <textarea
+                                                    name={`comments[${props.row.original.id}]`}
+                                                    value={comment}
+                                                    onChange={(e) => setComment(e.target.value)}
+                                                    placeholder="enter a comment..."
+                                                    className="h-8 flex-1 resize-none focus:outline-0"
+                                                />
+                                                <div className="grid h-8 w-8 place-items-center rounded-sm bg-blue-400 p-0.5 hover:cursor-pointer hover:bg-blue-300">
+                                                    <SendIcon
+                                                        className="size-5"
+                                                        color="#fff"
+                                                    />
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </>
+                            )}
+                            <button
+                                type="button"
+                                className="rounded-md bg-blue-200 p-1 hover:cursor-pointer hover:bg-blue-300"
+                                onClick={() => setShow(!show)}
+                            >
+                                Comments
+                            </button>
+                        </>
+                    );
+                },
             }),
             columnHelper.accessor((row) => row.beatmap, {
                 id: 'banner',
