@@ -191,6 +191,15 @@ export default function SuggestionTable<TData, TValue>({ mappool, tournament }: 
             columnHelper.accessor('user.username', {
                 header: 'Suggester',
                 size: 200,
+                cell: (props) => (
+                    <a
+                        href={`https://osu.ppy.sh/users/${props.row.original.user.osu_id}`}
+                        target="_blank"
+                        className="hover:underline"
+                    >
+                        {props.getValue()}
+                    </a>
+                ),
             }),
             columnHelper.display({
                 id: 'comments',
@@ -307,13 +316,24 @@ export default function SuggestionTable<TData, TValue>({ mappool, tournament }: 
                                                         key={comment.id}
                                                         className="flex place-items-center gap-2 p-2 text-left hover:bg-black/5"
                                                     >
-                                                        <img
-                                                            src={comment.user.avatar_url}
-                                                            className="h-10 w-10 rounded-full"
-                                                        />
+                                                        <a
+                                                            href={`https://osu.ppy.sh/users/${comment.user.osu_id}`}
+                                                            target="_blank"
+                                                        >
+                                                            <img
+                                                                src={comment.user.avatar_url}
+                                                                className="h-10 w-10 rounded-full"
+                                                            />
+                                                        </a>
                                                         <div className="flex flex-col">
                                                             <p className="font-bold">
-                                                                {comment.user.username}{' '}
+                                                                <a
+                                                                    href={`https://osu.ppy.sh/users/${comment.user.osu_id}`}
+                                                                    target="_blank"
+                                                                    className="hover:underline"
+                                                                >
+                                                                    {comment.user.username}
+                                                                </a>
                                                                 <span className="ml-1 text-sm font-normal text-black/80">
                                                                     {formattedDate(comment.created_at)}
                                                                 </span>
