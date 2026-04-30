@@ -235,6 +235,15 @@ export default function SuggestionTable<TData, TValue>({ mappool, tournament }: 
 
                     return (
                         <>
+                            <button
+                                type="button"
+                                className="mx-2 flex items-center place-self-center rounded-md bg-gray-200 p-1 hover:cursor-pointer hover:bg-gray-300"
+                                onClick={() => setShow(!show)}
+                            >
+                                <span className="whitespace-nowrap">
+                                    {props.row.original.comments.length} comment{props.row.original.comments.length !== 1 ? 's' : ''}
+                                </span>
+                            </button>
                             {show && (
                                 <>
                                     <div
@@ -244,11 +253,11 @@ export default function SuggestionTable<TData, TValue>({ mappool, tournament }: 
                                     <div className="relative">
                                         <div className="absolute left-25 z-2 flex w-104 flex-col rounded-md border border-gray-600 bg-white">
                                             <h2 className="my-2 border-b pb-2 text-2xl font-bold">Comments</h2>
-                                            {props.row.original.comments ? (
+                                            {props.row.original.comments.length > 0 ? (
                                                 props.row.original.comments.map((comment) => {
                                                     return (
                                                         <p>
-                                                            {comment.message} by {comment.user.username}
+                                                            {comment.comment.message} by {comment.comment.user.username}
                                                         </p>
                                                     );
                                                 })
@@ -288,13 +297,6 @@ export default function SuggestionTable<TData, TValue>({ mappool, tournament }: 
                                     </div>
                                 </>
                             )}
-                            <button
-                                type="button"
-                                className="rounded-md bg-blue-200 p-1 hover:cursor-pointer hover:bg-blue-300"
-                                onClick={() => setShow(!show)}
-                            >
-                                Comments
-                            </button>
                         </>
                     );
                 },

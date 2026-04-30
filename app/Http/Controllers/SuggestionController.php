@@ -22,7 +22,7 @@ class SuggestionController extends Controller
             return abort(404);
         }
 
-        $mappool->load(['suggestions.beatmap', 'suggestions.user']);
+        $mappool->load(['suggestions.beatmap', 'suggestions.user', 'suggestions.comments.comment.user']);
 
         return Inertia::render('suggestions', [
             'tournament' => $tournament,
