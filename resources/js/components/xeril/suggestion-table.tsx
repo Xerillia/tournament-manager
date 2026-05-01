@@ -7,7 +7,7 @@ import { Suggestion } from '@/types/suggestion';
 import { Tournament } from '@/types/tournament';
 import { router, usePage } from '@inertiajs/react';
 import { createColumnHelper, flexRender, getCoreRowModel, useReactTable } from '@tanstack/react-table';
-import { PencilIcon, SendIcon, Trash2Icon } from 'lucide-react';
+import { PencilIcon, SendIcon, Trash2Icon, XIcon } from 'lucide-react';
 import { useEffect, useMemo, useState } from 'react';
 import TextareaAutosize from 'react-textarea-autosize';
 
@@ -354,12 +354,21 @@ export default function SuggestionTable({ mappool, tournament }: SuggestionTable
                                 <>
                                     <div
                                         className="absolute top-0 left-0 z-1 h-screen w-screen bg-black/30"
-                                        onClick={() => closeModal()}
+                                        onClick={closeModal}
                                     />
                                     <div className="absolute top-1/2 left-1/2 z-2 flex w-180 -translate-1/2 flex-col rounded-md border border-gray-600 bg-white">
-                                        <h2 className="my-2 border-b pb-2 text-2xl font-bold">
-                                            Comments in: {props.row.original.beatmap.beatmap_id} - {props.row.original.beatmap.mods}
-                                        </h2>
+                                        <div className="relative flex items-center justify-center border-b py-2">
+                                            <h2 className="text-2xl font-bold">
+                                                Comments in: {props.row.original.beatmap.beatmap_id} - {props.row.original.beatmap.mods}
+                                            </h2>
+                                            <button
+                                                type="button"
+                                                className="absolute right-1.5 rounded-md p-0.5 hover:cursor-pointer hover:bg-black/10"
+                                                onClick={closeModal}
+                                            >
+                                                <XIcon color="#999" />
+                                            </button>
+                                        </div>
                                         {props.row.original.comments.length > 0 ? (
                                             props.row.original.comments.map((value) => {
                                                 const comment = value.comment;
