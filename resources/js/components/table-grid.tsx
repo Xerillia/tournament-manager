@@ -62,10 +62,10 @@ export function TableGrid({ className = "", data = [], columns = [], header = tr
     }, [firstCell, secondCell])
 
     // filter data into displayData
-    const displayData: Record<string, any>[] = [];
+    const displayData: Record<string, object>[] = [];
     data.map((element) => {
         const cols = columns.length > 0 ? columns.map((c) => c.toLowerCase()) : Object.keys(element);
-        const object: Record<string, any> = {}
+        const object: Record<string, object> = {}
         cols.map((key) => {
 
             object[key] = element[key];
@@ -147,7 +147,7 @@ export function TableGrid({ className = "", data = [], columns = [], header = tr
                                     `}
                                         aria-colindex={col}
                                     >
-                                        {element[key]}
+                                        {"" + element[key]}
                                     </td>
                                 ))}
                         </tr>
