@@ -6,6 +6,7 @@ import { Mappool } from '@/types/mappools';
 import { Suggestion } from '@/types/suggestion';
 import { Tournament } from '@/types/tournament';
 import { router, usePage } from '@inertiajs/react';
+import { useEcho } from '@laravel/echo-react';
 import { createColumnHelper, flexRender, getCoreRowModel, useReactTable } from '@tanstack/react-table';
 import { PencilIcon, SendIcon, Trash2Icon, TrashIcon, XIcon } from 'lucide-react';
 import { useEffect, useMemo, useState } from 'react';
@@ -30,6 +31,10 @@ function secondToTime(num: number) {
 const columnHelper = createColumnHelper<Suggestion>();
 
 export default function SuggestionTable({ mappool, tournament }: SuggestionTableProps) {
+    useEcho('suggestion_comments.' + mappool.id, 'SuggestionCommentCreated', (e) => {
+        console.log(e);
+    });
+
     const { auth } = usePage().props;
 
     const data = useMemo<Suggestion[]>(() => mappool.suggestions, [mappool]);
