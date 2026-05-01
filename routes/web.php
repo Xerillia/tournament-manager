@@ -47,10 +47,7 @@ Route::get('/beatmap/{id}', function (int $id) {
     dd($beatmap);
 });
 
-// Route::middleware(['auth', 'verified'])->group(function () {
-//     Route::inertia('dashboard', 'dashboard')->name('dashboard');
-// });
-
+require __DIR__.'/comment.php';
 require __DIR__.'/discord.php';
 require __DIR__.'/osu.php';
 require __DIR__.'/settings.php';

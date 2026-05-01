@@ -8,5 +8,6 @@ export type Comment = {
     id: number;
     user: User;
     message: string;
-    created_at: string;
+    created_at: Date;
+    updated_at: Date;
 };

@@ -1,15 +1,17 @@
 import { store } from '@/actions/App/Http/Controllers/SuggestionCommentController';
+import { updateComment } from '@/routes/comments';
 import { destroy, update } from '@/routes/tournaments/suggestions';
+import { Comment } from '@/types/comments';
 import { Mappool } from '@/types/mappools';
 import { Suggestion } from '@/types/suggestion';
 import { Tournament } from '@/types/tournament';
-import { router } from '@inertiajs/react';
+import { router, usePage } from '@inertiajs/react';
 import { createColumnHelper, flexRender, getCoreRowModel, useReactTable } from '@tanstack/react-table';
-import { SendIcon, Trash2Icon } from 'lucide-react';
+import { PencilIcon, SendIcon, Trash2Icon } from 'lucide-react';
 import { useEffect, useMemo, useState } from 'react';
 import TextareaAutosize from 'react-textarea-autosize';
 
-interface SuggestionTableProps<TData, TValue> {
+interface SuggestionTableProps {
     mappool: Mappool;
     tournament: Tournament;
 }
@@ -27,7 +29,9 @@ function secondToTime(num: number) {
 
 const columnHelper = createColumnHelper<Suggestion>();
 
-export default function SuggestionTable<TData, TValue>({ mappool, tournament }: SuggestionTableProps<TData, TValue>) {
+export default function SuggestionTable({ mappool, tournament }: SuggestionTableProps) {
+    const { auth } = usePage().props;
+
     const data = useMemo<Suggestion[]>(() => mappool.suggestions, [mappool]);
 
     const columns = useMemo(
@@ -252,7 +256,7 @@ export default function SuggestionTable<TData, TValue>({ mappool, tournament }: 
                         e.target.value = value;
                     }
 
-                    const formattedDate = (datetime: string) => {
+                    const formattedDate = (datetime: Date) => {
                         const date = new Date(datetime);
 
                         const today = new Date();
@@ -287,12 +291,60 @@ export default function SuggestionTable<TData, TValue>({ mappool, tournament }: 
                         });
                     };
 
+                    const [editId, setEditId] = useState<number>(NaN);
+                    const [editMessage, setEditMessage] = useState<string>('');
+
+                    function toggleEdit(comment: Comment) {
+                        setEditId(comment.id);
+                        setEditMessage(comment.message);
+                    }
+
+                    function updateMessage() {
+                        router.put(
+                            updateComment(editId),
+                            {
+                                message: editMessage,
+                            },
+                            {
+                                onSuccess: () => resetEdit(),
+                            },
+                        );
+                    }
+
+                    function resetEdit() {
+                        setEditId(NaN);
+                        setEditMessage('');
+                    }
+
+                    function closeModal() {
+                        setShow(false);
+                        resetEdit();
+                    }
+
+                    function handleKeyDownEdit(e: React.KeyboardEvent<HTMLTextAreaElement>) {
+                        if (!e.shiftKey && e.key === 'Enter') {
+                            e.preventDefault(); // do not insert linebreak unless Shift + Enter is pressed
+                        }
+
+                        if (beingHeld) return;
+
+                        // enter
+                        if (!e.shiftKey && e.key === 'Enter') {
+                            setBeingHeld(true);
+                            updateMessage();
+                        }
+
+                        if (e.key === 'Escape') {
+                            resetEdit();
+                        }
+                    }
+
                     return (
                         <>
                             <button
                                 type="button"
                                 className="mx-2 flex items-center place-self-center rounded-md bg-gray-200 p-1 hover:cursor-pointer hover:bg-gray-300"
-                                onClick={() => setShow(!show)}
+                                onClick={() => setShow(true)}
                             >
                                 <span className="whitespace-nowrap">
                                     {props.row.original.comments.length} comment{props.row.original.comments.length !== 1 ? 's' : ''}
@@ -302,7 +354,7 @@ export default function SuggestionTable<TData, TValue>({ mappool, tournament }: 
                                 <>
                                     <div
                                         className="absolute top-0 left-0 z-1 h-screen w-screen bg-black/30"
-                                        onClick={() => setShow(false)}
+                                        onClick={() => closeModal()}
                                     />
                                     <div className="absolute top-1/2 left-1/2 z-2 flex w-180 -translate-1/2 flex-col rounded-md border border-gray-600 bg-white">
                                         <h2 className="my-2 border-b pb-2 text-2xl font-bold">
@@ -314,7 +366,7 @@ export default function SuggestionTable<TData, TValue>({ mappool, tournament }: 
                                                 return (
                                                     <div
                                                         key={comment.id}
-                                                        className="flex place-items-center gap-2 p-2 text-left hover:bg-black/5"
+                                                        className="group relative flex place-items-center gap-2 p-2 text-left hover:bg-black/5"
                                                     >
                                                         <a
                                                             href={`https://osu.ppy.sh/users/${comment.user.osu_id}`}
@@ -325,21 +377,63 @@ export default function SuggestionTable<TData, TValue>({ mappool, tournament }: 
                                                                 className="h-10 w-10 rounded-full"
                                                             />
                                                         </a>
-                                                        <div className="flex flex-col">
-                                                            <p className="font-bold">
+                                                        <div className="flex w-full flex-col">
+                                                            <p>
                                                                 <a
                                                                     href={`https://osu.ppy.sh/users/${comment.user.osu_id}`}
                                                                     target="_blank"
-                                                                    className="hover:underline"
+                                                                    className="font-bold hover:underline"
                                                                 >
                                                                     {comment.user.username}
                                                                 </a>
-                                                                <span className="ml-1 text-sm font-normal text-black/80">
-                                                                    {formattedDate(comment.created_at)}
-                                                                </span>
+                                                                <span className="ml-1 text-sm text-black/80">{formattedDate(comment.created_at)}</span>
+                                                                {comment.created_at != comment.updated_at && <span className="ml-1 text-xs">(edited)</span>}
                                                             </p>
-                                                            <p>{comment.message}</p>
+                                                            {editId !== comment.id ? (
+                                                                <p>{comment.message}</p>
+                                                            ) : (
+                                                                <>
+                                                                    <TextareaAutosize
+                                                                        name={`messages[${comment.id}][message]`}
+                                                                        value={editMessage}
+                                                                        className="mt-1 mr-4 h-20 resize-none overflow-y-auto rounded-md border border-black/80 p-2 focus:outline-0"
+                                                                        onChange={(e) => setEditMessage(e.target.value)}
+                                                                        onKeyDown={handleKeyDownEdit}
+                                                                        onKeyUp={handleKeyUp}
+                                                                        autoFocus
+                                                                        onFocus={handleFocus}
+                                                                        maxRows={8}
+                                                                    />
+                                                                    <p className="align-middle text-xs">
+                                                                        escape to{' '}
+                                                                        <button
+                                                                            type="button"
+                                                                            className="text-blue-500 hover:cursor-pointer hover:underline"
+                                                                            onClick={resetEdit}
+                                                                        >
+                                                                            cancel
+                                                                        </button>{' '}
+                                                                        &bull; enter to save
+                                                                    </p>
+                                                                </>
+                                                            )}
                                                         </div>
+                                                        {!editId && (
+                                                            <div className="absolute right-6 bottom-1/2 z-10 hidden items-center gap-2 rounded-md border bg-white p-0.5 group-hover:flex">
+                                                                {comment.user.id === auth.user.id && (
+                                                                    <button
+                                                                        type="button"
+                                                                        className="rounded-md p-1 hover:cursor-pointer hover:bg-black/20"
+                                                                        onClick={() => toggleEdit(comment)}
+                                                                    >
+                                                                        <PencilIcon
+                                                                            className="size-5"
+                                                                            color="#000"
+                                                                        />
+                                                                    </button>
+                                                                )}
+                                                            </div>
+                                                        )}
                                                     </div>
                                                 );
                                             })
@@ -351,15 +445,16 @@ export default function SuggestionTable<TData, TValue>({ mappool, tournament }: 
                                         )}
                                         <div className="mt-2 flex items-end-safe gap-2 border-t p-2">
                                             <img
-                                                src={props.row.original.user.avatar_url}
+                                                src={auth.user.avatar_url}
                                                 className="h-8 w-8 rounded-full"
                                             />
                                             <TextareaAutosize
+                                                name={`suggestions[${props.row.original.id}][message]`}
                                                 value={message}
                                                 placeholder="enter a comment..."
                                                 className="flex-1 resize-none self-center overflow-y-auto focus:outline-0"
                                                 onChange={(e) => setMessage(e.target.value)}
-                                                onKeyDownCapture={handleKeyDown}
+                                                onKeyDown={handleKeyDown}
                                                 onKeyUp={handleKeyUp}
                                                 autoFocus
                                                 onFocus={handleFocus}
