@@ -305,15 +305,10 @@ export default function SuggestionTable({ mappool, tournament }: SuggestionTable
                     }
 
                     function handleUpdate() {
-                        router.put(
-                            updateComment(editId),
-                            {
-                                message: editMessage,
-                            },
-                            {
-                                onSuccess: () => resetEdit(),
-                            },
-                        );
+                        resetEdit();
+                        router.put(updateComment(editId), {
+                            message: editMessage,
+                        });
                     }
 
                     function resetEdit() {
@@ -431,7 +426,14 @@ export default function SuggestionTable({ mappool, tournament }: SuggestionTable
                                                                         >
                                                                             cancel
                                                                         </button>{' '}
-                                                                        &bull; enter to save
+                                                                        &bull; enter to{' '}
+                                                                        <button
+                                                                            type="button"
+                                                                            className="text-blue-500 hover:cursor-pointer hover:underline"
+                                                                            onClick={handleUpdate}
+                                                                        >
+                                                                            save
+                                                                        </button>
                                                                     </p>
                                                                 </>
                                                             )}
