@@ -1,35 +1,69 @@
 // resources/js/Pages/Admin/Tournament.jsx
+
+import { useEffect, useRef, useState } from 'react';
+import { TableGrid } from '@/components/table-grid';
 import type { Tournament } from '@/types/tournament';
+
+
 
 interface Props {
     tournament: Tournament;
 }
 
 export default function Admin({ tournament }: Props) {
+    const data =
+        [
+            {
+                "name": "John Smith",
+                "email": "john@example.com",
+                "salary": 85000
+            },
+            {
+                "name": "Sarah Johnson",
+                "email": "sarah@example.com",
+                "salary": 72000
+            },
+            {
+                "name": "Sarah Johnson",
+                "email": "sarah@example.com",
+                "salary": 72000
+            },
+            {
+                "name": "Sarah Johnson",
+                "email": "sarah@example.com",
+                "salary": 72000
+            },
+            {
+                "name": "Sarah Johnson",
+                "email": "sarah@example.com",
+                "salary": 72000
+            }
+        ]
 
     return (
         <Layout tournament={tournament}>
             <div className="flex-1 max-w-5xl mx-5 py-10 px-4">
                 <h1 className="text-2xl font-medium mb-6">Tournament admin panel</h1>
-                
+
                 <div className="flex border-b mb-6"></div>
                 <div className="mb-4">
                     <p>{tournament.name}</p>
                     <p>{tournament.id}</p>
                 </div>
+                <TableGrid className="border border-collapse border-gray-600" data={data} columns={["Name", "Salary"]} header={true}></TableGrid>
             </div>
         </Layout>
     )
 }
 
-export function AdminSidebar({ className = "", tournament }: { className?: string; tournament: Tournament}) {
+export function AdminSidebar({ className = "", tournament }: { className?: string; tournament: Tournament }) {
     return (
         <div className={`w-64 bg-zinc-800 min-h-screen flex flex-col p-4 gap-2 ${className}`}>
             {/* Maybe update hrefs to ude laravels built in routing names. */}
             <a href={`/tournaments/${tournament.id}/admin`} className="text-white hover:text-orange-400">Dashboard</a>
             <a href={`/tournaments/${tournament.id}/admin/settings`} className="text-white hover:text-orange-400">Settings</a>
             <a href={`/tournaments/${tournament.id}/admin/players`} className="text-white hover:text-orange-400">Players</a>
-            <a href={`/tournaments/${tournament.id}/admin/teams`}  className="text-white hover:text-orange-400">Teams</a>
+            <a href={`/tournaments/${tournament.id}/admin/teams`} className="text-white hover:text-orange-400">Teams</a>
         </div>
     )
 }
@@ -49,7 +83,7 @@ export function Layout(
         <div className="min-h-screen flex flex-col">
             <Header />
             <div className="flex flex-1">
-                <AdminSidebar tournament={tournament}/>
+                <AdminSidebar tournament={tournament} />
 
                 <main className="flex-1 bg-zinc-900">
                     {children}
@@ -58,3 +92,6 @@ export function Layout(
         </div>
     )
 }
+
+
+
