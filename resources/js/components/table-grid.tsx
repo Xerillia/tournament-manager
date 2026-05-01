@@ -61,38 +61,55 @@ export function TableGrid({ className = "", data = [], columns = [], header = tr
         secondCellRef.current = secondCell
     }, [firstCell, secondCell])
 
-    // filter data into displayData
+    // Filter data into displayData
     const displayData: Record<string, object>[] = [];
     data.map((element) => {
-        const cols = columns.length > 0 ? columns.map((c) => c.toLowerCase()) : Object.keys(element);
+        // Get matching attribute names while ignoring wheter is upper or lowercase
+        const sorted: string[] = []
+        Object.keys(element).map((key) => {
+            columns.forEach((col) => {
+                if (col.toLowerCase() == key.toLowerCase()) {
+
+                    sorted.push(key);
+                }
+            })
+
+        })
+
+        // Creates array based on if selected coloumn is given
+        const cols = columns.length > 0 ? sorted : Object.keys(element);
         const object: Record<string, object> = {}
         cols.map((key) => {
-
             object[key] = element[key];
-
         })
         displayData.push(object)
     })
-    console.log(displayData)
 
-    // Handles copying to clipboard
+    //Creates copyable text into a format that excel and google sheets accept.
+    function spreadSheetText(data: object[]) {
+        let copy = ""
+        data.forEach((element, row) => {
+            if (inRange(row, firstCellRef.current?.row, secondCellRef.current?.row)) {
+                Object.keys(element).forEach((key, col) => {
+                    if (inRange(col, firstCellRef.current?.col, secondCellRef.current?.col)) {
+                        copy += col > 0 ? "\t" : "";
+                        copy += element[key];
+                    }
+                })
+                copy += "\n";
+            }
+        })
+
+        return copy;
+    }
+
+
+    // Handles getting ctrl + c to copy to clipboard
     useEffect(() => {
         const handler = (e: KeyboardEvent) => {
             if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === "c" && document.activeElement === thisElement.current) {
                 e.preventDefault();
-                console.log()
-                let copy = ""
-                displayData.map((element, row) => {
-                    if (inRange(row, firstCellRef.current?.row, secondCellRef.current?.row)) {
-                        Object.keys(element).map((key, col) => {
-                            if (inRange(col, firstCellRef.current?.col, secondCellRef.current?.col)) {
-                                copy += col > 0 ? "\t" : "";
-                                copy += element[key];
-                            }
-                        })
-                        copy += "\n";
-                    }
-                })
+                const copy = spreadSheetText(displayData)
                 copyText(copy)
             }
         }
@@ -118,7 +135,7 @@ export function TableGrid({ className = "", data = [], columns = [], header = tr
         setSecondCell({ row, col });
     };
 
-    const cols = columns.length > 0 ? columns : Object.keys(data[0] || {});
+    const cols = columns.length > 0 ? columns : Object.keys(displayData[0] || {});
 
     return (
         <table ref={thisElement} tabIndex={0} className={`${className} select-none`} >
