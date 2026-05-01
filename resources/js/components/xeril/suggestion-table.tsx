@@ -531,7 +531,7 @@ export default function SuggestionTable({ mappool, tournament }: SuggestionTable
                 size: 75,
             }),
         ],
-        [mappool],
+        [],
     );
 
     const table = useReactTable({
