@@ -1,5 +1,5 @@
 import { store } from '@/actions/App/Http/Controllers/SuggestionCommentController';
-import { updateComment } from '@/routes/comments';
+import { deleteComment, updateComment } from '@/routes/comments';
 import { destroy, update } from '@/routes/tournaments/suggestions';
 import { Comment } from '@/types/comments';
 import { Mappool } from '@/types/mappools';
@@ -7,7 +7,7 @@ import { Suggestion } from '@/types/suggestion';
 import { Tournament } from '@/types/tournament';
 import { router, usePage } from '@inertiajs/react';
 import { createColumnHelper, flexRender, getCoreRowModel, useReactTable } from '@tanstack/react-table';
-import { PencilIcon, SendIcon, Trash2Icon, XIcon } from 'lucide-react';
+import { PencilIcon, SendIcon, Trash2Icon, TrashIcon, XIcon } from 'lucide-react';
 import { useEffect, useMemo, useState } from 'react';
 import TextareaAutosize from 'react-textarea-autosize';
 
@@ -213,7 +213,7 @@ export default function SuggestionTable({ mappool, tournament }: SuggestionTable
 
                     const [message, setMessage] = useState<string>('');
 
-                    function submitComment() {
+                    function handleStore() {
                         if (!message) return;
 
                         router.post(
@@ -238,7 +238,7 @@ export default function SuggestionTable({ mappool, tournament }: SuggestionTable
                         // enter
                         if (!e.shiftKey && e.key === 'Enter') {
                             setBeingHeld(true);
-                            submitComment();
+                            handleStore();
                         }
 
                         if (e.key === 'Escape') {
@@ -299,7 +299,7 @@ export default function SuggestionTable({ mappool, tournament }: SuggestionTable
                         setEditMessage(comment.message);
                     }
 
-                    function updateMessage() {
+                    function handleUpdate() {
                         router.put(
                             updateComment(editId),
                             {
@@ -331,12 +331,16 @@ export default function SuggestionTable({ mappool, tournament }: SuggestionTable
                         // enter
                         if (!e.shiftKey && e.key === 'Enter') {
                             setBeingHeld(true);
-                            updateMessage();
+                            handleUpdate();
                         }
 
                         if (e.key === 'Escape') {
                             resetEdit();
                         }
+                    }
+
+                    function handleDelete(comment: Comment) {
+                        router.delete(deleteComment(comment.id));
                     }
 
                     return (
@@ -428,18 +432,30 @@ export default function SuggestionTable({ mappool, tournament }: SuggestionTable
                                                             )}
                                                         </div>
                                                         {!editId && (
-                                                            <div className="absolute right-6 bottom-1/2 z-10 hidden items-center gap-2 rounded-md border bg-white p-0.5 group-hover:flex">
+                                                            <div className="absolute right-6 bottom-1/2 z-10 hidden items-center gap-0.5 rounded-md border bg-white p-0.5 group-hover:flex">
                                                                 {comment.user.id === auth.user.id && (
-                                                                    <button
-                                                                        type="button"
-                                                                        className="rounded-md p-1 hover:cursor-pointer hover:bg-black/20"
-                                                                        onClick={() => toggleEdit(comment)}
-                                                                    >
-                                                                        <PencilIcon
-                                                                            className="size-5"
-                                                                            color="#000"
-                                                                        />
-                                                                    </button>
+                                                                    <>
+                                                                        <button
+                                                                            type="button"
+                                                                            className="rounded-md p-1 hover:cursor-pointer hover:bg-black/20"
+                                                                            onClick={() => toggleEdit(comment)}
+                                                                        >
+                                                                            <PencilIcon
+                                                                                className="size-5"
+                                                                                color="#000"
+                                                                            />
+                                                                        </button>
+                                                                        <button
+                                                                            type="button"
+                                                                            className="rounded-md p-1 hover:cursor-pointer hover:bg-black/20"
+                                                                            onClick={() => handleDelete(comment)}
+                                                                        >
+                                                                            <TrashIcon
+                                                                                className="size-5"
+                                                                                color="#000"
+                                                                            />
+                                                                        </button>
+                                                                    </>
                                                                 )}
                                                             </div>
                                                         )}
@@ -472,7 +488,7 @@ export default function SuggestionTable({ mappool, tournament }: SuggestionTable
                                             <button
                                                 type="button"
                                                 className="grid h-8 w-8 place-items-center rounded-sm bg-blue-400 p-0.5 hover:cursor-pointer hover:bg-blue-300"
-                                                onClick={submitComment}
+                                                onClick={handleStore}
                                             >
                                                 <SendIcon
                                                     className="size-5"

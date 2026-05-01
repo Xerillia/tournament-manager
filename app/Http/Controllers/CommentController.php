@@ -18,4 +18,14 @@ class CommentController extends Controller
 
         return redirect()->back();
     }
+
+    /**
+     * Delete a comment
+     */
+    public function destroy(Comment $comment)
+    {
+        $comment->delete();
+
+        return redirect()->back();
+    }
 }
