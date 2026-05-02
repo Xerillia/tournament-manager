@@ -37,6 +37,10 @@ export default function SuggestionTable({ mappool, tournament }: SuggestionTable
         removeComment(e);
     });
 
+    useEcho('suggestion_comments.mappool.' + mappool.id, 'SuggestionCommentEdited', (e: { suggestionComment: SuggestionComment }) => {
+        editComment(e);
+    });
+
     const [data, setData] = useState<Suggestion[]>(mappool.suggestions);
 
     useEffect(() => {
@@ -68,6 +72,25 @@ export default function SuggestionTable({ mappool, tournament }: SuggestionTable
 
         // filter out the comment
         suggestion.comments = suggestion.comments.filter((comment) => comment.comment.id !== e.suggestionComment.comment_id);
+
+        setSuggestionComments(suggestion);
+    }
+
+    function editComment(e: { suggestionComment: SuggestionComment }) {
+        // find the suggestion
+        const suggestion = mappool.suggestions.find((suggestion) => suggestion.id === e.suggestionComment.mappool_suggestion_id);
+
+        // safe guard
+        if (!suggestion) return;
+
+        // find the edited comment index
+        const commentIndex = suggestion.comments.findIndex((comment) => comment.comment.id === e.suggestionComment.comment_id);
+
+        // safety
+        if (!commentIndex) return;
+
+        // set the edited comment
+        suggestion.comments[commentIndex] = e.suggestionComment;
 
         setSuggestionComments(suggestion);
     }

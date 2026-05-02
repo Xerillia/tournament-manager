@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Events\SuggestionCommentEdited;
 use App\Http\Requests\CommentRequest;
 use App\Models\Comment;
 use App\Models\MappoolSuggestion;
@@ -37,6 +38,9 @@ class SuggestionCommentController extends Controller
         $comment = $suggestionComment->comment();
 
         $comment->update($validated);
+
+        $suggestionComment->load(['comment.user']);
+        broadcast(new SuggestionCommentEdited($suggestionComment, $suggestion->mappool_id));
 
         return redirect()->back();
     }
