@@ -24,6 +24,7 @@ class CommentController extends Controller
      */
     public function destroy(Comment $comment)
     {
+        $comment->suggestionComment()->first()->delete();
         $comment->delete();
 
         return redirect()->back();

@@ -3,6 +3,7 @@
 namespace App\Observers;
 
 use App\Events\SuggestionCommentCreated;
+use App\Events\SuggestionCommentDeleted;
 use App\Models\SuggestionComment;
 
 class SuggestionCommentObserver
@@ -12,7 +13,7 @@ class SuggestionCommentObserver
      */
     public function created(SuggestionComment $suggestionComment): void
     {
-        $suggestionComment->load(['comment', 'suggestion.mappool']);
+        $suggestionComment->load(['suggestion.mappool', 'comment']);
 
         broadcast(new SuggestionCommentCreated($suggestionComment->comment, $suggestionComment->mappool_suggestion_id, $suggestionComment->suggestion->mappool_id));
     }
@@ -30,7 +31,8 @@ class SuggestionCommentObserver
      */
     public function deleted(SuggestionComment $suggestionComment): void
     {
-        //
+        $suggestionComment->load(['suggestion.mappool']);
+        broadcast(new SuggestionCommentDeleted($suggestionComment, $suggestionComment->suggestion->mappool_id));
     }
 
     /**
