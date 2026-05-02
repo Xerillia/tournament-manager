@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use App\Events\SuggestionCommentCreated;
 use App\Http\Requests\CommentRequest;
 use App\Models\Comment;
 use App\Models\MappoolSuggestion;
@@ -24,8 +23,6 @@ class SuggestionCommentController extends Controller
             'comment_id' => $comment->id,
             'mappool_suggestion_id' => $suggestion->id,
         ]);
-
-        broadcast(new SuggestionCommentCreated($comment, $suggestion->id, $suggestion->mappool_id))->toOthers();
 
         return redirect()->back();
     }
