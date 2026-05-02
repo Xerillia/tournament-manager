@@ -2,7 +2,7 @@
 
 namespace App\Events;
 
-use App\Models\Comment;
+use App\Models\SuggestionComment;
 use Illuminate\Broadcasting\InteractsWithSockets;
 use Illuminate\Broadcasting\PrivateChannel;
 use Illuminate\Contracts\Broadcasting\ShouldBroadcastNow;
@@ -16,9 +16,9 @@ class SuggestionCommentCreated implements ShouldBroadcastNow
     /**
      * Create a new event instance.
      */
-    public function __construct(public Comment $comment, public int $suggestion_id, private int $mappool_id)
+    public function __construct(public SuggestionComment $suggestionComment, private int $mappool_id)
     {
-        $comment->load(['user']);
+        //
     }
 
     /**

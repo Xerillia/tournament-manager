@@ -15,7 +15,7 @@ class SuggestionCommentDeleted implements ShouldBroadcastNow
     /**
      * Create a new event instance.
      */
-    public function __construct(public SuggestionComment $comment, private int $mappool_id)
+    public function __construct(public SuggestionComment $suggestionComment, private int $mappool_id)
     {
         //
     }

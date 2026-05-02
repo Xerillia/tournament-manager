@@ -29,11 +29,11 @@ function secondToTime(num: number) {
 const columnHelper = createColumnHelper<Suggestion>();
 
 export default function SuggestionTable({ mappool, tournament }: SuggestionTableProps) {
-    useEcho('suggestion_comments.mappool.' + mappool.id, 'SuggestionCommentCreated', (e: { suggestion_id: number; comment: Comment }) => {
+    useEcho('suggestion_comments.mappool.' + mappool.id, 'SuggestionCommentCreated', (e: { suggestionComment: SuggestionComment }) => {
         addNewComment(e);
     });
 
-    useEcho('suggestion_comments.mappool.' + mappool.id, 'SuggestionCommentDeleted', (e: { comment: SuggestionComment }) => {
+    useEcho('suggestion_comments.mappool.' + mappool.id, 'SuggestionCommentDeleted', (e: { suggestionComment: SuggestionComment }) => {
         removeComment(e);
     });
 
@@ -43,34 +43,35 @@ export default function SuggestionTable({ mappool, tournament }: SuggestionTable
         setData(mappool.suggestions);
     }, [mappool.suggestions]);
 
-    function addNewComment(e: { suggestion_id: number; comment: Comment }) {
+    function addNewComment(e: { suggestionComment: SuggestionComment }) {
         // find the suggestion
-        const suggestion = mappool.suggestions.find((suggestion) => suggestion.id === e.suggestion_id);
+        const suggestion = mappool.suggestions.find((suggestion) => suggestion.id === e.suggestionComment.mappool_suggestion_id);
 
         // safe guard
         if (!suggestion) return;
 
         // check if the comment has already existed
-        if (suggestion.comments.find((comment) => comment.comment.id === e.comment.id)) return;
+        if (suggestion.comments.find((comment) => comment.comment.id === e.suggestionComment.comment_id)) return;
 
         // otherwise append it
-        suggestion.comments.push({ comment: e.comment });
+        suggestion.comments.push({ comment: e.suggestionComment.comment });
 
         setSuggestionComments(suggestion);
     }
 
-    function removeComment(e: { comment: SuggestionComment }) {
+    function removeComment(e: { suggestionComment: SuggestionComment }) {
         // find the suggestion
-        const suggestion = mappool.suggestions.find((suggestion) => suggestion.id === e.comment.mappool_suggestion_id);
+        const suggestion = mappool.suggestions.find((suggestion) => suggestion.id === e.suggestionComment.mappool_suggestion_id);
 
         // safe guard
         if (!suggestion) return;
 
         // filter out the comment
-        suggestion.comments = suggestion.comments.filter((comment) => comment.comment.id !== e.comment.comment_id);
+        suggestion.comments = suggestion.comments.filter((comment) => comment.comment.id !== e.suggestionComment.comment_id);
 
         setSuggestionComments(suggestion);
     }
+
     function setSuggestionComments(suggestion: Suggestion) {
         // find the index of the suggestion
         const index = mappool.suggestions.indexOf(suggestion);
