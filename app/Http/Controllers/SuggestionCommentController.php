@@ -25,7 +25,7 @@ class SuggestionCommentController extends Controller
             'mappool_suggestion_id' => $suggestion->id,
         ]);
 
-        broadcast(new SuggestionCommentCreated($comment, $suggestion->mappool_id))->toOthers();
+        broadcast(new SuggestionCommentCreated($comment, $suggestion->id, $suggestion->mappool_id))->toOthers();
 
         return redirect()->back();
     }

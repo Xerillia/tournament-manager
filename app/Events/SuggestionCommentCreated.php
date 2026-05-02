@@ -16,9 +16,9 @@ class SuggestionCommentCreated implements ShouldBroadcast
     /**
      * Create a new event instance.
      */
-    public function __construct(public Comment $comment, private int $mappool_id)
+    public function __construct(public Comment $comment, public int $suggestion_id, private int $mappool_id)
     {
-        //
+        $comment->load(['user']);
     }
 
     /**

@@ -8,6 +8,7 @@ import { Trash2Icon } from 'lucide-react';
 import { useEffect, useMemo, useState } from 'react';
 import CommentsCell from './comments-cell';
 import { useEcho } from '@laravel/echo-react';
+import { Comment } from '@/types/comments';
 
 interface SuggestionTableProps {
     mappool: Mappool;
@@ -28,11 +29,42 @@ function secondToTime(num: number) {
 const columnHelper = createColumnHelper<Suggestion>();
 
 export default function SuggestionTable({ mappool, tournament }: SuggestionTableProps) {
-    useEcho('suggestion_comments.' + mappool.id, 'SuggestionCommentCreated', (e) => {
-        console.log(e);
+    useEcho('suggestion_comments.' + mappool.id, 'SuggestionCommentCreated', (e: { suggestion_id: number; comment: Comment }) => {
+        addNewComment(e);
     });
 
-    const data = useMemo<Suggestion[]>(() => mappool.suggestions, [mappool]);
+    const [data, setData] = useState<Suggestion[]>(mappool.suggestions);
+
+    useEffect(() => {
+        setData(mappool.suggestions);
+    }, [mappool.suggestions]);
+
+    function addNewComment(e: { suggestion_id: number; comment: Comment }) {
+        // find the suggestion
+        const suggestion = mappool.suggestions.find((suggestion) => suggestion.id === e.suggestion_id);
+
+        // safe guard
+        if (!suggestion) return;
+
+        // check if the comment has already existed
+        if (suggestion.comments.find((comment) => comment.comment.id === e.comment.id)) return;
+
+        // otherwise append it
+        suggestion.comments.push({ comment: e.comment });
+
+        // find the index of the suggestion
+        const index = mappool.suggestions.indexOf(suggestion);
+
+        // get the data without the suggestion
+        const excluded = mappool.suggestions.filter((value) => value.id !== suggestion.id);
+
+        // update the state
+        setData([
+            ...excluded.slice(0, index), // elements before insertion index
+            suggestion,
+            ...excluded.slice(index), // elements after insertion index
+        ]);
+    }
 
     const columns = useMemo(
         () => [
