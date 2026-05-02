@@ -1,6 +1,8 @@
 import { User } from './auth';
 
 export type SuggestionComment = {
+    comment_id?: number;
+    mappool_suggestion_id?: number;
     comment: Comment;
 };
 
