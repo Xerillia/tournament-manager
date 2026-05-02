@@ -56,18 +56,7 @@ export default function SuggestionTable({ mappool, tournament }: SuggestionTable
         // otherwise append it
         suggestion.comments.push({ comment: e.comment });
 
-        // find the index of the suggestion
-        const index = mappool.suggestions.indexOf(suggestion);
-
-        // get the data without the suggestion
-        const excluded = mappool.suggestions.filter((value) => value.id !== suggestion.id);
-
-        // update the state
-        setData([
-            ...excluded.slice(0, index), // elements before insertion index
-            suggestion,
-            ...excluded.slice(index), // elements after insertion index
-        ]);
+        setSuggestionComments(suggestion);
     }
 
     function removeComment(e: { comment: SuggestionComment }) {
@@ -80,6 +69,9 @@ export default function SuggestionTable({ mappool, tournament }: SuggestionTable
         // filter out the comment
         suggestion.comments = suggestion.comments.filter((comment) => comment.comment.id !== e.comment.comment_id);
 
+        setSuggestionComments(suggestion);
+    }
+    function setSuggestionComments(suggestion: Suggestion) {
         // find the index of the suggestion
         const index = mappool.suggestions.indexOf(suggestion);
 
