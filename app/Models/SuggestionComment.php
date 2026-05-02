@@ -4,11 +4,13 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Table;
+use Illuminate\Database\Eloquent\Attributes\WithoutIncrementing;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
-#[Table('comment_mappoolsuggestion')]
+#[Table('comment_mappoolsuggestion', key: 'comment_id')]
 #[Fillable(['comment_id', 'mappool_suggestion_id'])]
+#[WithoutIncrementing()]
 class SuggestionComment extends Model
 {
     /**
@@ -16,7 +18,7 @@ class SuggestionComment extends Model
      */
     public function suggestion(): BelongsTo
     {
-        return $this->belongsTo(MappoolSuggestion::class);
+        return $this->belongsTo(MappoolSuggestion::class, 'mappool_suggestion_id');
     }
 
     /**
