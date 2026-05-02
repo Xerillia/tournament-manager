@@ -47,7 +47,6 @@ Route::get('/beatmap/{id}', function (int $id) {
     dd($beatmap);
 });
 
-require __DIR__.'/comment.php';
 require __DIR__.'/discord.php';
 require __DIR__.'/osu.php';
 require __DIR__.'/settings.php';

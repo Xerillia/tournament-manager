@@ -33,4 +33,6 @@ Route::prefix('tournaments')->name('tournaments.')->group(function () {
 
 Route::prefix('{suggestion}/comments')->name('suggestions.comments.')->group(function () {
     Route::post('/', [SuggestionCommentController::class, 'store'])->name('store');
+    Route::put('/{suggestionComment}', [SuggestionCommentController::class, 'update'])->name('updateSuggestionComment');
+    Route::delete('/{suggestionComment}', [SuggestionCommentController::class, 'destroy'])->name('deleteSuggestionComment');
 });

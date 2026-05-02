@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { store } from '@/actions/App/Http/Controllers/SuggestionCommentController';
 import { router, usePage } from '@inertiajs/react';
 import { Comment } from '@/types/comments';
-import { deleteComment, updateComment } from '@/routes/comments';
+import { deleteSuggestionComment, updateSuggestionComment } from '@/routes/suggestions/comments';
 import { PencilIcon, SendIcon, TrashIcon, XIcon } from 'lucide-react';
 import TextareaAutosize from 'react-textarea-autosize';
 import { CellContext } from '@tanstack/react-table';
@@ -107,7 +107,7 @@ export default function CommentsCell({ props }: CommentCellProps) {
 
     function handleUpdate() {
         resetEdit();
-        router.put(updateComment(editId), {
+        router.put(updateSuggestionComment([props.row.original.id, editId]), {
             message: editMessage,
         });
     }
@@ -141,7 +141,7 @@ export default function CommentsCell({ props }: CommentCellProps) {
     }
 
     function handleDelete(comment: Comment) {
-        router.delete(deleteComment(comment.id));
+        router.delete(deleteSuggestionComment([props.row.original.id, comment.id]));
     }
 
     return (

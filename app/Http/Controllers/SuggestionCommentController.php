@@ -11,7 +11,7 @@ use Illuminate\Support\Facades\Auth;
 class SuggestionCommentController extends Controller
 {
     /**
-     * Show a specific suggestion's comments
+     * Store a new comment in a suggestion
      */
     public function store(CommentRequest $request, MappoolSuggestion $suggestion)
     {
@@ -23,6 +23,34 @@ class SuggestionCommentController extends Controller
             'comment_id' => $comment->id,
             'mappool_suggestion_id' => $suggestion->id,
         ]);
+
+        return redirect()->back();
+    }
+
+    /**
+     * Update a comment in the suggestion
+     */
+    public function update(CommentRequest $request, MappoolSuggestion $suggestion, SuggestionComment $suggestionComment)
+    {
+        $validated = $request->validated();
+
+        $comment = $suggestionComment->comment();
+
+        $comment->update($validated);
+
+        return redirect()->back();
+    }
+
+    /**
+     * Delete a comment in the suggestion
+     */
+    public function destroy(MappoolSuggestion $suggestion, SuggestionComment $suggestionComment)
+    {
+        $comment = $suggestionComment->comment();
+
+        $suggestionComment->delete();
+
+        $comment->delete();
 
         return redirect()->back();
     }
