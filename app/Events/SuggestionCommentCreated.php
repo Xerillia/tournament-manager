@@ -29,7 +29,7 @@ class SuggestionCommentCreated implements ShouldBroadcast
     public function broadcastOn(): array
     {
         return [
-            new PrivateChannel('suggestion_comments.'.$this->mappool_id),
+            new PrivateChannel('suggestion_comments.mappool.'.$this->mappool_id),
         ];
     }
 }

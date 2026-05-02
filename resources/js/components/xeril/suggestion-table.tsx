@@ -29,7 +29,7 @@ function secondToTime(num: number) {
 const columnHelper = createColumnHelper<Suggestion>();
 
 export default function SuggestionTable({ mappool, tournament }: SuggestionTableProps) {
-    useEcho('suggestion_comments.' + mappool.id, 'SuggestionCommentCreated', (e: { suggestion_id: number; comment: Comment }) => {
+    useEcho('suggestion_comments.mappool.' + mappool.id, 'SuggestionCommentCreated', (e: { suggestion_id: number; comment: Comment }) => {
         addNewComment(e);
     });
 
