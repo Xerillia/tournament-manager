@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Events\MappoolSuggestionTagAdded;
 use App\Http\Requests\StoreSuggestionRequest;
 use App\Http\Requests\UpdateSuggestionRequest;
 use App\Models\Beatmap;
@@ -108,6 +109,8 @@ class SuggestionController extends Controller
     public function addTag(MappoolSuggestion $suggestion, BeatmapTag $tag)
     {
         $suggestion->tags()->attach($tag->id);
+
+        broadcast(new MappoolSuggestionTagAdded($tag, $suggestion, $suggestion->mappool_id));
 
         return redirect()->back();
     }

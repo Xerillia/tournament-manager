@@ -45,11 +45,30 @@ export default function SuggestionTable({ mappool, tournament, tags }: Suggestio
         editComment(e);
     });
 
+    useEcho('mappools.' + mappool.id + '.suggestions', 'MappoolSuggestionTagAdded', (e: { beatmapTag: BeatmapTag; mappoolSuggestion: Suggestion }) => {
+        addTagToBeatmap(e);
+    });
+
     const [data, setData] = useState<Suggestion[]>(mappool.suggestions);
 
     useEffect(() => {
         setData(mappool.suggestions);
     }, [mappool.suggestions]);
+
+    function updateSuggestionState(suggestion: Suggestion) {
+        // find the index of the suggestion
+        const index = mappool.suggestions.indexOf(suggestion);
+
+        // get the data without the suggestion
+        const excluded = mappool.suggestions.filter((value) => value.id !== suggestion.id);
+
+        // update the state
+        setData([
+            ...excluded.slice(0, index), // elements before insertion index
+            suggestion,
+            ...excluded.slice(index), // elements after insertion index
+        ]);
+    }
 
     function addNewComment(e: { suggestionComment: SuggestionComment }) {
         // find the suggestion
@@ -64,7 +83,7 @@ export default function SuggestionTable({ mappool, tournament, tags }: Suggestio
         // otherwise append it
         suggestion.comments.push({ id: e.suggestionComment.id, comment: e.suggestionComment.comment, parent: e.suggestionComment.parent });
 
-        setSuggestionComments(suggestion);
+        updateSuggestionState(suggestion);
     }
 
     function removeComment(e: { suggestionComment: SuggestionComment }) {
@@ -77,7 +96,7 @@ export default function SuggestionTable({ mappool, tournament, tags }: Suggestio
         // filter out the comment
         suggestion.comments = suggestion.comments.filter((comment) => comment.comment.id !== e.suggestionComment.comment_id);
 
-        setSuggestionComments(suggestion);
+        updateSuggestionState(suggestion);
     }
 
     function editComment(e: { suggestionComment: SuggestionComment }) {
@@ -96,22 +115,20 @@ export default function SuggestionTable({ mappool, tournament, tags }: Suggestio
         // set the edited comment
         suggestion.comments[commentIndex] = e.suggestionComment;
 
-        setSuggestionComments(suggestion);
+        updateSuggestionState(suggestion);
     }
 
-    function setSuggestionComments(suggestion: Suggestion) {
-        // find the index of the suggestion
-        const index = mappool.suggestions.indexOf(suggestion);
+    function addTagToBeatmap(e: { beatmapTag: BeatmapTag; mappoolSuggestion: Suggestion }) {
+        // find the suggestion
+        const suggestion = mappool.suggestions.find((suggestion) => suggestion.id === e.mappoolSuggestion.id);
 
-        // get the data without the suggestion
-        const excluded = mappool.suggestions.filter((value) => value.id !== suggestion.id);
+        // safe guard
+        if (!suggestion) return;
 
-        // update the state
-        setData([
-            ...excluded.slice(0, index), // elements before insertion index
-            suggestion,
-            ...excluded.slice(index), // elements after insertion index
-        ]);
+        // update the tags
+        suggestion.tags.push(e.beatmapTag);
+
+        updateSuggestionState(suggestion);
     }
 
     const columns = useMemo(
