@@ -2,7 +2,6 @@
 
 namespace App\Http\Requests;
 
-use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
 
 class UpdateMappoolFormatRequest extends FormRequest
@@ -18,13 +17,14 @@ class UpdateMappoolFormatRequest extends FormRequest
     /**
      * Get the validation rules that apply to the request.
      *
-     * @return array<string, ValidationRule|array<mixed>|string>
+     * @return array<string, array<mixed>>
      */
     public function rules(): array
     {
         return [
             'mappools.*.id' => ['required', 'integer'],
             'mappools.*.round' => ['required', 'string'],
+            'mappools.*.star_rating' => ['required', 'decimal:0,2', 'min:0'],
             'mappools.*.formats.*.id' => ['required', 'integer'],
             'mappools.*.formats.*.slot' => ['required', 'string'],
             'mappools.*.formats.*.count' => ['required', 'integer'],
