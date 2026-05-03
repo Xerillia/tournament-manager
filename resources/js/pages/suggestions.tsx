@@ -1,5 +1,6 @@
 import SuggestionTable from '@/components/xeril/suggestion-table';
 import { store } from '@/routes/tournaments/suggestions';
+import { BeatmapTag } from '@/types/beatmaptag';
 import { Mappool } from '@/types/mappools';
 import { Tournament } from '@/types/tournament';
 import { Form, usePage } from '@inertiajs/react';
@@ -7,9 +8,10 @@ import { Form, usePage } from '@inertiajs/react';
 interface SuggestionsProps {
     tournament: Tournament;
     mappool: Mappool;
+    tags: BeatmapTag[];
 }
 
-export default function Suggestions({ tournament, mappool }: SuggestionsProps) {
+export default function Suggestions({ tournament, mappool, tags }: SuggestionsProps) {
     const { flash } = usePage().props;
 
     const suggestionPanel = (
@@ -67,6 +69,7 @@ export default function Suggestions({ tournament, mappool }: SuggestionsProps) {
             <SuggestionTable
                 mappool={mappool}
                 tournament={tournament}
+                tags={tags}
             />
         </>
     );
