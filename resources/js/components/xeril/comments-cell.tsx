@@ -182,7 +182,7 @@ export default function CommentsCell({ props }: CommentCellProps) {
                                     return (
                                         <div
                                             key={comment.id}
-                                            className="group relative flex place-items-center gap-2 p-2 text-left hover:bg-black/5"
+                                            className="group relative flex place-items-start gap-2 p-2 text-left hover:bg-black/5"
                                         >
                                             <a
                                                 href={`https://osu.ppy.sh/users/${comment.user.osu_id}`}
@@ -206,7 +206,7 @@ export default function CommentsCell({ props }: CommentCellProps) {
                                                     {comment.created_at != comment.updated_at && <span className="ml-1 text-xs">(edited)</span>}
                                                 </p>
                                                 {editId !== comment.id ? (
-                                                    <p>{comment.message}</p>
+                                                    <p className="whitespace-pre-wrap">{comment.message}</p>
                                                 ) : (
                                                     <>
                                                         <TextareaAutosize
