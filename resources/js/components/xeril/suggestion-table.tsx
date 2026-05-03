@@ -11,6 +11,7 @@ import { useEcho } from '@laravel/echo-react';
 import { SuggestionComment } from '@/types/comments';
 import { BeatmapTag } from '@/types/beatmaptag';
 import Fuse, { FuseResult } from 'fuse.js/basic';
+import { addTagToSuggestion, removeTagFromSuggestion } from '@/routes/tags';
 
 interface SuggestionTableProps {
     mappool: Mappool;
@@ -294,7 +295,9 @@ export default function SuggestionTable({ mappool, tournament, tags }: Suggestio
                 header: 'Tags',
                 cell: (props) => {
                     const [suggestionTags, setSuggestionTags] = useState<BeatmapTag[]>(props.row.original.tags);
-                    const [availableTags, setAvailableTags] = useState<BeatmapTag[]>(tags.filter((tag) => !suggestionTags.includes(tag)));
+                    const [availableTags, setAvailableTags] = useState<BeatmapTag[]>(
+                        tags.filter((tag) => !suggestionTags.some((existingTag) => existingTag.id === tag.id)),
+                    );
 
                     const [showPopup, setShowPopup] = useState<boolean>(false);
 
@@ -311,15 +314,19 @@ export default function SuggestionTable({ mappool, tournament, tags }: Suggestio
                     }, [searchTerm, availableTags]);
 
                     useEffect(() => {
-                        setAvailableTags(tags.filter((tag) => !suggestionTags.includes(tag)));
+                        setAvailableTags(tags.filter((tag) => !suggestionTags.some((existingTag) => existingTag.id === tag.id)));
                     }, [suggestionTags]);
 
                     function addTag(tag: BeatmapTag) {
                         setSuggestionTags([...suggestionTags, tag]);
+
+                        router.post(addTagToSuggestion([props.row.original.id, tag]));
                     }
 
                     function removeTag(tag: BeatmapTag) {
                         setSuggestionTags(suggestionTags.filter((obj) => obj.id !== tag.id));
+
+                        router.delete(removeTagFromSuggestion([props.row.original.id, tag]));
                     }
                     return (
                         <div className="relative align-middle">

@@ -21,6 +21,7 @@ Route::prefix('tournaments')->name('tournaments.')->group(function () {
             Route::post('/', [SuggestionController::class, 'store'])->middleware([HandlePrecognitiveRequests::class])->name('store');
             Route::put('/{suggestion}', [SuggestionController::class, 'update'])->name('update');
             Route::delete('/{suggestion}', [SuggestionController::class, 'destroy'])->name('destroy');
+
         });
 
         Route::prefix('{tournament}/pooling/')->name('pooling.')->group(function () {
@@ -35,4 +36,9 @@ Route::prefix('{suggestion}/comments')->name('suggestions.comments.')->group(fun
     Route::post('/', [SuggestionCommentController::class, 'store'])->name('store');
     Route::put('/{comment:comment_id}', [SuggestionCommentController::class, 'update'])->name('updateSuggestionComment');
     Route::delete('/{comment:comment_id}', [SuggestionCommentController::class, 'destroy'])->name('deleteSuggestionComment');
+});
+
+Route::prefix('{suggestion}/tags')->name('tags.')->group(function () {
+    Route::post('/{tag}', [SuggestionController::class, 'addTag'])->name('addTagToSuggestion');
+    Route::delete('/{tag}', [SuggestionController::class, 'removeTag'])->name('removeTagFromSuggestion');
 });

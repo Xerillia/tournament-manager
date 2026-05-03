@@ -104,4 +104,18 @@ class SuggestionController extends Controller
 
         return redirect()->back();
     }
+
+    public function addTag(MappoolSuggestion $suggestion, BeatmapTag $tag)
+    {
+        $suggestion->tags()->attach($tag->id);
+
+        return redirect()->back();
+    }
+
+    public function removeTag(MappoolSuggestion $suggestion, BeatmapTag $tag)
+    {
+        $suggestion->tags()->detach($tag->id);
+
+        return redirect()->back();
+    }
 }
