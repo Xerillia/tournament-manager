@@ -2,8 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use App\Events\MappoolSuggestionTagAdded;
+use App\Events\MappoolSuggestionTagRemoved;
 use App\Http\Requests\StoreSuggestionRequest;
+use App\Http\Requests\UpdateSuggestionRequest;
 use App\Models\Beatmap;
+use App\Models\BeatmapTag;
 use App\Models\Mappool;
 use App\Models\MappoolSuggestion;
 use App\Models\Tournament;
@@ -13,17 +17,20 @@ use Inertia\Inertia;
 
 class SuggestionController extends Controller
 {
-    public function index(Tournament $tournament)
+    public function index(Tournament $tournament, Mappool $mappool)
     {
-        $tournament->load(['mappools.suggestions.beatmap', 'mappools.suggestions.user']);
+        $mappool->load(['suggestions.beatmap', 'suggestions.user', 'suggestions.tags', 'suggestions.comments.comment.user', 'suggestions.comments.parent.comment.user']);
+
+        $tags = BeatmapTag::all();
 
         return Inertia::render('suggestions', [
             'tournament' => $tournament,
-            'mappools' => $tournament->mappools,
+            'mappool' => $mappool,
+            'tags' => $tags,
         ]);
     }
 
-    public function store(StoreSuggestionRequest $request, Tournament $tournament)
+    public function store(StoreSuggestionRequest $request, Tournament $tournament, Mappool $mappool)
     {
         // validating
         $validated = $request->validated();
@@ -39,26 +46,82 @@ class SuggestionController extends Controller
         // loading beatmap
         $beatmap = Beatmap::whereBeatmapId($beatmapId)->whereMods($mods)->first();
         if (! $beatmap) {
-            $accessToken = Auth::user()->getAccessToken();
-            $beatmapObject = (new OsuService)->getBeatmap($accessToken, $beatmapId, $array_mods);
-            $beatmap = Beatmap::updateOrCreate($beatmapObject->toArray());
+            try {
+                $accessToken = Auth::user()->getAccessToken();
+                $beatmapObject = (new OsuService)->getBeatmap($accessToken, $beatmapId, $array_mods);
+                $beatmap = Beatmap::updateOrCreate($beatmapObject->toArray());
+            } catch (\Exception $e) {
+                return redirect()->back()->with('beatmap_not_found', 'Beatmap not found!');
+            }
+        }
+        // only create the suggestion if a valid beatmap is found
+        if ($beatmap) {
+            MappoolSuggestion::create([
+                'mappool_id' => $mappool->id,
+                'beatmap_id' => $beatmap->id,
+                'user_id' => Auth::id(),
+            ]);
         }
 
-        // create suggestion
-        $mappool = Mappool::whereTournamentId($tournament->id)->whereRound($round)->first();
-        MappoolSuggestion::create([
-            'mappool_id' => $mappool->id,
-            'beatmap_id' => $beatmap->id,
-            'user_id' => Auth::id(),
-        ]);
-
-        return to_route('tournaments.suggestions.index', $tournament);
+        return redirect()->back();
     }
 
-    public function destroy(Tournament $tournament, MappoolSuggestion $suggestion)
+    public function update(UpdateSuggestionRequest $request, Tournament $tournament, Mappool $mappool, MappoolSuggestion $suggestion)
+    {
+        // validating
+        $validated = $request->validated();
+        $beatmapId = $validated['beatmap_id'];
+        $mods = $validated['mods'];
+
+        // manipulate string with array methods
+        $array_mods = str_split($mods, 2);
+        sort($array_mods);
+        $mods = implode(' ', $array_mods); // 'DT HD', 'HD HR', ...
+
+        // loading beatmap
+        $beatmap = Beatmap::whereBeatmapId($beatmapId)->whereMods($mods)->first();
+        if (! $beatmap) {
+            try {
+                $accessToken = Auth::user()->getAccessToken();
+                $beatmapObject = (new OsuService)->getBeatmap($accessToken, $beatmapId, $array_mods);
+                $beatmap = Beatmap::updateOrCreate($beatmapObject->toArray());
+            } catch (\Exception $e) {
+                return redirect()->back()->withErrors(['beatmap_not_found' => 'Beatmap does not exist!']);
+            }
+        }
+
+        // only update the suggestion if a valid beatmap is found
+        if ($beatmap) {
+            $suggestion->update([
+                'beatmap_id' => $beatmap->id,
+            ]);
+        }
+
+        return redirect()->back();
+    }
+
+    public function destroy(Tournament $tournament, Mappool $mappool, MappoolSuggestion $suggestion)
     {
         $suggestion->delete();
 
-        return to_route('tournaments.suggestions.index', $tournament);
+        return redirect()->back();
+    }
+
+    public function addTag(MappoolSuggestion $suggestion, BeatmapTag $tag)
+    {
+        $suggestion->tags()->attach($tag->id);
+
+        broadcast(new MappoolSuggestionTagAdded($tag, $suggestion, $suggestion->mappool_id));
+
+        return redirect()->back();
+    }
+
+    public function removeTag(MappoolSuggestion $suggestion, BeatmapTag $tag)
+    {
+        $suggestion->tags()->detach($tag->id);
+
+        broadcast(new MappoolSuggestionTagRemoved($tag, $suggestion, $suggestion->mappool_id));
+
+        return redirect()->back();
     }
 }

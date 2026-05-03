@@ -35,17 +35,17 @@ Route::get('/beatmap/{id}', function (int $id) {
 
     $beatmap = $refresh ? null : Beatmap::whereBeatmapId($id)->where('mods', $mods)->first();
     if (! $beatmap) {
-        $accessToken = Auth::user()->getAccessToken();
-        $beatmapObject = (new OsuService)->getBeatmap($accessToken, $id, $array_mods);
-        $beatmap = Beatmap::updateOrCreate($beatmapObject->toArray());
+        try {
+            $accessToken = Auth::user()->getAccessToken();
+            $beatmapObject = (new OsuService)->getBeatmap($accessToken, $id, $array_mods);
+            $beatmap = Beatmap::updateOrCreate($beatmapObject->toArray());
+        } catch (Exception $e) {
+            dd($e);
+        }
     }
 
     dd($beatmap);
 });
-
-// Route::middleware(['auth', 'verified'])->group(function () {
-//     Route::inertia('dashboard', 'dashboard')->name('dashboard');
-// });
 
 require __DIR__.'/discord.php';
 require __DIR__.'/osu.php';

@@ -11,8 +11,9 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('mappools', function (Blueprint $table) {
-            $table->string('round')->after('tournament_id');
+        Schema::create('beatmap_tags', function (Blueprint $table) {
+            $table->id();
+            $table->string('name');
         });
     }
 
@@ -21,8 +22,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('mappools', function (Blueprint $table) {
-            $table->dropColumn('round');
-        });
+        Schema::dropIfExists('beatmap_tags');
     }
 };

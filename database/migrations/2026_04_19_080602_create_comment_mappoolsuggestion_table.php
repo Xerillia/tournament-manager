@@ -1,5 +1,7 @@
 <?php
 
+use App\Models\Comment;
+use App\Models\MappoolSuggestion;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -11,8 +13,10 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('mappools', function (Blueprint $table) {
-            $table->string('round')->after('tournament_id');
+        Schema::create('comment_mappoolsuggestion', function (Blueprint $table) {
+            $table->foreignIdFor(Comment::class);
+            $table->foreignIdFor(MappoolSuggestion::class);
+            $table->timestamps();
         });
     }
 
@@ -21,8 +25,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('mappools', function (Blueprint $table) {
-            $table->dropColumn('round');
-        });
+        Schema::dropIfExists('comment_mappoolsuggestion');
     }
 };

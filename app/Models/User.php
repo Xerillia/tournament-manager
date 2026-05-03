@@ -30,4 +30,12 @@ class User extends Authenticatable
     {
         return $this->hasMany(MappoolSuggestion::class);
     }
+
+    /**
+     * Get the comments this user has made
+     */
+    public function comments(): HasMany
+    {
+        return $this->hasMany(Comment::class);
+    }
 }

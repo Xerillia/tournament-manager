@@ -14,6 +14,7 @@ enum Mods: string
     case FLASHLIGHT = 'FL';
     case RELAX = 'RX';
     case AUTOPILOT = 'AP';
+    case FREEMOD = 'FM';
 
     public function label(): string
     {
@@ -28,6 +29,7 @@ enum Mods: string
             self::FLASHLIGHT => 'Flashlight',
             self::RELAX => 'Relax',
             self::AUTOPILOT => 'Auto Pilot',
+            self::FREEMOD => 'Free Mod',
         };
     }
 }

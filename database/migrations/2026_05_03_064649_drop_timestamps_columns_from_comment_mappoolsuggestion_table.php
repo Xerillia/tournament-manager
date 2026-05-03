@@ -11,8 +11,8 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('mappools', function (Blueprint $table) {
-            $table->string('round')->after('tournament_id');
+        Schema::table('comment_mappoolsuggestion', function (Blueprint $table) {
+            $table->dropTimestamps();
         });
     }
 
@@ -21,8 +21,8 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('mappools', function (Blueprint $table) {
-            $table->dropColumn('round');
+        Schema::table('comment_mappoolsuggestion', function (Blueprint $table) {
+            $table->timestamps();
         });
     }
 };

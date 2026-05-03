@@ -15,6 +15,7 @@ class DatabaseSeeder extends Seeder
             UserSeeder::class,
             TournamentSeeder::class,
             MappoolSeeder::class,
+            BeatmapTagSeeder::class,
         ]);
     }
 }

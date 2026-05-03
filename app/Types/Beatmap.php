@@ -122,7 +122,7 @@ class Beatmap
             'beatmap_id' => $this->beatmap_id,
             'beatmapset_id' => $this->beatmapset_id,
             'mode' => $this->mode,
-            'mods' => implode(' ', $this->mods),
+            'mods' => implode($this->mods),
             'star_rating' => $this->star_rating,
             'bpm' => $this->bpm,
             'cs' => $this->cs,
