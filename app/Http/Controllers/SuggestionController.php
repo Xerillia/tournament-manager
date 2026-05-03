@@ -49,7 +49,7 @@ class SuggestionController extends Controller
                 $beatmapObject = (new OsuService)->getBeatmap($accessToken, $beatmapId, $array_mods);
                 $beatmap = Beatmap::updateOrCreate($beatmapObject->toArray());
             } catch (\Exception $e) {
-                return to_route('tournaments.suggestions.index', [$tournament, $round])->with('beatmap_not_found', 'Beatmap not found!');
+                return redirect()->back()->with('beatmap_not_found', 'Beatmap not found!');
             }
         }
         // only create the suggestion if a valid beatmap is found
@@ -61,7 +61,7 @@ class SuggestionController extends Controller
             ]);
         }
 
-        return to_route('tournaments.suggestions.index', [$tournament, $round]);
+        return redirect()->back();
     }
 
     public function update(UpdateSuggestionRequest $request, Tournament $tournament, Mappool $mappool, MappoolSuggestion $suggestion)
@@ -84,7 +84,7 @@ class SuggestionController extends Controller
                 $beatmapObject = (new OsuService)->getBeatmap($accessToken, $beatmapId, $array_mods);
                 $beatmap = Beatmap::updateOrCreate($beatmapObject->toArray());
             } catch (\Exception $e) {
-                return to_route('tournaments.suggestions.index', [$tournament, $suggestion->mappool->round])->withErrors(['beatmap_not_found' => 'Beatmap does not exist!']);
+                return redirect()->back()->withErrors(['beatmap_not_found' => 'Beatmap does not exist!']);
             }
         }
 
@@ -95,13 +95,13 @@ class SuggestionController extends Controller
             ]);
         }
 
-        return to_route('tournaments.suggestions.index', [$tournament, $suggestion->mappool->round]);
+        return redirect()->back();
     }
 
     public function destroy(Tournament $tournament, Mappool $mappool, MappoolSuggestion $suggestion)
     {
         $suggestion->delete();
 
-        return to_route('tournaments.suggestions.index', [$tournament, $suggestion->mappool->round]);
+        return redirect()->back();
     }
 }
