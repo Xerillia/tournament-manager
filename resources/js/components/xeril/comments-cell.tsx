@@ -197,11 +197,14 @@ export default function CommentsCell({ props }: CommentCellProps) {
                                     return (
                                         <div
                                             key={comment.id}
-                                            className="flex flex-col p-2 text-left"
+                                            className={
+                                                (replyingTo?.comment.id === comment.id ? 'border-l-2 border-blue-400 bg-blue-100 ' : 'hover:bg-black/5 ') +
+                                                'flex flex-col p-2 text-left'
+                                            }
                                         >
                                             {parent && (
                                                 <div className="flex items-center gap-1 text-sm">
-                                                    <p className="ml-12">replying to</p>
+                                                    <p className="mb-0.5 ml-12">replying to</p>
                                                     <img
                                                         src={parent.user.avatar_url}
                                                         className="h-5 w-5 flex-none rounded-full"
@@ -211,12 +214,7 @@ export default function CommentsCell({ props }: CommentCellProps) {
                                                     {parent.created_at != parent.updated_at && <span className="text-sm">(edited)</span>}
                                                 </div>
                                             )}
-                                            <div
-                                                className={
-                                                    (replyingTo?.comment.id === comment.id ? 'border-l-2 border-blue-400 bg-blue-100 ' : 'hover:bg-black/5 ') +
-                                                    'group relative flex place-items-start gap-2'
-                                                }
-                                            >
+                                            <div className="group relative flex place-items-start gap-2">
                                                 <a
                                                     href={`https://osu.ppy.sh/users/${comment.user.osu_id}`}
                                                     target="_blank"
@@ -326,47 +324,49 @@ export default function CommentsCell({ props }: CommentCellProps) {
                             {/* dummy div to scroll to the bottom */}
                             <div ref={bottomRef} />
                         </div>
-                        {replyingTo && (
-                            <div className="flex justify-between rounded-t bg-gray-300 py-2 pr-2 pl-4 text-left">
-                                <p>
-                                    Replying to <span className="font-bold">{replyingTo?.comment.user.username}</span>
-                                </p>
+                        <div className="mt-4">
+                            {replyingTo && (
+                                <div className="flex justify-between rounded-t bg-gray-300 py-2 pr-2 pl-4 text-left">
+                                    <p>
+                                        Replying to <span className="font-bold">{replyingTo?.comment.user.username}</span>
+                                    </p>
+                                    <button
+                                        className="px-2 hover:cursor-pointer"
+                                        onClick={() => setReplyingTo(null)}
+                                    >
+                                        <CircleXIcon className="size-5 text-black hover:text-gray-600" />
+                                    </button>
+                                </div>
+                            )}
+                            <div className="flex items-end-safe gap-2 border-t p-2">
+                                <img
+                                    src={auth.user.avatar_url}
+                                    className="h-8 w-8 rounded-full"
+                                />
+                                <TextareaAutosize
+                                    ref={textAreaInput}
+                                    name={`suggestions[${props.row.original.id}][message]`}
+                                    value={message}
+                                    placeholder="enter a comment..."
+                                    className="flex-1 resize-none self-center overflow-y-auto focus:outline-0"
+                                    onChange={(e) => setMessage(e.target.value)}
+                                    onKeyDown={handleKeyDown}
+                                    onKeyUp={handleKeyUp}
+                                    autoFocus
+                                    onFocus={handleFocus}
+                                    maxRows={8}
+                                />
                                 <button
-                                    className="px-2 hover:cursor-pointer"
-                                    onClick={() => setReplyingTo(null)}
+                                    type="button"
+                                    className="grid h-8 w-8 place-items-center rounded-sm bg-blue-400 p-0.5 hover:cursor-pointer hover:bg-blue-300"
+                                    onClick={handleStore}
                                 >
-                                    <CircleXIcon className="size-5 text-black hover:text-gray-600" />
+                                    <SendIcon
+                                        className="size-5"
+                                        color="#fff"
+                                    />
                                 </button>
                             </div>
-                        )}
-                        <div className="flex items-end-safe gap-2 border-t p-2">
-                            <img
-                                src={auth.user.avatar_url}
-                                className="h-8 w-8 rounded-full"
-                            />
-                            <TextareaAutosize
-                                ref={textAreaInput}
-                                name={`suggestions[${props.row.original.id}][message]`}
-                                value={message}
-                                placeholder="enter a comment..."
-                                className="flex-1 resize-none self-center overflow-y-auto focus:outline-0"
-                                onChange={(e) => setMessage(e.target.value)}
-                                onKeyDown={handleKeyDown}
-                                onKeyUp={handleKeyUp}
-                                autoFocus
-                                onFocus={handleFocus}
-                                maxRows={8}
-                            />
-                            <button
-                                type="button"
-                                className="grid h-8 w-8 place-items-center rounded-sm bg-blue-400 p-0.5 hover:cursor-pointer hover:bg-blue-300"
-                                onClick={handleStore}
-                            >
-                                <SendIcon
-                                    className="size-5"
-                                    color="#fff"
-                                />
-                            </button>
                         </div>
                     </div>
                 </>
