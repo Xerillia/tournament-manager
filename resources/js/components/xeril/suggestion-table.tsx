@@ -507,7 +507,9 @@ export default function SuggestionTable({ mappool, tournament, tags }: Suggestio
 
     return (
         <div className="container mx-auto py-10">
-            <h1 className="mb-2 text-center text-4xl font-bold">{mappool.round} Suggestions</h1>
+            <h1 className="mb-2 text-center text-4xl font-bold">
+                {mappool.round} Suggestions &mdash; SR: {typeof mappool.star_rating === 'number' && mappool.star_rating.toFixed(2)} &#9733;
+            </h1>
             <table>
                 <thead className="border-b bg-gray-300">
                     {table.getHeaderGroups().map((headerGroup) => (
