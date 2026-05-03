@@ -35,6 +35,7 @@ class PoolingController extends Controller
                 [
                     'round' => $mappool['round'],
                     'slug' => Str::slug($mappool['round']),
+                    'star_rating' => (float) $mappool['star_rating'],
                 ]);
 
             $formats = Arr::has($mappool, 'formats') ? $mappool['formats'] : [];
