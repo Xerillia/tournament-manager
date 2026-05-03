@@ -14,14 +14,8 @@ use Inertia\Inertia;
 
 class SuggestionController extends Controller
 {
-    public function index(Tournament $tournament, string $round)
+    public function index(Tournament $tournament, Mappool $mappool)
     {
-        $mappool = Mappool::whereTournamentId($tournament->id)->whereRound($round)->first();
-
-        if (! $mappool) {
-            return abort(404);
-        }
-
         $mappool->load(['suggestions.beatmap', 'suggestions.user', 'suggestions.comments.comment.user', 'suggestions.comments.parent.comment.user']);
 
         return Inertia::render('suggestions', [
@@ -30,7 +24,7 @@ class SuggestionController extends Controller
         ]);
     }
 
-    public function store(StoreSuggestionRequest $request, Tournament $tournament)
+    public function store(StoreSuggestionRequest $request, Tournament $tournament, Mappool $mappool)
     {
         // validating
         $validated = $request->validated();
@@ -56,7 +50,6 @@ class SuggestionController extends Controller
         }
         // only create the suggestion if a valid beatmap is found
         if ($beatmap) {
-            $mappool = Mappool::whereTournamentId($tournament->id)->whereRound($round)->first();
             MappoolSuggestion::create([
                 'mappool_id' => $mappool->id,
                 'beatmap_id' => $beatmap->id,
@@ -67,7 +60,7 @@ class SuggestionController extends Controller
         return to_route('tournaments.suggestions.index', [$tournament, $round]);
     }
 
-    public function update(UpdateSuggestionRequest $request, Tournament $tournament, MappoolSuggestion $suggestion)
+    public function update(UpdateSuggestionRequest $request, Tournament $tournament, Mappool $mappool, MappoolSuggestion $suggestion)
     {
         // validating
         $validated = $request->validated();
@@ -101,7 +94,7 @@ class SuggestionController extends Controller
         return to_route('tournaments.suggestions.index', [$tournament, $suggestion->mappool->round]);
     }
 
-    public function destroy(Tournament $tournament, MappoolSuggestion $suggestion)
+    public function destroy(Tournament $tournament, Mappool $mappool, MappoolSuggestion $suggestion)
     {
         $suggestion->delete();
 

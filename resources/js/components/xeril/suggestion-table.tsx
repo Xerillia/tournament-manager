@@ -8,7 +8,7 @@ import { Trash2Icon } from 'lucide-react';
 import { useEffect, useMemo, useState } from 'react';
 import CommentsCell from './comments-cell';
 import { useEcho } from '@laravel/echo-react';
-import { Comment, SuggestionComment } from '@/types/comments';
+import { SuggestionComment } from '@/types/comments';
 
 interface SuggestionTableProps {
     mappool: Mappool;
@@ -118,7 +118,7 @@ export default function SuggestionTable({ mappool, tournament }: SuggestionTable
                     <button
                         type="button"
                         className="rounded-md bg-red-200 p-1 align-middle hover:cursor-pointer hover:bg-red-300"
-                        onClick={() => router.delete(destroy([tournament, props.row.original.id]))}
+                        onClick={() => router.delete(destroy([tournament, mappool, props.row.original.id]))}
                     >
                         <Trash2Icon className="hover:text-700 text-red-800" />
                     </button>
@@ -156,7 +156,7 @@ export default function SuggestionTable({ mappool, tournament }: SuggestionTable
                         // route param
                         const suggestion_id = props.row.original.id;
 
-                        router.put(update([tournament, suggestion_id]), data, {
+                        router.put(update([tournament, mappool, suggestion_id]), data, {
                             onError: (error) => {
                                 setError(error.beatmap_not_found);
                                 setValue(originalValue);
@@ -228,7 +228,7 @@ export default function SuggestionTable({ mappool, tournament }: SuggestionTable
                         // route param
                         const suggestion_id = props.row.original.id;
 
-                        router.put(update([tournament, suggestion_id]), data, {
+                        router.put(update([tournament, mappool, suggestion_id]), data, {
                             onError: (error) => {
                                 setError(error.mods);
                                 setValue(originalValue);

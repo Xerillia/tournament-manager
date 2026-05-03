@@ -4,6 +4,7 @@ export type Mappool = {
     id: number;
     round: string;
     formats: Format[];
+    slug: string;
     suggestions: Suggestion[];
 };
 

@@ -8,9 +8,17 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
-#[Fillable(['tournament_id', 'round'])]
+#[Fillable(['tournament_id', 'round', 'slug'])]
 class Mappool extends Model
 {
+    /**
+     * Get the route key for the model.
+     */
+    public function getRouteKeyName(): string
+    {
+        return 'slug';
+    }
+
     /**
      * Get the tournament the mappool belongs to
      */

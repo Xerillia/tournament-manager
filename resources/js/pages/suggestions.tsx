@@ -15,7 +15,7 @@ export default function Suggestions({ tournament, mappool }: SuggestionsProps) {
     const suggestionPanel = (
         <>
             <Form
-                action={store(tournament)}
+                action={store([tournament, mappool])}
                 method="post"
                 resetOnSuccess
                 transform={(data) => ({
