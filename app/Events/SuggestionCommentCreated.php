@@ -18,7 +18,7 @@ class SuggestionCommentCreated implements ShouldBroadcastNow
      */
     public function __construct(public SuggestionComment $suggestionComment, private int $mappool_id)
     {
-        //
+        $suggestionComment->load(['parent.comment.user']);
     }
 
     /**

@@ -58,7 +58,7 @@ export default function SuggestionTable({ mappool, tournament }: SuggestionTable
         if (suggestion.comments.find((comment) => comment.comment.id === e.suggestionComment.comment_id)) return;
 
         // otherwise append it
-        suggestion.comments.push({ comment: e.suggestionComment.comment });
+        suggestion.comments.push({ id: e.suggestionComment.id, comment: e.suggestionComment.comment, parent: e.suggestionComment.parent });
 
         setSuggestionComments(suggestion);
     }
