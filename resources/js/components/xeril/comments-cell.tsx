@@ -31,10 +31,18 @@ export default function CommentsCell({ props }: CommentCellProps) {
         setMessage('');
         setReplyingTo(null);
 
-        router.post(store(props.row.original.id), {
-            message: message,
-            parent_id: replyingTo?.id,
-        });
+        router.post(
+            store(props.row.original.id),
+            {
+                message: message,
+                parent_id: replyingTo?.id,
+            },
+            {
+                onSuccess: () => {
+                    bottomRef.current?.scrollIntoView();
+                },
+            },
+        );
     }
 
     const [beingHeld, setBeingHeld] = useState<boolean>(false);
