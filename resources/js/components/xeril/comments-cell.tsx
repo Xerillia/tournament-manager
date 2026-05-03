@@ -169,108 +169,110 @@ export default function CommentsCell({ props }: CommentCellProps) {
                                 <XIcon color="#999" />
                             </button>
                         </div>
-                        {props.row.original.comments.length > 0 ? (
-                            props.row.original.comments.map((value) => {
-                                const comment = value.comment;
-                                return (
-                                    <div
-                                        key={comment.id}
-                                        className="group relative flex place-items-center gap-2 p-2 text-left hover:bg-black/5"
-                                    >
-                                        <a
-                                            href={`https://osu.ppy.sh/users/${comment.user.osu_id}`}
-                                            target="_blank"
+                        <div className="max-h-192 overflow-y-auto">
+                            {props.row.original.comments.length > 0 ? (
+                                props.row.original.comments.map((value) => {
+                                    const comment = value.comment;
+                                    return (
+                                        <div
+                                            key={comment.id}
+                                            className="group relative flex place-items-center gap-2 p-2 text-left hover:bg-black/5"
                                         >
-                                            <img
-                                                src={comment.user.avatar_url}
-                                                className="h-10 w-10 rounded-full"
-                                            />
-                                        </a>
-                                        <div className="flex w-full flex-col">
-                                            <p>
-                                                <a
-                                                    href={`https://osu.ppy.sh/users/${comment.user.osu_id}`}
-                                                    target="_blank"
-                                                    className="font-bold hover:underline"
-                                                >
-                                                    {comment.user.username}
-                                                </a>
-                                                <span className="ml-1 text-sm text-black/80">{formattedDate(comment.created_at)}</span>
-                                                {comment.created_at != comment.updated_at && <span className="ml-1 text-xs">(edited)</span>}
-                                            </p>
-                                            {editId !== comment.id ? (
-                                                <p>{comment.message}</p>
-                                            ) : (
-                                                <>
-                                                    <TextareaAutosize
-                                                        name={`messages[${comment.id}][message]`}
-                                                        value={editMessage}
-                                                        className="mt-1 mr-4 h-20 resize-none overflow-y-auto rounded-md border border-black/80 p-2 focus:outline-0"
-                                                        onChange={(e) => setEditMessage(e.target.value)}
-                                                        onKeyDown={handleKeyDownEdit}
-                                                        onKeyUp={handleKeyUp}
-                                                        autoFocus
-                                                        onFocus={handleFocus}
-                                                        maxRows={8}
-                                                    />
-                                                    <p className="align-middle text-xs">
-                                                        escape to{' '}
-                                                        <button
-                                                            type="button"
-                                                            className="text-blue-500 hover:cursor-pointer hover:underline"
-                                                            onClick={resetEdit}
-                                                        >
-                                                            cancel
-                                                        </button>{' '}
-                                                        &bull; enter to{' '}
-                                                        <button
-                                                            type="button"
-                                                            className="text-blue-500 hover:cursor-pointer hover:underline"
-                                                            onClick={handleUpdate}
-                                                        >
-                                                            save
-                                                        </button>
-                                                    </p>
-                                                </>
-                                            )}
-                                        </div>
-                                        {!editId && (
-                                            <div className="absolute right-6 bottom-1/2 z-10 hidden items-center gap-0.5 rounded-md border bg-white p-0.5 group-hover:flex">
-                                                {comment.user.id === auth.user.id && (
+                                            <a
+                                                href={`https://osu.ppy.sh/users/${comment.user.osu_id}`}
+                                                target="_blank"
+                                            >
+                                                <img
+                                                    src={comment.user.avatar_url}
+                                                    className="h-10 w-10 rounded-full"
+                                                />
+                                            </a>
+                                            <div className="flex w-full flex-col">
+                                                <p>
+                                                    <a
+                                                        href={`https://osu.ppy.sh/users/${comment.user.osu_id}`}
+                                                        target="_blank"
+                                                        className="font-bold hover:underline"
+                                                    >
+                                                        {comment.user.username}
+                                                    </a>
+                                                    <span className="ml-1 text-sm text-black/80">{formattedDate(comment.created_at)}</span>
+                                                    {comment.created_at != comment.updated_at && <span className="ml-1 text-xs">(edited)</span>}
+                                                </p>
+                                                {editId !== comment.id ? (
+                                                    <p>{comment.message}</p>
+                                                ) : (
                                                     <>
-                                                        <button
-                                                            type="button"
-                                                            className="rounded-md p-1 hover:cursor-pointer hover:bg-black/20"
-                                                            onClick={() => toggleEdit(comment)}
-                                                        >
-                                                            <PencilIcon
-                                                                className="size-5"
-                                                                color="#000"
-                                                            />
-                                                        </button>
-                                                        <button
-                                                            type="button"
-                                                            className="rounded-md p-1 hover:cursor-pointer hover:bg-black/20"
-                                                            onClick={() => handleDelete(comment)}
-                                                        >
-                                                            <TrashIcon
-                                                                className="size-5"
-                                                                color="#000"
-                                                            />
-                                                        </button>
+                                                        <TextareaAutosize
+                                                            name={`messages[${comment.id}][message]`}
+                                                            value={editMessage}
+                                                            className="mt-1 mr-4 h-20 resize-none overflow-y-auto rounded-md border border-black/80 p-2 focus:outline-0"
+                                                            onChange={(e) => setEditMessage(e.target.value)}
+                                                            onKeyDown={handleKeyDownEdit}
+                                                            onKeyUp={handleKeyUp}
+                                                            autoFocus
+                                                            onFocus={handleFocus}
+                                                            maxRows={8}
+                                                        />
+                                                        <p className="align-middle text-xs">
+                                                            escape to{' '}
+                                                            <button
+                                                                type="button"
+                                                                className="text-blue-500 hover:cursor-pointer hover:underline"
+                                                                onClick={resetEdit}
+                                                            >
+                                                                cancel
+                                                            </button>{' '}
+                                                            &bull; enter to{' '}
+                                                            <button
+                                                                type="button"
+                                                                className="text-blue-500 hover:cursor-pointer hover:underline"
+                                                                onClick={handleUpdate}
+                                                            >
+                                                                save
+                                                            </button>
+                                                        </p>
                                                     </>
                                                 )}
                                             </div>
-                                        )}
-                                    </div>
-                                );
-                            })
-                        ) : (
-                            <p className="my-12 text-gray-400">
-                                No comments found. <br />
-                                Start commenting!
-                            </p>
-                        )}
+                                            {!editId && (
+                                                <div className="absolute right-6 bottom-1/2 z-10 hidden items-center gap-0.5 rounded-md border bg-white p-0.5 group-hover:flex">
+                                                    {comment.user.id === auth.user.id && (
+                                                        <>
+                                                            <button
+                                                                type="button"
+                                                                className="rounded-md p-1 hover:cursor-pointer hover:bg-black/20"
+                                                                onClick={() => toggleEdit(comment)}
+                                                            >
+                                                                <PencilIcon
+                                                                    className="size-5"
+                                                                    color="#000"
+                                                                />
+                                                            </button>
+                                                            <button
+                                                                type="button"
+                                                                className="rounded-md p-1 hover:cursor-pointer hover:bg-black/20"
+                                                                onClick={() => handleDelete(comment)}
+                                                            >
+                                                                <TrashIcon
+                                                                    className="size-5"
+                                                                    color="#000"
+                                                                />
+                                                            </button>
+                                                        </>
+                                                    )}
+                                                </div>
+                                            )}
+                                        </div>
+                                    );
+                                })
+                            ) : (
+                                <p className="my-12 text-gray-400">
+                                    No comments found. <br />
+                                    Start commenting!
+                                </p>
+                            )}
+                        </div>
                         <div className="mt-2 flex items-end-safe gap-2 border-t p-2">
                             <img
                                 src={auth.user.avatar_url}
