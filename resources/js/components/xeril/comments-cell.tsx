@@ -21,16 +21,11 @@ export default function CommentsCell({ props }: CommentCellProps) {
 
     function handleStore() {
         if (!message) return;
+        setMessage('');
 
-        router.post(
-            store(props.row.original.id),
-            {
-                message: message,
-            },
-            {
-                onSuccess: () => setMessage(''),
-            },
-        );
+        router.post(store(props.row.original.id), {
+            message: message,
+        });
     }
 
     const [beingHeld, setBeingHeld] = useState<boolean>(false);
