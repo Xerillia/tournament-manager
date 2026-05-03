@@ -153,7 +153,7 @@ export default function CommentsCell({ props }: CommentCellProps) {
             {show && (
                 <>
                     <div
-                        className="absolute top-0 left-0 z-1 h-screen w-screen bg-black/30"
+                        className="fixed top-0 left-0 z-1 h-full w-full overflow-hidden bg-black/30"
                         onClick={closeModal}
                     />
                     <div className="absolute top-1/2 left-1/2 z-2 flex w-180 -translate-1/2 flex-col rounded-md border border-gray-600 bg-white">
