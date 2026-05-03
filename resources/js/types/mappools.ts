@@ -5,6 +5,7 @@ export type Mappool = {
     round: string;
     formats: Format[];
     slug: string;
+    star_rating: number | string;
     suggestions: Suggestion[];
 };
 
