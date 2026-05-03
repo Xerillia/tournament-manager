@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { store } from '@/actions/App/Http/Controllers/SuggestionCommentController';
 import { router, usePage } from '@inertiajs/react';
 import { Comment } from '@/types/comments';
@@ -16,6 +16,12 @@ export default function CommentsCell({ props }: CommentCellProps) {
     const { auth } = usePage().props;
 
     const [show, setShow] = useState<boolean>(false);
+
+    const bottomRef = useRef<HTMLDivElement>(null);
+
+    useEffect(() => {
+        bottomRef.current?.scrollIntoView();
+    }, [show]);
 
     const [message, setMessage] = useState<string>('');
 
@@ -272,8 +278,10 @@ export default function CommentsCell({ props }: CommentCellProps) {
                                     Start commenting!
                                 </p>
                             )}
+                            {/* dummy div to scroll to the bottom */}
+                            <div ref={bottomRef} />
                         </div>
-                        <div className="mt-2 flex items-end-safe gap-2 border-t p-2">
+                        <div className="flex items-end-safe gap-2 border-t p-2">
                             <img
                                 src={auth.user.avatar_url}
                                 className="h-8 w-8 rounded-full"
