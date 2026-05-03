@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Events\MappoolSuggestionTagAdded;
+use App\Events\MappoolSuggestionTagRemoved;
 use App\Http\Requests\StoreSuggestionRequest;
 use App\Http\Requests\UpdateSuggestionRequest;
 use App\Models\Beatmap;
@@ -118,6 +119,8 @@ class SuggestionController extends Controller
     public function removeTag(MappoolSuggestion $suggestion, BeatmapTag $tag)
     {
         $suggestion->tags()->detach($tag->id);
+
+        broadcast(new MappoolSuggestionTagRemoved($tag, $suggestion, $suggestion->mappool_id));
 
         return redirect()->back();
     }

@@ -49,6 +49,10 @@ export default function SuggestionTable({ mappool, tournament, tags }: Suggestio
         addTagToBeatmap(e);
     });
 
+    useEcho('mappools.' + mappool.id + '.suggestions', 'MappoolSuggestionTagRemoved', (e: { beatmapTag: BeatmapTag; mappoolSuggestion: Suggestion }) => {
+        removeTagFromBeatmap(e);
+    });
+
     const [data, setData] = useState<Suggestion[]>(mappool.suggestions);
 
     useEffect(() => {
@@ -127,6 +131,19 @@ export default function SuggestionTable({ mappool, tournament, tags }: Suggestio
 
         // update the tags
         suggestion.tags.push(e.beatmapTag);
+
+        updateSuggestionState(suggestion);
+    }
+
+    function removeTagFromBeatmap(e: { beatmapTag: BeatmapTag; mappoolSuggestion: Suggestion }) {
+        // find the suggestion
+        const suggestion = mappool.suggestions.find((suggestion) => suggestion.id === e.mappoolSuggestion.id);
+
+        // safe guard
+        if (!suggestion) return;
+
+        // update the tags
+        suggestion.tags = suggestion.tags.filter((tag) => tag.id !== e.beatmapTag.id);
 
         updateSuggestionState(suggestion);
     }
@@ -333,6 +350,10 @@ export default function SuggestionTable({ mappool, tournament, tags }: Suggestio
                     useEffect(() => {
                         setAvailableTags(tags.filter((tag) => !suggestionTags.some((existingTag) => existingTag.id === tag.id)));
                     }, [suggestionTags]);
+
+                    useEffect(() => {
+                        setSuggestionTags(props.row.original.tags);
+                    }, [props.row.original.tags]);
 
                     function addTag(tag: BeatmapTag) {
                         setSuggestionTags([...suggestionTags, tag]);
