@@ -26,7 +26,7 @@ export default function EditMappoolFormat({ tournament_id, mappools }: EditMappo
     const indexOf = (mappool: Mappool) => getMappools.findIndex((obj) => obj.id === mappool.id);
     const filteredOut = (mappool: Mappool) => getMappools.filter((obj) => obj.id !== mappool.id);
 
-    const addRound = () => setMappools([...getMappools, { id: nextMappoolId--, round: '', formats: [], suggestions: [] }]);
+    const addRound = () => setMappools([...getMappools, { id: nextMappoolId--, round: '', formats: [], suggestions: [], slug: '' }]);
 
     function removeMappool(mappool: Mappool) {
         setMappools(filteredOut(mappool));

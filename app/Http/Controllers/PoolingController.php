@@ -8,6 +8,7 @@ use App\Models\Mappool;
 use App\Models\MappoolFormat;
 use App\Models\Tournament;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Str;
 use Inertia\Inertia;
 
 class PoolingController extends Controller
@@ -33,6 +34,7 @@ class PoolingController extends Controller
             ],
                 [
                     'round' => $mappool['round'],
+                    'slug' => Str::slug($mappool['round']),
                 ]);
 
             $formats = Arr::has($mappool, 'formats') ? $mappool['formats'] : [];
