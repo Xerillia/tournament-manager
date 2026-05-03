@@ -23,6 +23,7 @@ class SuggestionCommentController extends Controller
         SuggestionComment::create([
             'comment_id' => $comment->id,
             'mappool_suggestion_id' => $suggestion->id,
+            'parent_id' => array_key_exists('parent_id', $validated) ? $validated['parent_id'] : null,
         ]);
 
         return redirect()->back();

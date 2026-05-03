@@ -23,6 +23,7 @@ class CommentRequest extends FormRequest
     {
         return [
             'message' => ['required', 'string'],
+            'parent_id' => ['nullable', 'integer', 'exists:comment_mappoolsuggestion,id'],
         ];
     }
 }
