@@ -111,6 +111,7 @@ export default function CommentsCell({ props }: CommentCellProps) {
         router.put(updateSuggestionComment([props.row.original.id, editId]), {
             message: editMessage,
         });
+        textAreaInput.current?.focus();
     }
 
     function resetEdit() {
@@ -143,7 +144,9 @@ export default function CommentsCell({ props }: CommentCellProps) {
 
     function handleDelete(comment: Comment) {
         router.delete(deleteSuggestionComment([props.row.original.id, comment.id]));
+        textAreaInput.current?.focus();
     }
+    const textAreaInput = useRef<HTMLTextAreaElement>(null);
 
     return (
         <>
@@ -288,6 +291,7 @@ export default function CommentsCell({ props }: CommentCellProps) {
                                 className="h-8 w-8 rounded-full"
                             />
                             <TextareaAutosize
+                                ref={textAreaInput}
                                 name={`suggestions[${props.row.original.id}][message]`}
                                 value={message}
                                 placeholder="enter a comment..."
