@@ -28,7 +28,7 @@ class SuggestionCommentDeleted implements ShouldBroadcastNow
     public function broadcastOn(): array
     {
         return [
-            new PrivateChannel('suggestion_comments.mappool.'.$this->mappool_id),
+            new PrivateChannel('mappools.'.$this->mappool_id.'.suggestions'),
         ];
     }
 }

@@ -33,15 +33,15 @@ function secondToTime(num: number) {
 const columnHelper = createColumnHelper<Suggestion>();
 
 export default function SuggestionTable({ mappool, tournament, tags }: SuggestionTableProps) {
-    useEcho('suggestion_comments.mappool.' + mappool.id, 'SuggestionCommentCreated', (e: { suggestionComment: SuggestionComment }) => {
+    useEcho('mappools.' + mappool.id + '.suggestions', 'SuggestionCommentCreated', (e: { suggestionComment: SuggestionComment }) => {
         addNewComment(e);
     });
 
-    useEcho('suggestion_comments.mappool.' + mappool.id, 'SuggestionCommentDeleted', (e: { suggestionComment: SuggestionComment }) => {
+    useEcho('mappools.' + mappool.id + '.suggestions', 'SuggestionCommentDeleted', (e: { suggestionComment: SuggestionComment }) => {
         removeComment(e);
     });
 
-    useEcho('suggestion_comments.mappool.' + mappool.id, 'SuggestionCommentEdited', (e: { suggestionComment: SuggestionComment }) => {
+    useEcho('mappools.' + mappool.id + '.suggestions', 'SuggestionCommentEdited', (e: { suggestionComment: SuggestionComment }) => {
         editComment(e);
     });
 
