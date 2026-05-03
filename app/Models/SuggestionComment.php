@@ -6,15 +6,14 @@ use App\Observers\SuggestionCommentObserver;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Attributes\Table;
-use Illuminate\Database\Eloquent\Attributes\WithoutIncrementing;
 use Illuminate\Database\Eloquent\Attributes\WithoutTimestamps;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
-#[Table('comment_mappoolsuggestion', key: 'comment_id')]
-#[Fillable(['comment_id', 'mappool_suggestion_id'])]
+#[Table('comment_mappoolsuggestion')]
+#[Fillable(['parent_id', 'comment_id', 'mappool_suggestion_id'])]
 #[ObservedBy([SuggestionCommentObserver::class])]
-#[WithoutIncrementing()]
 #[WithoutTimestamps()]
 class SuggestionComment extends Model
 {
@@ -32,5 +31,21 @@ class SuggestionComment extends Model
     public function comment(): BelongsTo
     {
         return $this->belongsTo(Comment::class);
+    }
+
+    /**
+     * Get the replied model
+     */
+    public function parent(): BelongsTo
+    {
+        return $this->belongsTo(SuggestionComment::class, 'parent_id');
+    }
+
+    /**
+     * Get the comments that replies this
+     */
+    public function children(): HasMany
+    {
+        return $this->hasMany(SuggestionComment::class, 'parent_id');
     }
 }
