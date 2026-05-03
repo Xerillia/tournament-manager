@@ -1,7 +1,7 @@
 import { update, destroy } from '@/actions/App/Http/Controllers/PoolingController';
 import { Format, Mappool } from '@/types/mappools';
 import { Form, router } from '@inertiajs/react';
-import { useState } from 'react';
+import { ChangeEvent, useState } from 'react';
 import { isEqual, cloneDeep } from 'lodash';
 
 interface EditMappoolFormatProps {
@@ -26,7 +26,7 @@ export default function EditMappoolFormat({ tournament_id, mappools }: EditMappo
     const indexOf = (mappool: Mappool) => getMappools.findIndex((obj) => obj.id === mappool.id);
     const filteredOut = (mappool: Mappool) => getMappools.filter((obj) => obj.id !== mappool.id);
 
-    const addRound = () => setMappools([...getMappools, { id: nextMappoolId--, round: '', formats: [], suggestions: [], slug: '' }]);
+    const addRound = () => setMappools([...getMappools, { id: nextMappoolId--, round: '', formats: [], suggestions: [], slug: '', star_rating: 0 }]);
 
     function removeMappool(mappool: Mappool) {
         setMappools(filteredOut(mappool));
@@ -56,6 +56,16 @@ export default function EditMappoolFormat({ tournament_id, mappools }: EditMappo
 
     function setRound(round: string, mappool: Mappool) {
         mappool.round = round;
+
+        updateOrInsertMappool(mappool);
+    }
+
+    function setStarRating(e: ChangeEvent<HTMLInputElement>, mappool: Mappool) {
+        const value = e.target.value;
+        const regex = /^\d*\.?\d{0,2}$/;
+        if (value === '' || regex.test(value)) {
+            mappool.star_rating = value;
+        }
 
         updateOrInsertMappool(mappool);
     }
@@ -191,7 +201,24 @@ export default function EditMappoolFormat({ tournament_id, mappools }: EditMappo
                                             value={mappool.round}
                                             onChange={(e) => setRound(e.target.value, mappool)}
                                             disabled={!editMode}
+                                            autoComplete="off"
                                         />
+                                    </label>
+                                    <label className="flex flex-col items-center justify-center">
+                                        Star Rating
+                                        <div className="flex items-center gap-2">
+                                            <input
+                                                type="text"
+                                                name={'mappools[' + mappool.id + '][star_rating]'}
+                                                placeholder="5.0"
+                                                className="block w-16 rounded-md border border-slate-800 p-2 text-center"
+                                                value={typeof mappool.star_rating === 'number' ? Number(mappool.star_rating).toFixed(2) : mappool.star_rating}
+                                                onChange={(e) => setStarRating(e, mappool)}
+                                                disabled={!editMode}
+                                                autoComplete="off"
+                                            />
+                                            <span className="text-xl">&#9733;</span>
+                                        </div>
                                     </label>
                                     <p className="flex flex-col self-center">Slots: </p>
                                     <div className="flex flex-col gap-4 self-center text-right">
