@@ -31,16 +31,16 @@ class SuggestionCommentController extends Controller
     /**
      * Update a comment in the suggestion
      */
-    public function update(CommentRequest $request, MappoolSuggestion $suggestion, SuggestionComment $suggestionComment)
+    public function update(CommentRequest $request, MappoolSuggestion $suggestion, SuggestionComment $comment)
     {
         $validated = $request->validated();
 
-        $comment = $suggestionComment->comment();
+        $base = $comment->comment();
 
-        $comment->update($validated);
+        $base->update($validated);
 
-        $suggestionComment->load(['comment.user']);
-        broadcast(new SuggestionCommentEdited($suggestionComment, $suggestion->mappool_id));
+        $comment->load(['comment.user']);
+        broadcast(new SuggestionCommentEdited($comment, $suggestion->mappool_id));
 
         return redirect()->back();
     }
@@ -48,13 +48,13 @@ class SuggestionCommentController extends Controller
     /**
      * Delete a comment in the suggestion
      */
-    public function destroy(MappoolSuggestion $suggestion, SuggestionComment $suggestionComment)
+    public function destroy(MappoolSuggestion $suggestion, SuggestionComment $comment)
     {
-        $comment = $suggestionComment->comment();
-
-        $suggestionComment->delete();
+        $base = $comment->comment();
 
         $comment->delete();
+
+        $base->delete();
 
         return redirect()->back();
     }
