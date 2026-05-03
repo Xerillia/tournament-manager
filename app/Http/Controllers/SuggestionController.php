@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\StoreSuggestionRequest;
 use App\Http\Requests\UpdateSuggestionRequest;
 use App\Models\Beatmap;
+use App\Models\BeatmapTag;
 use App\Models\Mappool;
 use App\Models\MappoolSuggestion;
 use App\Models\Tournament;
@@ -16,11 +17,14 @@ class SuggestionController extends Controller
 {
     public function index(Tournament $tournament, Mappool $mappool)
     {
-        $mappool->load(['suggestions.beatmap', 'suggestions.user', 'suggestions.comments.comment.user', 'suggestions.comments.parent.comment.user']);
+        $mappool->load(['suggestions.beatmap', 'suggestions.user', 'suggestions.tags', 'suggestions.comments.comment.user', 'suggestions.comments.parent.comment.user']);
+
+        $tags = BeatmapTag::all();
 
         return Inertia::render('suggestions', [
             'tournament' => $tournament,
             'mappool' => $mappool,
+            'tags' => $tags,
         ]);
     }
 
