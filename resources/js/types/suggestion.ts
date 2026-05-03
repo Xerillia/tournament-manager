@@ -1,5 +1,6 @@
 import { User } from './auth';
 import { Beatmap } from './beatmaps';
+import { BeatmapTag } from './beatmaptag';
 import { SuggestionComment } from './comments';
 import { Mappool } from './mappools';
 
@@ -10,6 +11,6 @@ export type Suggestion = {
     beatmap_id: number;
     beatmap: Beatmap;
     user: User;
-    tags: string;
+    tags: BeatmapTag[];
     comments: SuggestionComment[];
 };
