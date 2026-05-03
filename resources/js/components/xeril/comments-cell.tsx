@@ -187,6 +187,7 @@ export default function CommentsCell({ props }: CommentCellProps) {
                                             <a
                                                 href={`https://osu.ppy.sh/users/${comment.user.osu_id}`}
                                                 target="_blank"
+                                                className="flex-none"
                                             >
                                                 <img
                                                     src={comment.user.avatar_url}
