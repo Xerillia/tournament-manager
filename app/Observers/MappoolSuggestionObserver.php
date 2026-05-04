@@ -2,6 +2,9 @@
 
 namespace App\Observers;
 
+use App\Events\MappoolSuggestionCreated;
+use App\Events\MappoolSuggestionDeleted;
+use App\Events\MappoolSuggestionEdited;
 use App\Models\MappoolSuggestion;
 
 class MappoolSuggestionObserver
@@ -11,7 +14,9 @@ class MappoolSuggestionObserver
      */
     public function created(MappoolSuggestion $mappoolSuggestion): void
     {
-        //
+        $mappoolSuggestion->load(['beatmap', 'user', 'comments', 'tags']);
+
+        broadcast(new MappoolSuggestionCreated($mappoolSuggestion));
     }
 
     /**
@@ -19,7 +24,9 @@ class MappoolSuggestionObserver
      */
     public function updated(MappoolSuggestion $mappoolSuggestion): void
     {
-        //
+        $mappoolSuggestion->load(['beatmap', 'user', 'comments', 'tags']);
+
+        broadcast(new MappoolSuggestionEdited($mappoolSuggestion));
     }
 
     /**
@@ -27,6 +34,6 @@ class MappoolSuggestionObserver
      */
     public function deleted(MappoolSuggestion $mappoolSuggestion): void
     {
-        //
+        broadcast(new MappoolSuggestionDeleted($mappoolSuggestion));
     }
 }
