@@ -2,7 +2,9 @@
 
 namespace App\Models;
 
+use App\Observers\MappoolFormatObserver;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
+use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Attributes\Table;
 use Illuminate\Database\Eloquent\Attributes\WithoutTimestamps;
 use Illuminate\Database\Eloquent\Model;
@@ -11,6 +13,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 
 #[Table('mappool_formats')]
 #[Fillable(['mappool_id', 'slot', 'count'])]
+#[ObservedBy(MappoolFormatObserver::class)]
 #[WithoutTimestamps]
 class MappoolFormat extends Model
 {
