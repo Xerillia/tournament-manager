@@ -9,6 +9,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 
 #[Fillable(['mappool_id', 'beatmap_id', 'user_id', 'tags'])]
 #[ObservedBy(MappoolSuggestionObserver::class)]
@@ -52,5 +53,13 @@ class MappoolSuggestion extends Model
     public function tags(): BelongsToMany
     {
         return $this->belongsToMany(BeatmapTag::class, 'beatmaptag_mappoolsuggestion');
+    }
+
+    /**
+     * Get the slot of this suggestion
+     */
+    public function slot(): HasOne
+    {
+        return $this->hasOne(MappoolSlot::class, 'mappool_suggestion_id');
     }
 }
