@@ -34,15 +34,15 @@ const columnHelper = createColumnHelper<Suggestion>();
 
 export default function SuggestionTable({ mappool, tournament, tags }: SuggestionTableProps) {
     useEcho('mappools.' + mappool.id + '.suggestions', 'MappoolSuggestionCreated', (e: { mappoolSuggestion: Suggestion }) => {
-        console.log(e);
+        addSuggestion(e);
     });
 
     useEcho('mappools.' + mappool.id + '.suggestions', 'MappoolSuggestionEdited', (e: { mappoolSuggestion: Suggestion }) => {
-        console.log(e);
+        editSuggestion(e);
     });
 
     useEcho('mappools.' + mappool.id + '.suggestions', 'MappoolSuggestionDeleted', (e: { mappoolSuggestion: Suggestion }) => {
-        console.log(e);
+        removeSuggestion(e);
     });
 
     useEcho('mappools.' + mappool.id + '.suggestions', 'SuggestionCommentCreated', (e: { suggestionComment: SuggestionComment }) => {
@@ -67,9 +67,27 @@ export default function SuggestionTable({ mappool, tournament, tags }: Suggestio
 
     const [data, setData] = useState<Suggestion[]>(mappool.suggestions);
 
-    useEffect(() => {
-        setData(mappool.suggestions);
-    }, [mappool.suggestions]);
+    function addSuggestion(e: { mappoolSuggestion: Suggestion }) {
+        setData((prevState) => [...prevState, e.mappoolSuggestion]);
+    }
+
+    function editSuggestion(e: { mappoolSuggestion: Suggestion }) {
+        // find the suggestion
+        const suggestion = data.find((suggestion) => suggestion.id === e.mappoolSuggestion.id);
+
+        // safe guard
+        if (!suggestion) return;
+
+        // update the property
+        suggestion.beatmap_id = e.mappoolSuggestion.beatmap_id;
+        suggestion.beatmap = e.mappoolSuggestion.beatmap;
+
+        updateSuggestionState(suggestion);
+    }
+
+    function removeSuggestion(e: { mappoolSuggestion: Suggestion }) {
+        setData((prevState) => prevState.filter((suggestion) => suggestion.id !== e.mappoolSuggestion.id));
+    }
 
     function updateSuggestionState(suggestion: Suggestion) {
         // update the state
@@ -182,6 +200,11 @@ export default function SuggestionTable({ mappool, tournament, tags }: Suggestio
                     const [value, setValue] = useState<number>(props.getValue());
                     const [originalValue, setOriginalValue] = useState<number>(props.getValue());
 
+                    useEffect(() => {
+                        setValue(props.getValue());
+                        setOriginalValue(props.getValue());
+                    }, [props]);
+
                     const [error, setError] = useState<string>('');
 
                     useEffect(() => {
@@ -253,6 +276,11 @@ export default function SuggestionTable({ mappool, tournament, tags }: Suggestio
                 cell: (props) => {
                     const [value, setValue] = useState<string>(props.getValue());
                     const [originalValue, setOriginalValue] = useState<string>(props.getValue());
+
+                    useEffect(() => {
+                        setValue(props.getValue());
+                        setOriginalValue(props.getValue());
+                    }, [props]);
 
                     const [error, setError] = useState<string>('');
 
