@@ -4,14 +4,13 @@ import { Suggestion } from '@/types/suggestion';
 import { Tournament } from '@/types/tournament';
 import { router } from '@inertiajs/react';
 import { createColumnHelper, flexRender, getCoreRowModel, useReactTable } from '@tanstack/react-table';
-import { PlusIcon, Trash2Icon, XIcon } from 'lucide-react';
+import { Trash2Icon } from 'lucide-react';
 import { useEffect, useMemo, useState } from 'react';
 import CommentsCell from './comments-cell';
 import { useEcho } from '@laravel/echo-react';
 import { SuggestionComment } from '@/types/comments';
 import { BeatmapTag } from '@/types/beatmaptag';
-import Fuse, { FuseResult } from 'fuse.js/basic';
-import { addTagToSuggestion, removeTagFromSuggestion } from '@/routes/tags';
+import TagsCell from './tags-cell';
 
 interface SuggestionTableProps {
     mappool: Mappool;
@@ -369,121 +368,13 @@ export default function SuggestionTable({ mappool, tournament, tags }: Suggestio
             columnHelper.display({
                 id: 'tags',
                 header: 'Tags',
-                cell: (props) => {
-                    const [suggestionTags, setSuggestionTags] = useState<BeatmapTag[]>(props.row.original.tags);
-                    const [availableTags, setAvailableTags] = useState<BeatmapTag[]>(
-                        tags.filter((tag) => !suggestionTags.some((existingTag) => existingTag.id === tag.id)),
-                    );
-
-                    const [showPopup, setShowPopup] = useState<boolean>(false);
-
-                    const [searchTerm, setSearchTerm] = useState<string>('');
-                    const [foundTags, setFoundTags] = useState<FuseResult<BeatmapTag>[]>([]);
-
-                    const fuse = new Fuse(availableTags, {
-                        keys: ['id', 'name'],
-                        threshold: 0.5,
-                    });
-
-                    useEffect(() => {
-                        setFoundTags(fuse.search(searchTerm));
-                    }, [searchTerm, availableTags]);
-
-                    useEffect(() => {
-                        setAvailableTags(tags.filter((tag) => !suggestionTags.some((existingTag) => existingTag.id === tag.id)));
-                    }, [suggestionTags]);
-
-                    useEffect(() => {
-                        setSuggestionTags(props.row.original.tags);
-                    }, [props.row.original.tags]);
-
-                    function addTag(tag: BeatmapTag) {
-                        setSuggestionTags([...suggestionTags, tag]);
-
-                        router.post(addTagToSuggestion([props.row.original.id, tag]));
-                    }
-
-                    function removeTag(tag: BeatmapTag) {
-                        setSuggestionTags(suggestionTags.filter((obj) => obj.id !== tag.id));
-
-                        router.delete(removeTagFromSuggestion([props.row.original.id, tag]));
-                    }
-                    return (
-                        <div className="relative align-middle">
-                            <div className="flex w-32 flex-wrap gap-1 px-2 py-1">
-                                {suggestionTags.map((tag) => (
-                                    <span
-                                        key={tag.id}
-                                        className="flex rounded-full bg-blue-200 px-1 text-xs"
-                                    >
-                                        <p>{tag.name}</p>
-                                        <button
-                                            className="group ml-0.5 hover:cursor-pointer"
-                                            onClick={() => removeTag(tag)}
-                                        >
-                                            <XIcon
-                                                className="size-2.5 rounded-full bg-black group-hover:bg-gray-500"
-                                                color="#fff"
-                                            />
-                                        </button>
-                                    </span>
-                                ))}
-                            </div>
-                            <button
-                                type="button"
-                                className="group p-2 hover:cursor-pointer"
-                                onClick={() => setShowPopup(true)}
-                            >
-                                <PlusIcon
-                                    className="size-5 w-20 rounded-sm bg-green-400 p-0.5 group-hover:bg-green-500"
-                                    color="#000"
-                                />
-                            </button>
-                            {showPopup && (
-                                <>
-                                    <div
-                                        className="fixed top-0 left-0 z-1 h-full w-full"
-                                        onClick={() => setShowPopup(false)}
-                                    />
-                                    <div className="absolute top-0 left-full z-2 rounded-sm border border-black bg-white">
-                                        <input
-                                            type="text"
-                                            name="tag"
-                                            autoComplete="off"
-                                            className="w-full border-b p-2 focus:outline-0"
-                                            placeholder="Search a tag..."
-                                            value={searchTerm}
-                                            onChange={(e) => setSearchTerm(e.target.value)}
-                                        />
-                                        <div className="max-h-80 min-h-40 w-80 flex-col overflow-y-auto">
-                                            {!searchTerm &&
-                                                availableTags.map((tag) => (
-                                                    <button
-                                                        key={tag.id}
-                                                        className="w-full border px-2 py-1 hover:cursor-pointer hover:bg-black/10"
-                                                        onClick={() => addTag(tag)}
-                                                    >
-                                                        {tag.name}
-                                                    </button>
-                                                ))}
-                                            {searchTerm &&
-                                                foundTags.map((tag) => (
-                                                    <button
-                                                        key={tag.item.id}
-                                                        className="w-full border px-2 py-1 hover:cursor-pointer hover:bg-black/10"
-                                                        onClick={() => addTag(tag.item)}
-                                                    >
-                                                        <p>{tag.item.name}</p>
-                                                    </button>
-                                                ))}
-                                            {searchTerm && foundTags.length === 0 && <p className="leading-40">No tags matched!</p>}
-                                        </div>
-                                    </div>
-                                </>
-                            )}
-                        </div>
-                    );
-                },
+                cell: (props) => (
+                    <TagsCell
+                        suggestionId={props.row.original.id}
+                        originalTags={props.row.original.tags}
+                        tags={tags}
+                    />
+                ),
             }),
             columnHelper.accessor((row) => row.beatmap, {
                 id: 'banner',
