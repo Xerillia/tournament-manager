@@ -364,7 +364,7 @@ export default function SuggestionTable({ mappool, tournament, tags }: Suggestio
             columnHelper.display({
                 id: 'comments',
                 header: 'Comments',
-                cell: (props) => <CommentsCell props={props} />,
+                cell: (props) => <CommentsCell suggestion={props.row.original} />,
             }),
             columnHelper.display({
                 id: 'tags',
