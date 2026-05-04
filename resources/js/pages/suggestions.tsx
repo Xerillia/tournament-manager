@@ -1,7 +1,8 @@
+import AssemblyTable from '@/components/xeril/assembly-table';
 import SuggestionTable from '@/components/xeril/suggestion-table';
 import { store } from '@/routes/tournaments/suggestions';
 import { BeatmapTag } from '@/types/beatmaptag';
-import { Mappool } from '@/types/mappools';
+import { Mappool, Slot } from '@/types/mappools';
 import { Tournament } from '@/types/tournament';
 import { Form, usePage } from '@inertiajs/react';
 
@@ -9,9 +10,10 @@ interface SuggestionsProps {
     tournament: Tournament;
     mappool: Mappool;
     tags: BeatmapTag[];
+    slots: Slot[];
 }
 
-export default function Suggestions({ tournament, mappool, tags }: SuggestionsProps) {
+export default function Suggestions({ tournament, mappool, tags, slots }: SuggestionsProps) {
     const { flash } = usePage().props;
 
     const suggestionPanel = (
@@ -67,11 +69,21 @@ export default function Suggestions({ tournament, mappool, tags }: SuggestionsPr
     return (
         <>
             <div className="grid place-items-center">{suggestionPanel}</div>
-            <SuggestionTable
-                mappool={mappool}
-                tournament={tournament}
-                tags={tags}
-            />
+            <div className="mx-8 my-4 flex gap-4">
+                <div className="max-w-1/2 overflow-auto">
+                    <SuggestionTable
+                        mappool={mappool}
+                        tournament={tournament}
+                        tags={tags}
+                    />
+                </div>
+                <div className="max-w-1/2 overflow-auto">
+                    <AssemblyTable
+                        mappool={mappool}
+                        slots={slots}
+                    />
+                </div>
+            </div>
         </>
     );
 }
