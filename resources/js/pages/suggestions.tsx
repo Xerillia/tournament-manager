@@ -38,6 +38,7 @@ export default function Suggestions({ tournament, mappool, tags }: SuggestionsPr
                         {invalid('beatmap_id') && <p className="text-red-400">{errors.beatmap_id}</p>}
                         <input
                             type="text"
+                            autoComplete="off"
                             name="mods"
                             className="block border-2 border-blue-400 p-2 focus:outline-0"
                             placeholder="Mods"
