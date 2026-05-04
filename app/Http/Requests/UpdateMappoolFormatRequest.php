@@ -27,7 +27,7 @@ class UpdateMappoolFormatRequest extends FormRequest
             'mappools.*.star_rating' => ['required', 'decimal:0,2', 'min:0'],
             'mappools.*.formats.*.id' => ['required', 'integer'],
             'mappools.*.formats.*.slot' => ['required', 'string'],
-            'mappools.*.formats.*.count' => ['required', 'integer'],
+            'mappools.*.formats.*.count' => ['required', 'integer', 'min:1'],
         ];
     }
 }

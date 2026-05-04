@@ -43,7 +43,7 @@ export default function EditMappoolFormat({ tournament_id, mappools }: EditMappo
     }
 
     function addFormat(mappool: Mappool) {
-        mappool.formats = [...mappool.formats, { id: nextFormatId--, mappool_id: mappool.id, slot: '', count: 0 }];
+        mappool.formats = [...mappool.formats, { id: nextFormatId--, mappool_id: mappool.id, slot: '', count: 1 }];
 
         updateOrInsertMappool(mappool);
     }
