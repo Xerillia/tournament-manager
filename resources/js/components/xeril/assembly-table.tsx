@@ -8,6 +8,8 @@ import TagsCell from './tags-cell';
 import { useDragDropMonitor, useDroppable } from '@dnd-kit/react';
 import { router } from '@inertiajs/react';
 import { insertSuggestionToSlot } from '@/routes/suggestion/slot';
+import { Trash2Icon } from 'lucide-react';
+import { removeSuggestionFromSlot } from '@/routes/slot';
 
 interface AssemblyTableProps {
     mappool: Mappool;
@@ -64,6 +66,21 @@ export default function AssemblyTable({ mappool, slots }: AssemblyTableProps) {
                         </div>
                     );
                 },
+            }),
+            columnHelper.display({
+                id: 'removeSuggestion',
+                cell: (props) =>
+                    props.row.original.suggestion ? (
+                        <button
+                            type="button"
+                            className="rounded-md bg-red-200 p-0.5 text-red-800 hover:cursor-pointer hover:bg-red-300"
+                            onClick={() => router.delete(removeSuggestionFromSlot([Number(props.row.original.id)]))}
+                        >
+                            <Trash2Icon />
+                        </button>
+                    ) : (
+                        <></>
+                    ),
             }),
             columnHelper.accessor('slot', {
                 header: 'Slot',
