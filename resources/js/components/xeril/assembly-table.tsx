@@ -96,7 +96,7 @@ export default function AssemblyTable({ mappool, slots }: AssemblyTableProps) {
             columnHelper.display({
                 id: 'comments',
                 header: 'Comments',
-                cell: (props) => <CommentsCell suggestion={props.row.original.suggestion} />,
+                cell: (props) => (props.row.original.suggestion ? <CommentsCell suggestion={props.row.original.suggestion} /> : null),
             }),
             columnHelper.display({
                 id: 'tags',
