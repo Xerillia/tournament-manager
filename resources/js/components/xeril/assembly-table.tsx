@@ -5,6 +5,7 @@ import CommentsCell from './comments-cell';
 import { useEcho } from '@laravel/echo-react';
 import { SuggestionComment } from '@/types/comments';
 import TagsCell from './tags-cell';
+import { useDragDropMonitor, useDroppable } from '@dnd-kit/react';
 
 interface AssemblyTableProps {
     mappool: Mappool;
@@ -35,6 +36,23 @@ export default function AssemblyTable({ mappool, slots }: AssemblyTableProps) {
 
     const columns = useMemo(
         () => [
+            columnHelper.display({
+                id: 'droppable',
+                header: 'Drop Zone',
+                cell: (props) => {
+                    const { ref } = useDroppable({
+                        id: props.row.original.id,
+                    });
+                    return (
+                        <div
+                            ref={ref}
+                            className="p-2"
+                        >
+                            Zone
+                        </div>
+                    );
+                },
+            }),
             columnHelper.accessor('slot', {
                 header: 'Slot',
             }),

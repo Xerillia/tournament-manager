@@ -4,6 +4,7 @@ import { store } from '@/routes/tournaments/suggestions';
 import { BeatmapTag } from '@/types/beatmaptag';
 import { Mappool, Slot } from '@/types/mappools';
 import { Tournament } from '@/types/tournament';
+import { DragDropProvider } from '@dnd-kit/react';
 import { Form, usePage } from '@inertiajs/react';
 
 interface SuggestionsProps {
@@ -69,21 +70,23 @@ export default function Suggestions({ tournament, mappool, tags, slots }: Sugges
     return (
         <>
             <div className="grid place-items-center">{suggestionPanel}</div>
-            <div className="mx-8 my-4 flex gap-4">
-                <div className="max-w-1/2 overflow-auto">
-                    <SuggestionTable
-                        mappool={mappool}
-                        tournament={tournament}
-                        tags={tags}
-                    />
+            <DragDropProvider>
+                <div className="mx-8 my-4 flex gap-4">
+                    <div className="max-w-1/2 overflow-auto">
+                        <SuggestionTable
+                            mappool={mappool}
+                            tournament={tournament}
+                            tags={tags}
+                        />
+                    </div>
+                    <div className="max-w-1/2 overflow-auto">
+                        <AssemblyTable
+                            mappool={mappool}
+                            slots={slots}
+                        />
+                    </div>
                 </div>
-                <div className="max-w-1/2 overflow-auto">
-                    <AssemblyTable
-                        mappool={mappool}
-                        slots={slots}
-                    />
-                </div>
-            </div>
+            </DragDropProvider>
         </>
     );
 }

@@ -11,6 +11,7 @@ import { useEcho } from '@laravel/echo-react';
 import { SuggestionComment } from '@/types/comments';
 import { BeatmapTag } from '@/types/beatmaptag';
 import TagsCell from './tags-cell';
+import { useDraggable } from '@dnd-kit/react';
 
 interface SuggestionTableProps {
     mappool: Mappool;
@@ -427,6 +428,24 @@ export default function SuggestionTable({ mappool, tournament, tags }: Suggestio
                 header: 'OD',
                 cell: (props) => +props.getValue().toFixed(2),
                 size: 75,
+            }),
+            columnHelper.display({
+                id: 'draggable',
+                header: 'Drag Button',
+                cell: (props) => {
+                    const { ref } = useDraggable({
+                        id: props.row.original.id,
+                    });
+
+                    return (
+                        <button
+                            ref={ref}
+                            className="cursor-grab rounded-sm bg-gray-800 p-0.5 text-nowrap text-white"
+                        >
+                            Drag
+                        </button>
+                    );
+                },
             }),
         ],
         [],
