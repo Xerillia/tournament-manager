@@ -29,7 +29,7 @@ Route::middleware('auth')->group(function () {
     });
 
     // suggestions
-    Route::post('/mappools/{mappool}/', [SuggestionController::class, 'addSuggestion'])->name('mappools.addSuggestion');
+    Route::post('/mappools/{mappool}/', [SuggestionController::class, 'addSuggestion'])->middleware([HandlePrecognitiveRequests::class])->name('mappools.addSuggestion');
     Route::put('/suggestions/{suggestion}', [SuggestionController::class, 'updateSuggestion'])->name('suggestions.updateSuggestion');
     Route::delete('/suggestions/{suggestion}', [SuggestionController::class, 'deleteSuggestion'])->name('suggestions.deleteSuggestion');
 
