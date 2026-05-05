@@ -2,12 +2,9 @@
 
 namespace App\Http\Controllers;
 
-use App\Events\MappoolSuggestionTagAdded;
-use App\Events\MappoolSuggestionTagRemoved;
 use App\Http\Requests\StoreSuggestionRequest;
 use App\Http\Requests\UpdateSuggestionRequest;
 use App\Models\Beatmap;
-use App\Models\BeatmapTag;
 use App\Models\Mappool;
 use App\Models\MappoolSuggestion;
 use App\Services\OsuService;
@@ -88,24 +85,6 @@ class SuggestionController extends Controller
     public function deleteSuggestion(MappoolSuggestion $suggestion)
     {
         $suggestion->delete();
-
-        return redirect()->back();
-    }
-
-    public function addTag(MappoolSuggestion $suggestion, BeatmapTag $tag)
-    {
-        $suggestion->tags()->attach($tag->id);
-
-        broadcast(new MappoolSuggestionTagAdded($tag, $suggestion, $suggestion->mappool_id));
-
-        return redirect()->back();
-    }
-
-    public function removeTag(MappoolSuggestion $suggestion, BeatmapTag $tag)
-    {
-        $suggestion->tags()->detach($tag->id);
-
-        broadcast(new MappoolSuggestionTagRemoved($tag, $suggestion, $suggestion->mappool_id));
 
         return redirect()->back();
     }

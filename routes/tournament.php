@@ -4,6 +4,7 @@ use App\Http\Controllers\AssemblyController;
 use App\Http\Controllers\PoolingController;
 use App\Http\Controllers\SuggestionCommentController;
 use App\Http\Controllers\SuggestionController;
+use App\Http\Controllers\SuggestionTagController;
 use App\Http\Controllers\TournamentController;
 use Illuminate\Foundation\Http\Middleware\HandlePrecognitiveRequests;
 use Illuminate\Support\Facades\Route;
@@ -36,11 +37,10 @@ Route::middleware('auth')->group(function () {
     Route::post('/suggestions/{suggestion}/comments', [SuggestionCommentController::class, 'postSuggestionComment'])->name('suggestions.comments.postSuggestionComment');
     Route::put('/suggestions/{suggestion}/comments/{comment:comment_id}', [SuggestionCommentController::class, 'updateSuggestionComment'])->name('suggestions.comments.updateSuggestionComment');
     Route::delete('/comments/{comment:comment_id}', [SuggestionCommentController::class, 'deleteSuggestionComment'])->name('comments.deleteSuggestionComment');
-});
 
-Route::prefix('{suggestion}/tags')->name('tags.')->group(function () {
-    Route::post('/{tag}', [SuggestionController::class, 'addTag'])->name('addTagToSuggestion');
-    Route::delete('/{tag}', [SuggestionController::class, 'removeTag'])->name('removeTagFromSuggestion');
+    // tags
+    Route::post('/suggestions/{suggestion}/tags/{tag}', [SuggestionTagController::class, 'addTagToSuggestion'])->name('suggestions.tags.addTagToSuggestion');
+    Route::delete('/suggestions/{suggestion}/tags/{tag}', [SuggestionTagController::class, 'removeTagFromSuggestion'])->name('suggestions.tags.removeTagFromSuggestion');
 });
 
 Route::post('suggestion/{suggestion}/to/slot/{slot}', [AssemblyController::class, 'insertSuggestionToSlot'])->name('suggestion.slot.insertSuggestionToSlot');
