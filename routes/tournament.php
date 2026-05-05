@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AssemblyController;
 use App\Http\Controllers\PoolingController;
 use App\Http\Controllers\SuggestionCommentController;
 use App\Http\Controllers\SuggestionController;
@@ -42,3 +43,6 @@ Route::prefix('{suggestion}/tags')->name('tags.')->group(function () {
     Route::post('/{tag}', [SuggestionController::class, 'addTag'])->name('addTagToSuggestion');
     Route::delete('/{tag}', [SuggestionController::class, 'removeTag'])->name('removeTagFromSuggestion');
 });
+
+Route::post('suggestion/{suggestion}/to/slot/{slot}', [AssemblyController::class, 'insertSuggestionToSlot'])->name('suggestion.slot.insertSuggestionToSlot');
+Route::delete('slot/{slot}', [AssemblyController::class, 'removeSuggestionFromSlot'])->name('slot.removeSuggestionFromSlot');
