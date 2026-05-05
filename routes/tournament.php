@@ -32,12 +32,10 @@ Route::middleware('auth')->group(function () {
     Route::put('/suggestions/{suggestion}', [SuggestionController::class, 'updateSuggestion'])->name('suggestions.updateSuggestion');
     Route::delete('/suggestions/{suggestion}', [SuggestionController::class, 'deleteSuggestion'])->name('suggestions.deleteSuggestion');
 
-});
-
-Route::prefix('{suggestion}/comments')->name('suggestions.comments.')->group(function () {
-    Route::post('/', [SuggestionCommentController::class, 'store'])->name('store');
-    Route::put('/{comment:comment_id}', [SuggestionCommentController::class, 'update'])->name('updateSuggestionComment');
-    Route::delete('/{comment:comment_id}', [SuggestionCommentController::class, 'destroy'])->name('deleteSuggestionComment');
+    // comments
+    Route::post('/suggestions/{suggestion}/comments', [SuggestionCommentController::class, 'postSuggestionComment'])->name('suggestions.comments.postSuggestionComment');
+    Route::put('/suggestions/{suggestion}/comments/{comment:comment_id}', [SuggestionCommentController::class, 'updateSuggestionComment'])->name('suggestions.comments.updateSuggestionComment');
+    Route::delete('/comments/{comment:comment_id}', [SuggestionCommentController::class, 'deleteSuggestionComment'])->name('comments.deleteSuggestionComment');
 });
 
 Route::prefix('{suggestion}/tags')->name('tags.')->group(function () {

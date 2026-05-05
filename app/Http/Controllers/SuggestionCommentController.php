@@ -14,7 +14,7 @@ class SuggestionCommentController extends Controller
     /**
      * Store a new comment in a suggestion
      */
-    public function store(CommentRequest $request, MappoolSuggestion $suggestion)
+    public function postSuggestionComment(CommentRequest $request, MappoolSuggestion $suggestion)
     {
         $validated = $request->safe()->merge(['user_id' => Auth::id()])->all();
 
@@ -32,7 +32,7 @@ class SuggestionCommentController extends Controller
     /**
      * Update a comment in the suggestion
      */
-    public function update(CommentRequest $request, MappoolSuggestion $suggestion, SuggestionComment $comment)
+    public function updateSuggestionComment(CommentRequest $request, MappoolSuggestion $suggestion, SuggestionComment $comment)
     {
         $validated = $request->validated();
 
@@ -49,9 +49,9 @@ class SuggestionCommentController extends Controller
     /**
      * Delete a comment in the suggestion
      */
-    public function destroy(MappoolSuggestion $suggestion, SuggestionComment $comment)
+    public function deleteSuggestionComment(SuggestionComment $comment)
     {
-        $base = $comment->comment();
+        $base = $comment->comment()->first();
 
         $comment->delete();
 

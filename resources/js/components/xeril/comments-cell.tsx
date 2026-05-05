@@ -1,8 +1,9 @@
 import { useEffect, useRef, useState } from 'react';
-import { store } from '@/actions/App/Http/Controllers/SuggestionCommentController';
+import { postSuggestionComment } from '@/routes/suggestions/comments';
 import { router, usePage } from '@inertiajs/react';
 import { Comment, SuggestionComment } from '@/types/comments';
-import { deleteSuggestionComment, updateSuggestionComment } from '@/routes/suggestions/comments';
+import { updateSuggestionComment } from '@/routes/suggestions/comments';
+import { deleteSuggestionComment } from '@/routes/comments';
 import { CircleXIcon, PencilIcon, ReplyIcon, SendIcon, TrashIcon, XIcon } from 'lucide-react';
 import TextareaAutosize from 'react-textarea-autosize';
 import { Suggestion } from '@/types/suggestion';
@@ -33,7 +34,7 @@ export default function CommentsCell({ suggestion }: CommentCellProps) {
         setReplyingTo(null);
 
         router.post(
-            store(suggestion.id),
+            postSuggestionComment(suggestion.id),
             {
                 message: message,
                 parent_id: replyingTo?.id,
@@ -155,7 +156,7 @@ export default function CommentsCell({ suggestion }: CommentCellProps) {
     }
 
     function handleDelete(comment: Comment) {
-        router.delete(deleteSuggestionComment([suggestion.id, comment.id]));
+        router.delete(deleteSuggestionComment(comment.id));
         textAreaInput.current?.focus();
     }
 
