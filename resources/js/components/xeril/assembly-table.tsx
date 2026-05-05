@@ -1,11 +1,13 @@
 import { Mappool, Slot } from '@/types/mappools';
 import { createColumnHelper, flexRender, getCoreRowModel, useReactTable } from '@tanstack/react-table';
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import CommentsCell from './comments-cell';
 import { useEcho } from '@laravel/echo-react';
 import { SuggestionComment } from '@/types/comments';
 import TagsCell from './tags-cell';
 import { useDragDropMonitor, useDroppable } from '@dnd-kit/react';
+import { router } from '@inertiajs/react';
+import { insertSuggestionToSlot } from '@/routes/suggestion/slot';
 
 interface AssemblyTableProps {
     mappool: Mappool;
@@ -32,6 +34,16 @@ export default function AssemblyTable({ mappool, slots }: AssemblyTableProps) {
 
     useEcho('mappools.' + mappool.id + '.suggestions', 'SuggestionCommentDeleted', (e: { suggestionComment: SuggestionComment }) => {
         console.log(e);
+    });
+
+    useDragDropMonitor({
+        onDragEnd(event) {
+            const { operation } = event;
+
+            if (operation.target) {
+                router.post(insertSuggestionToSlot([Number(operation.source?.id), Number(operation.target.id)]));
+            }
+        },
     });
 
     const columns = useMemo(
@@ -142,6 +154,10 @@ export default function AssemblyTable({ mappool, slots }: AssemblyTableProps) {
     );
 
     const [data, setData] = useState<Slot[]>(slots);
+
+    useEffect(() => {
+        setData(slots);
+    }, [slots]);
 
     const table = useReactTable({
         data,
