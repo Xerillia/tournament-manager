@@ -5,14 +5,15 @@ import { Comment, SuggestionComment } from '@/types/comments';
 import { deleteSuggestionComment, updateSuggestionComment } from '@/routes/suggestions/comments';
 import { CircleXIcon, PencilIcon, ReplyIcon, SendIcon, TrashIcon, XIcon } from 'lucide-react';
 import TextareaAutosize from 'react-textarea-autosize';
-import { CellContext } from '@tanstack/react-table';
 import { Suggestion } from '@/types/suggestion';
 
 interface CommentCellProps {
-    props: CellContext<Suggestion, unknown>;
+    suggestion: Suggestion;
 }
 
-export default function CommentsCell({ props }: CommentCellProps) {
+export default function CommentsCell({ suggestion }: CommentCellProps) {
+    if (!suggestion) return;
+
     const { auth } = usePage().props;
 
     const [show, setShow] = useState<boolean>(false);
@@ -32,7 +33,7 @@ export default function CommentsCell({ props }: CommentCellProps) {
         setReplyingTo(null);
 
         router.post(
-            store(props.row.original.id),
+            store(suggestion.id),
             {
                 message: message,
                 parent_id: replyingTo?.id,
@@ -119,7 +120,7 @@ export default function CommentsCell({ props }: CommentCellProps) {
 
     function handleUpdate() {
         resetEdit();
-        router.put(updateSuggestionComment([props.row.original.id, editId]), {
+        router.put(updateSuggestionComment([suggestion.id, editId]), {
             message: editMessage,
         });
         textAreaInput.current?.focus();
@@ -154,7 +155,7 @@ export default function CommentsCell({ props }: CommentCellProps) {
     }
 
     function handleDelete(comment: Comment) {
-        router.delete(deleteSuggestionComment([props.row.original.id, comment.id]));
+        router.delete(deleteSuggestionComment([suggestion.id, comment.id]));
         textAreaInput.current?.focus();
     }
 
@@ -175,7 +176,7 @@ export default function CommentsCell({ props }: CommentCellProps) {
                 onClick={() => setShow(true)}
             >
                 <span className="whitespace-nowrap">
-                    {props.row.original.comments.length} comment{props.row.original.comments.length !== 1 ? 's' : ''}
+                    {suggestion.comments.length} comment{suggestion.comments.length !== 1 ? 's' : ''}
                 </span>
             </button>
             {show && (
@@ -187,7 +188,7 @@ export default function CommentsCell({ props }: CommentCellProps) {
                     <div className="absolute top-1/2 left-1/2 z-2 flex w-180 -translate-1/2 flex-col rounded-md border border-gray-600 bg-white">
                         <div className="relative flex items-center justify-center border-b py-2">
                             <h2 className="text-2xl font-bold">
-                                Comments in: {props.row.original.beatmap.beatmap_id} - {props.row.original.beatmap.mods}
+                                Comments in: {suggestion.beatmap.beatmap_id} - {suggestion.beatmap.mods}
                             </h2>
                             <button
                                 type="button"
@@ -198,8 +199,8 @@ export default function CommentsCell({ props }: CommentCellProps) {
                             </button>
                         </div>
                         <div className="max-h-192 overflow-y-auto">
-                            {props.row.original.comments.length > 0 ? (
-                                props.row.original.comments.map((value) => {
+                            {suggestion.comments.length > 0 ? (
+                                suggestion.comments.map((value) => {
                                     const comment = value.comment;
                                     const parent = value.parent?.comment;
                                     return (
@@ -353,7 +354,7 @@ export default function CommentsCell({ props }: CommentCellProps) {
                                 />
                                 <TextareaAutosize
                                     ref={textAreaInput}
-                                    name={`suggestions[${props.row.original.id}][message]`}
+                                    name={`suggestions[${suggestion.id}][message]`}
                                     value={message}
                                     placeholder="enter a comment..."
                                     className="flex-1 resize-none self-center overflow-y-auto focus:outline-0"

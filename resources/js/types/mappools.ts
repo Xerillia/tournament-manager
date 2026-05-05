@@ -14,4 +14,12 @@ export type Format = {
     mappool_id: number;
     slot: string;
     count: number;
+    slots?: Slot[];
+};
+
+export type Slot = {
+    id: number;
+    mappool_format_id: number;
+    suggestion: Suggestion;
+    slot: string;
 };

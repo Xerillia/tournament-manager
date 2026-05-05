@@ -23,27 +23,31 @@ export default function EditMappoolFormat({ tournament_id, mappools }: EditMappo
         setOriginalMappools(cloneDeep(mappools));
     }
 
-    const indexOf = (mappool: Mappool) => getMappools.findIndex((obj) => obj.id === mappool.id);
-    const filteredOut = (mappool: Mappool) => getMappools.filter((obj) => obj.id !== mappool.id);
-
     const addRound = () => setMappools([...getMappools, { id: nextMappoolId--, round: '', formats: [], suggestions: [], slug: '', star_rating: 0 }]);
 
     function removeMappool(mappool: Mappool) {
-        setMappools(filteredOut(mappool));
+        setMappools((prevState) => {
+            const filtered = prevState.filter((obj) => obj.id !== mappool.id);
+
+            return filtered;
+        });
     }
 
-    function updateOrInsertMappool(mappool: Mappool, index = indexOf(mappool)) {
-        const filtered = filteredOut(mappool);
+    function updateOrInsertMappool(mappool: Mappool) {
+        setMappools((prevState) => {
+            const index = prevState.findIndex((obj) => obj.id === mappool.id);
+            const filtered = prevState.filter((obj) => obj.id !== mappool.id);
 
-        setMappools([
-            ...filtered.slice(0, index), // elements before index
-            mappool,
-            ...filtered.slice(index), // elements after index
-        ]);
+            return [
+                ...filtered.slice(0, index), // elements before index
+                mappool,
+                ...filtered.slice(index), // elements after index
+            ];
+        });
     }
 
     function addFormat(mappool: Mappool) {
-        mappool.formats = [...mappool.formats, { id: nextFormatId--, mappool_id: mappool.id, slot: '', count: 0 }];
+        mappool.formats = [...mappool.formats, { id: nextFormatId--, mappool_id: mappool.id, slot: '', count: 1 }];
 
         updateOrInsertMappool(mappool);
     }
