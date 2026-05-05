@@ -1,5 +1,5 @@
 import { Mode, ModeUtils } from '@/enums';
-import { update } from '@/routes/tournaments';
+import { updateTournament } from '@/routes/tournaments';
 import { Link, Tournament } from '@/types/tournament';
 import { Form, Head } from '@inertiajs/react';
 import { useState } from 'react';
@@ -82,7 +82,7 @@ export default function EditTournament({ tournament }: EditTournamentProps) {
             <Head title="Edit Tournament" />
             <h1 className="text-4xl font-bold">Edit a Tournament</h1>
             <Form
-                action={update(tournament.id)}
+                action={updateTournament(tournament.id)}
                 method="PUT"
                 className="m-4 flex flex-col"
                 disableWhileProcessing

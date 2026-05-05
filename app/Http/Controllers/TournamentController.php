@@ -13,17 +13,9 @@ use Inertia\Inertia;
 class TournamentController extends Controller
 {
     /**
-     * Display a listing of the resource.
-     */
-    public function index()
-    {
-        //
-    }
-
-    /**
      * Show the form for creating a new resource.
      */
-    public function create()
+    public function createTournament()
     {
         return Inertia::render('create-tournament');
     }
@@ -31,7 +23,7 @@ class TournamentController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(StoreTournamentRequest $request): RedirectResponse
+    public function storeTournament(StoreTournamentRequest $request): RedirectResponse
     {
         $user_id = ['user_id' => Auth::id()];
 
@@ -67,7 +59,7 @@ class TournamentController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(Tournament $tournament)
+    public function showTournament(Tournament $tournament)
     {
         $tournament->load(['host', 'links', 'mappools.formats']);
 
@@ -79,7 +71,7 @@ class TournamentController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(Tournament $tournament)
+    public function editTournament(Tournament $tournament)
     {
         $tournament->load('links');
 
@@ -91,7 +83,7 @@ class TournamentController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(UpdateTournamentRequest $request, Tournament $tournament)
+    public function updateTournament(UpdateTournamentRequest $request, Tournament $tournament)
     {
         $tournament->update($request->validated());
 
@@ -125,7 +117,7 @@ class TournamentController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Tournament $tournament)
+    public function deleteTournament(Tournament $tournament)
     {
         $tournament->delete(); // soft deleted
 

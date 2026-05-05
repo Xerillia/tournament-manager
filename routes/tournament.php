@@ -10,12 +10,12 @@ use Illuminate\Support\Facades\Route;
 
 Route::prefix('tournaments')->name('tournaments.')->group(function () {
     Route::middleware('auth')->group(function () {
-        Route::get('/create', [TournamentController::class, 'create'])->name('create');
-        Route::post('/', [TournamentController::class, 'store'])->middleware([HandlePrecognitiveRequests::class])->name('store');
-        Route::get('/{tournament}', [TournamentController::class, 'show'])->name('show');
-        Route::get('/{tournament}/edit', [TournamentController::class, 'edit'])->name('edit');
-        Route::put('/{tournament}', [TournamentController::class, 'update'])->middleware([HandlePrecognitiveRequests::class])->name('update');
-        Route::delete('/{tournament}', [TournamentController::class, 'destroy'])->name('destroy');
+        Route::get('/create', [TournamentController::class, 'createTournament'])->name('createTournament');
+        Route::post('/', [TournamentController::class, 'storeTournament'])->middleware([HandlePrecognitiveRequests::class])->name('storeTournament');
+        Route::get('/{tournament}', [TournamentController::class, 'showTournament'])->name('showTournament');
+        Route::get('/{tournament}/edit', [TournamentController::class, 'editTournament'])->name('editTournament');
+        Route::put('/{tournament}', [TournamentController::class, 'updateTournament'])->middleware([HandlePrecognitiveRequests::class])->name('updateTournament');
+        Route::delete('/{tournament}', [TournamentController::class, 'deleteTournament'])->name('deleteTournament');
 
         Route::prefix('{tournament}/mappools/{mappool}/suggestions')->name('suggestions.')->group(function () {
             Route::get('/', [SuggestionController::class, 'index'])->name('index');
