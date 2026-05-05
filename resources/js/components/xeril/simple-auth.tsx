@@ -1,6 +1,6 @@
 import { login, logout } from '@/routes/osu';
 import { link, unlink } from '@/routes/discord';
-import { create } from '@/routes/tournaments';
+import { createTournament } from '@/routes/tournaments';
 import { Link } from '@inertiajs/react';
 import { User } from '@/types';
 
@@ -11,7 +11,10 @@ export default function SimpleAuth({ user }: SimpleAuthProps) {
     return (
         <>
             {!user && (
-                <Link href={login()} className="bg-green-200 p-2">
+                <Link
+                    href={login()}
+                    className="bg-green-200 p-2"
+                >
                     Login Osu
                 </Link>
             )}
@@ -19,18 +22,13 @@ export default function SimpleAuth({ user }: SimpleAuthProps) {
                 <>
                     <div className="mb-4">
                         <p>
-                            Logged in user:{' '}
-                            <span className="font-bold">{user.username}</span>
+                            Logged in user: <span className="font-bold">{user.username}</span>
                         </p>
                         <p>
-                            User Country:{' '}
-                            <span className="font-bold">
-                                {user.country_name}
-                            </span>
+                            User Country: <span className="font-bold">{user.country_name}</span>
                         </p>
                         <p>
-                            Linked Discord username:{' '}
-                            <span className="font-bold">{user.discord}</span>
+                            Linked Discord username: <span className="font-bold">{user.discord}</span>
                         </p>
                     </div>
                     <Link
@@ -59,7 +57,7 @@ export default function SimpleAuth({ user }: SimpleAuthProps) {
                     )}
                     <div className="mt-4">
                         <Link
-                            href={create()}
+                            href={createTournament()}
                             className="bg-orange-200 p-2 hover:bg-orange-300"
                         >
                             Create Tournament

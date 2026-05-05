@@ -1,6 +1,6 @@
 import AssemblyTable from '@/components/xeril/assembly-table';
 import SuggestionTable from '@/components/xeril/suggestion-table';
-import { store } from '@/routes/tournaments/suggestions';
+import { addSuggestion } from '@/routes/mappools';
 import { BeatmapTag } from '@/types/beatmaptag';
 import { Mappool, Slot } from '@/types/mappools';
 import { Tournament } from '@/types/tournament';
@@ -20,15 +20,14 @@ export default function Suggestions({ tournament, mappool, tags, slots }: Sugges
     const suggestionPanel = (
         <>
             <Form
-                action={store([tournament, mappool])}
-                method="post"
+                action={addSuggestion(mappool)}
                 resetOnSuccess
                 transform={(data) => ({
                     ...data,
                     mods: data.mods.replace(/\s+/g, ''),
                 })}
             >
-                {({ errors, invalid, validate }) => (
+                {({ errors, invalid, validate, processing }) => (
                     <>
                         <input
                             type="number"
@@ -57,6 +56,7 @@ export default function Suggestions({ tournament, mappool, tags, slots }: Sugges
                         <button
                             type="submit"
                             className="block bg-green-300 p-2 hover:cursor-pointer hover:bg-green-400"
+                            disabled={processing}
                         >
                             Submit
                         </button>
@@ -75,7 +75,6 @@ export default function Suggestions({ tournament, mappool, tags, slots }: Sugges
                     <div className="max-w-1/2 overflow-auto">
                         <SuggestionTable
                             mappool={mappool}
-                            tournament={tournament}
                             tags={tags}
                         />
                     </div>

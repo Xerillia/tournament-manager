@@ -1,4 +1,4 @@
-import { addTagToSuggestion, removeTagFromSuggestion } from '@/routes/tags';
+import { addTagToSuggestion, removeTagFromSuggestion } from '@/routes/suggestions/tags';
 import { BeatmapTag } from '@/types/beatmaptag';
 import Fuse, { FuseResult } from 'fuse.js';
 import { useEffect, useState } from 'react';

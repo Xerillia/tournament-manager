@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\DeleteMappoolFormatRequest;
 use App\Http\Requests\UpdateMappoolFormatRequest;
+use App\Models\BeatmapTag;
 use App\Models\Mappool;
 use App\Models\MappoolFormat;
 use App\Models\Tournament;
@@ -13,6 +14,32 @@ use Inertia\Inertia;
 
 class PoolingController extends Controller
 {
+    public function showPoolingPanel(Tournament $tournament, Mappool $mappool)
+    {
+        $mappool->load([
+            'suggestions.beatmap',
+            'suggestions.user',
+            'suggestions.tags',
+            'suggestions.comments.comment.user',
+            'suggestions.comments.parent.comment.user',
+            'formats.slots.suggestion.beatmap',
+            'formats.slots.suggestion.tags',
+            'formats.slots.suggestion.comments.comment.user',
+            'formats.slots.suggestion.comments.parent.comment.user',
+        ]);
+
+        $slots = collect($mappool->formats)->flatMap(fn ($item) => $item['slots']);
+
+        $tags = BeatmapTag::all();
+
+        return Inertia::render('suggestions', [
+            'tournament' => $tournament,
+            'mappool' => $mappool,
+            'tags' => $tags,
+            'slots' => $slots,
+        ]);
+    }
+
     public function index(Tournament $tournament)
     {
         $tournament->load(['mappools.formats']);

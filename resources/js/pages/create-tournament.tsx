@@ -1,5 +1,5 @@
 import { Mode, ModeUtils } from '@/enums';
-import { store } from '@/routes/tournaments';
+import { storeTournament } from '@/routes/tournaments';
 import { Link } from '@/types/tournament';
 import { Form, Head } from '@inertiajs/react';
 import { useState } from 'react';
@@ -78,7 +78,7 @@ export default function CreateTournament() {
             <Head title="Create Tournament" />
             <h1 className="text-4xl font-bold">Create a Tournament</h1>
             <Form
-                action={store()}
+                action={storeTournament()}
                 method="POST"
                 className="m-4 flex flex-col"
                 disableWhileProcessing
