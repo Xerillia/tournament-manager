@@ -75,7 +75,6 @@ export default function Suggestions({ tournament, mappool, tags, slots }: Sugges
                     <div className="max-w-1/2 overflow-auto">
                         <SuggestionTable
                             mappool={mappool}
-                            tournament={tournament}
                             tags={tags}
                         />
                     </div>

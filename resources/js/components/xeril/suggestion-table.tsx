@@ -1,7 +1,6 @@
 import { deleteSuggestion, updateSuggestion } from '@/routes/suggestions';
 import { Mappool } from '@/types/mappools';
 import { Suggestion } from '@/types/suggestion';
-import { Tournament } from '@/types/tournament';
 import { router } from '@inertiajs/react';
 import { createColumnHelper, flexRender, getCoreRowModel, useReactTable } from '@tanstack/react-table';
 import { Trash2Icon } from 'lucide-react';
@@ -15,7 +14,6 @@ import { useDraggable } from '@dnd-kit/react';
 
 interface SuggestionTableProps {
     mappool: Mappool;
-    tournament: Tournament;
     tags: BeatmapTag[];
 }
 
@@ -32,7 +30,7 @@ function secondToTime(num: number) {
 
 const columnHelper = createColumnHelper<Suggestion>();
 
-export default function SuggestionTable({ mappool, tournament, tags }: SuggestionTableProps) {
+export default function SuggestionTable({ mappool, tags }: SuggestionTableProps) {
     useEcho('mappools.' + mappool.id + '.suggestions', 'MappoolSuggestionCreated', (e: { mappoolSuggestion: Suggestion }) => {
         addSuggestion(e);
     });
