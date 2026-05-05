@@ -7,9 +7,8 @@ import { SuggestionComment } from '@/types/comments';
 import TagsCell from './tags-cell';
 import { useDragDropMonitor, useDroppable } from '@dnd-kit/react';
 import { router } from '@inertiajs/react';
-import { insertSuggestionToSlot } from '@/routes/suggestion/slot';
 import { Trash2Icon } from 'lucide-react';
-import { removeSuggestionFromSlot } from '@/routes/slot';
+import { insertSuggestionToSlot, removeSuggestionFromSlot } from '@/routes/slots';
 
 interface AssemblyTableProps {
     mappool: Mappool;
@@ -41,9 +40,10 @@ export default function AssemblyTable({ mappool, slots }: AssemblyTableProps) {
     useDragDropMonitor({
         onDragEnd(event) {
             const { operation } = event;
-
             if (operation.target) {
-                router.post(insertSuggestionToSlot([Number(operation.source?.id), Number(operation.target.id)]));
+                const suggestion = Number(operation.source?.id);
+                const slot = Number(operation.target.id);
+                router.post(insertSuggestionToSlot({ suggestion: suggestion, slot: slot }));
             }
         },
     });

@@ -41,7 +41,8 @@ Route::middleware('auth')->group(function () {
     // tags
     Route::post('/suggestions/{suggestion}/tags/{tag}', [SuggestionTagController::class, 'addTagToSuggestion'])->name('suggestions.tags.addTagToSuggestion');
     Route::delete('/suggestions/{suggestion}/tags/{tag}', [SuggestionTagController::class, 'removeTagFromSuggestion'])->name('suggestions.tags.removeTagFromSuggestion');
-});
 
-Route::post('suggestion/{suggestion}/to/slot/{slot}', [AssemblyController::class, 'insertSuggestionToSlot'])->name('suggestion.slot.insertSuggestionToSlot');
-Route::delete('slot/{slot}', [AssemblyController::class, 'removeSuggestionFromSlot'])->name('slot.removeSuggestionFromSlot');
+    // assembly
+    Route::post('/suggestions/{suggestion}/slots/{slot}', [AssemblyController::class, 'insertSuggestionToSlot'])->name('slots.insertSuggestionToSlot');
+    Route::delete('/slots/{slot}', [AssemblyController::class, 'removeSuggestionFromSlot'])->name('slots.removeSuggestionFromSlot');
+});
