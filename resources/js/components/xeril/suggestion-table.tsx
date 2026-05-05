@@ -1,4 +1,4 @@
-import { destroy, update } from '@/routes/tournaments/suggestions';
+import { deleteSuggestion, updateSuggestion } from '@/routes/suggestions';
 import { Mappool } from '@/types/mappools';
 import { Suggestion } from '@/types/suggestion';
 import { Tournament } from '@/types/tournament';
@@ -188,7 +188,7 @@ export default function SuggestionTable({ mappool, tournament, tags }: Suggestio
                     <button
                         type="button"
                         className="rounded-md bg-red-200 p-1 align-middle hover:cursor-pointer hover:bg-red-300"
-                        onClick={() => router.delete(destroy([tournament, mappool, props.row.original.id]))}
+                        onClick={() => router.delete(deleteSuggestion(props.row.original.id))}
                     >
                         <Trash2Icon className="hover:text-700 text-red-800" />
                     </button>
@@ -231,7 +231,7 @@ export default function SuggestionTable({ mappool, tournament, tags }: Suggestio
                         // route param
                         const suggestion_id = props.row.original.id;
 
-                        router.put(update([tournament, mappool, suggestion_id]), data, {
+                        router.put(updateSuggestion(suggestion_id), data, {
                             onError: (error) => {
                                 setError(error.beatmap_not_found);
                                 setValue(originalValue);
@@ -308,7 +308,7 @@ export default function SuggestionTable({ mappool, tournament, tags }: Suggestio
                         // route param
                         const suggestion_id = props.row.original.id;
 
-                        router.put(update([tournament, mappool, suggestion_id]), data, {
+                        router.put(updateSuggestion(suggestion_id), data, {
                             onError: (error) => {
                                 setError(error.mods);
                                 setValue(originalValue);

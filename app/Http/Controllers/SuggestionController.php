@@ -10,40 +10,12 @@ use App\Models\Beatmap;
 use App\Models\BeatmapTag;
 use App\Models\Mappool;
 use App\Models\MappoolSuggestion;
-use App\Models\Tournament;
 use App\Services\OsuService;
 use Illuminate\Support\Facades\Auth;
-use Inertia\Inertia;
 
 class SuggestionController extends Controller
 {
-    public function index(Tournament $tournament, Mappool $mappool)
-    {
-        $mappool->load([
-            'suggestions.beatmap',
-            'suggestions.user',
-            'suggestions.tags',
-            'suggestions.comments.comment.user',
-            'suggestions.comments.parent.comment.user',
-            'formats.slots.suggestion.beatmap',
-            'formats.slots.suggestion.tags',
-            'formats.slots.suggestion.comments.comment.user',
-            'formats.slots.suggestion.comments.parent.comment.user',
-        ]);
-
-        $slots = collect($mappool->formats)->flatMap(fn ($item) => $item['slots']);
-
-        $tags = BeatmapTag::all();
-
-        return Inertia::render('suggestions', [
-            'tournament' => $tournament,
-            'mappool' => $mappool,
-            'tags' => $tags,
-            'slots' => $slots,
-        ]);
-    }
-
-    public function store(StoreSuggestionRequest $request, Tournament $tournament, Mappool $mappool)
+    public function addSuggestion(StoreSuggestionRequest $request, Mappool $mappool)
     {
         // validating
         $validated = $request->validated();
@@ -79,7 +51,7 @@ class SuggestionController extends Controller
         return redirect()->back();
     }
 
-    public function update(UpdateSuggestionRequest $request, Tournament $tournament, Mappool $mappool, MappoolSuggestion $suggestion)
+    public function updateSuggestion(UpdateSuggestionRequest $request, MappoolSuggestion $suggestion)
     {
         // validating
         $validated = $request->validated();
@@ -113,7 +85,7 @@ class SuggestionController extends Controller
         return redirect()->back();
     }
 
-    public function destroy(Tournament $tournament, Mappool $mappool, MappoolSuggestion $suggestion)
+    public function deleteSuggestion(MappoolSuggestion $suggestion)
     {
         $suggestion->delete();
 

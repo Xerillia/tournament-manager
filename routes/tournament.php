@@ -8,8 +8,9 @@ use App\Http\Controllers\TournamentController;
 use Illuminate\Foundation\Http\Middleware\HandlePrecognitiveRequests;
 use Illuminate\Support\Facades\Route;
 
-Route::prefix('tournaments')->name('tournaments.')->group(function () {
-    Route::middleware('auth')->group(function () {
+Route::middleware('auth')->group(function () {
+    Route::prefix('tournaments')->name('tournaments.')->group(function () {
+
         Route::get('/create', [TournamentController::class, 'createTournament'])->name('createTournament');
         Route::post('/', [TournamentController::class, 'storeTournament'])->middleware([HandlePrecognitiveRequests::class])->name('storeTournament');
         Route::get('/{tournament}', [TournamentController::class, 'showTournament'])->name('showTournament');
@@ -17,13 +18,7 @@ Route::prefix('tournaments')->name('tournaments.')->group(function () {
         Route::put('/{tournament}', [TournamentController::class, 'updateTournament'])->middleware([HandlePrecognitiveRequests::class])->name('updateTournament');
         Route::delete('/{tournament}', [TournamentController::class, 'deleteTournament'])->name('deleteTournament');
 
-        Route::prefix('{tournament}/mappools/{mappool}/suggestions')->name('suggestions.')->group(function () {
-            Route::get('/', [SuggestionController::class, 'index'])->name('index');
-            Route::post('/', [SuggestionController::class, 'store'])->middleware([HandlePrecognitiveRequests::class])->name('store');
-            Route::put('/{suggestion}', [SuggestionController::class, 'update'])->name('update');
-            Route::delete('/{suggestion}', [SuggestionController::class, 'destroy'])->name('destroy');
-
-        });
+        Route::get('/{tournament}/mappools/{mappool}/panel', [PoolingController::class, 'showPoolingPanel'])->name('mappools.showPoolingPanel');
 
         Route::prefix('{tournament}/pooling/')->name('pooling.')->group(function () {
             Route::get('/', [PoolingController::class, 'index'])->name('index');
@@ -31,6 +26,12 @@ Route::prefix('tournaments')->name('tournaments.')->group(function () {
             Route::delete('/', [PoolingController::class, 'destroy'])->name('destroy');
         });
     });
+
+    // suggestions
+    Route::post('/mappools/{mappool}/', [SuggestionController::class, 'addSuggestion'])->name('mappools.addSuggestion');
+    Route::put('/suggestions/{suggestion}', [SuggestionController::class, 'updateSuggestion'])->name('suggestions.updateSuggestion');
+    Route::delete('/suggestions/{suggestion}', [SuggestionController::class, 'deleteSuggestion'])->name('suggestions.deleteSuggestion');
+
 });
 
 Route::prefix('{suggestion}/comments')->name('suggestions.comments.')->group(function () {

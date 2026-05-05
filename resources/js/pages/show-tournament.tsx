@@ -1,5 +1,6 @@
+import { showPoolingPanel } from '@/routes/tournaments/mappools';
 import { Tournament } from '@/types/tournament';
-import { Head } from '@inertiajs/react';
+import { Head, Link } from '@inertiajs/react';
 
 interface ShowTournamentProps {
     tournament: Tournament;
@@ -14,6 +15,16 @@ export default function ShowTournament({ tournament }: ShowTournamentProps) {
         >
             {link.label} - {link.url}
         </a>
+    ));
+
+    const mappools = tournament.mappools.map((mappool) => (
+        <Link
+            key={mappool.id}
+            href={showPoolingPanel([tournament, mappool])}
+            className="rounded-md bg-purple-300 p-2 hover:cursor-pointer hover:bg-purple-200"
+        >
+            {mappool.round}
+        </Link>
     ));
     return (
         <>
@@ -31,6 +42,8 @@ export default function ShowTournament({ tournament }: ShowTournamentProps) {
             <p>Status: {tournament.status}</p>
             <p>Links:</p>
             {linkItems}
+
+            <div className="mt-2 flex gap-2">{mappools}</div>
         </>
     );
 }
