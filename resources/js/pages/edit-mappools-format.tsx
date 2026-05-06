@@ -51,7 +51,7 @@ export default function EditMappoolFormat({ tournament, mappools }: EditMappoolF
     }
 
     function addFormat(mappool: Mappool) {
-        mappool.formats = [...mappool.formats, { id: nextFormatId--, mappool_id: mappool.id, slot: '', count: 1 }];
+        mappool.formats = [...mappool.formats, { id: nextFormatId--, mappool_id: mappool.id, slot: '', count: 1, is_freemod: false }];
 
         updateOrInsertMappool(mappool);
     }
@@ -344,6 +344,7 @@ export default function EditMappoolFormat({ tournament, mappools }: EditMappoolF
                                                     type="checkbox"
                                                     name={'mappools[' + mappool.id + '][formats][' + format.id + '][is_freemod]'}
                                                     className="size-5"
+                                                    defaultChecked={format.is_freemod}
                                                     value="1"
                                                     disabled={!editMode}
                                                 />

@@ -17,6 +17,7 @@ export type Format = {
     slot: string;
     count: number;
     slots?: Slot[];
+    is_freemod: boolean;
 };
 
 export type Slot = {
