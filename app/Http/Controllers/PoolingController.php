@@ -3,15 +3,16 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\DeleteMappoolFormatRequest;
+use App\Http\Requests\UpdateFreemodRulesRequest;
 use App\Http\Requests\UpdateMappoolFormatRequest;
 use App\Models\BeatmapTag;
+use App\Models\FreemodRule;
 use App\Models\Mappool;
 use App\Models\MappoolFormat;
 use App\Models\Tournament;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
 use Inertia\Inertia;
-use Symfony\Component\HttpFoundation\Request;
 
 class PoolingController extends Controller
 {
@@ -127,8 +128,33 @@ class PoolingController extends Controller
     /**
      * Update the freemod rules
      */
-    public function updateFreemodRules(Request $request)
+    public function updateFreemodRules(UpdateFreemodRulesRequest $request)
     {
-        dd($request);
+        $validated = $request->validated();
+        if (! Arr::has($validated, 'payload')) {
+            return redirect()->back()->withErrors(['empty_payload' => 'Freemod Rules Payload is missing!']);
+        }
+
+        foreach ($request->validated()['payload'] as $data) {
+            foreach ($data['rules'] as $rule) {
+                if (! $rule['allowed']) {
+                    FreemodRule::whereMappoolId($data['mappool_id'])->whereMod($rule['mod'])->delete();
+
+                    continue;
+                }
+
+                FreemodRule::updateOrCreate(
+                    [
+                        'mappool_id' => $data['mappool_id'],
+                        'mod' => $rule['mod'],
+                    ],
+                    [
+                        'allowed' => $rule['allowed'],
+                        'multiplier' => $rule['multiplier'],
+                    ]);
+            }
+        }
+
+        return redirect()->back();
     }
 }
