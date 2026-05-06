@@ -31,7 +31,7 @@ class MappoolSlot extends Model
     /**
      * Get the freemod slot of this slot if any (0...N relation)
      */
-    public function freemod_rules(): HasMany
+    public function freemodRules(): HasMany
     {
         return $this->hasMany(FreemodSlot::class);
     }

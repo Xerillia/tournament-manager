@@ -6,9 +6,10 @@ import { useEcho } from '@laravel/echo-react';
 import { SuggestionComment } from '@/types/comments';
 import TagsCell from './tags-cell';
 import { useDragDropMonitor, useDroppable } from '@dnd-kit/react';
-import { router } from '@inertiajs/react';
+import { Form, router } from '@inertiajs/react';
 import { Trash2Icon } from 'lucide-react';
 import { insertSuggestionToSlot, removeSuggestionFromSlot } from '@/routes/slots';
+import { overrideFreemodRules } from '@/routes/tournaments/pooling/slots/override';
 
 interface AssemblyTableProps {
     mappool: Mappool;
@@ -103,37 +104,59 @@ export default function AssemblyTable({ mappool, slots }: AssemblyTableProps) {
                             <>
                                 {showModal && (
                                     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/20">
-                                        <div className="w-xl rounded-md bg-white shadow-md">
+                                        <Form
+                                            className="w-xl rounded-md bg-white shadow-md"
+                                            action={overrideFreemodRules(props.row.original.id)}
+                                            method="POST"
+                                            onSuccess={() => setShowModal(false)}
+                                        >
                                             <h1 className="mx-4 border-b py-4 pb-2 text-2xl font-bold">Override Freemod Multipliers</h1>
                                             <div className="flex flex-col">
                                                 <div className="flex text-lg font-semibold">
                                                     <p className="flex-1">Mod</p>
                                                     <p className="flex-1">Multiplier</p>
                                                 </div>
-                                                {mappool.freemod_rules.map((rule) => (
-                                                    <div
-                                                        key={rule.id}
-                                                        className="flex items-center"
-                                                    >
-                                                        <p className="flex-1">{rule.mod}</p>
-                                                        <input
-                                                            type="number"
-                                                            defaultValue={rule.multiplier}
-                                                            className="flex-1 py-2 text-center focus:outline-0"
-                                                        />
-                                                    </div>
-                                                ))}
+                                                {mappool.freemod_rules.map((rule) => {
+                                                    const overriddenRules = props.row.original.freemod_rules?.find((override) => override.mod === rule.mod);
+
+                                                    return (
+                                                        <div
+                                                            key={rule.id}
+                                                            className="flex items-center"
+                                                        >
+                                                            <input
+                                                                type="hidden"
+                                                                name={`rules[${rule.id}][mod]`}
+                                                                value={rule.mod}
+                                                            />
+                                                            <div className="flex-1">{rule.mod}</div>
+                                                            <input
+                                                                type="number"
+                                                                name={`rules[${rule.id}][multiplier]`}
+                                                                defaultValue={overriddenRules?.multiplier ?? rule.multiplier}
+                                                                step={0.01}
+                                                                className="flex-1 py-2 text-center focus:outline-0"
+                                                            />
+                                                        </div>
+                                                    );
+                                                })}
                                             </div>
                                             <div className="flex h-10">
-                                                <button className="flex-1 cursor-pointer rounded-bl bg-green-300 hover:bg-green-200">Override</button>
                                                 <button
+                                                    type="submit"
+                                                    className="flex-1 cursor-pointer rounded-bl bg-green-300 hover:bg-green-200"
+                                                >
+                                                    Override
+                                                </button>
+                                                <button
+                                                    type="button"
                                                     className="flex-1 cursor-pointer rounded-br bg-red-300 hover:bg-red-200"
                                                     onClick={() => setShowModal(false)}
                                                 >
                                                     Cancel
                                                 </button>
                                             </div>
-                                        </div>
+                                        </Form>
                                     </div>
                                 )}
                                 <button

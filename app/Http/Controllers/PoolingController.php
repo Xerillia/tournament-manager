@@ -3,12 +3,15 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\DeleteMappoolFormatRequest;
+use App\Http\Requests\OverrideFreemodRulesRequest;
 use App\Http\Requests\UpdateFreemodRulesRequest;
 use App\Http\Requests\UpdateMappoolFormatRequest;
 use App\Models\BeatmapTag;
 use App\Models\FreemodRule;
+use App\Models\FreemodSlot;
 use App\Models\Mappool;
 use App\Models\MappoolFormat;
+use App\Models\MappoolSlot;
 use App\Models\Tournament;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
@@ -31,6 +34,7 @@ class PoolingController extends Controller
             'formats.slots.suggestion.tags',
             'formats.slots.suggestion.comments.comment.user',
             'formats.slots.suggestion.comments.parent.comment.user',
+            'formats.slots.freemodRules',
             'freemodRules',
         ]);
 
@@ -137,17 +141,17 @@ class PoolingController extends Controller
             return redirect()->back()->withErrors(['empty_payload' => 'Freemod Rules Payload is missing!']);
         }
 
-        foreach ($request->validated()['payload'] as $data) {
-            foreach ($data['rules'] as $rule) {
+        foreach ($validated['payload'] as $payload) {
+            foreach ($payload['rules'] as $rule) {
                 if (! $rule['allowed']) {
-                    FreemodRule::whereMappoolId($data['mappool_id'])->whereMod($rule['mod'])->delete();
+                    FreemodRule::whereMappoolId($payload['mappool_id'])->whereMod($rule['mod'])->delete();
 
                     continue;
                 }
 
                 FreemodRule::updateOrCreate(
                     [
-                        'mappool_id' => $data['mappool_id'],
+                        'mappool_id' => $payload['mappool_id'],
                         'mod' => $rule['mod'],
                     ],
                     [
@@ -158,5 +162,28 @@ class PoolingController extends Controller
         }
 
         return redirect()->back();
+    }
+
+    /**
+     * Override the freemod rules
+     */
+    public function overrideFreemodRules(OverrideFreemodRulesRequest $request, MappoolSlot $slot)
+    {
+        $validated = $request->validated();
+        if (! Arr::has($validated, 'rules')) {
+            return redirect()->back()->withErrors(['empty_payload' => 'The freemod rules override payload is missing!']);
+        }
+
+        foreach ($validated['rules'] as $rule) {
+            FreemodSlot::updateOrCreate(
+                [
+                    'mappool_slot_id' => $slot->id,
+                    'mod' => $rule['mod'],
+                ],
+                [
+                    'multiplier' => $rule['multiplier'],
+                ],
+            );
+        }
     }
 }

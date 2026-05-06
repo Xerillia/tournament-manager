@@ -19,9 +19,8 @@ Route::middleware('auth')->group(function () {
         Route::put('/{tournament}', [TournamentController::class, 'updateTournament'])->middleware([HandlePrecognitiveRequests::class])->name('updateTournament');
         Route::delete('/{tournament}', [TournamentController::class, 'deleteTournament'])->name('deleteTournament');
 
+        // panel
         Route::get('/{tournament}/mappools/{mappool}/panel', [PoolingController::class, 'showPoolingPanel'])->name('mappools.showPoolingPanel');
-
-        Route::prefix('{tournament}/pooling/settings')->name('pooling.settings.')->group(function () {});
 
         // formats
         Route::get('/{tournament}/pooling/formats', [PoolingController::class, 'editMappoolsFormat'])->name('pooling.formats.editMappoolsFormat');
@@ -30,6 +29,7 @@ Route::middleware('auth')->group(function () {
 
         // freemod rules
         Route::post('/pooling/freemod/rules', [PoolingController::class, 'updateFreemodRules'])->name('pooling.freemod.rules.updateFreemodRules');
+        Route::post('/pooling/slots/{slot}/override', [PoolingController::class, 'overrideFreemodRules'])->name('pooling.slots.override.overrideFreemodRules');
     });
 
     // suggestions
