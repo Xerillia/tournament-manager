@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
-#[Fillable(['mappool_format_id', 'mappool_suggestion_id', 'slot'])]
+#[Fillable(['mappool_format_id', 'mappool_suggestion_id', 'slot', 'is_freemod'])]
 #[WithoutTimestamps()]
 class MappoolSlot extends Model
 {

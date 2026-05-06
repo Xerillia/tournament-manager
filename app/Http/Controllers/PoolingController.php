@@ -83,6 +83,7 @@ class PoolingController extends Controller
                     [
                         'slot' => $format['slot'],
                         'count' => $format['count'],
+                        'is_freemod' => $format['is_freemod'],
                     ]);
             }
 

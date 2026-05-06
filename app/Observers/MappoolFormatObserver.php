@@ -16,6 +16,7 @@ class MappoolFormatObserver
             MappoolSlot::create([
                 'mappool_format_id' => $mappoolFormat->id,
                 'slot' => $mappoolFormat->slot.($i),
+                'is_freemod' => $mappoolFormat->is_freemod,
             ]);
         }
     }
@@ -34,6 +35,7 @@ class MappoolFormatObserver
                 $slot = $slots[$number - 1];
                 $slot->update([
                     'slot' => $mappoolFormat->slot.($number++),
+                    'is_freemod' => $mappoolFormat->is_freemod,
                 ]);
             }
 
@@ -42,6 +44,7 @@ class MappoolFormatObserver
                 MappoolSlot::create([
                     'mappool_format_id' => $mappoolFormat->id,
                     'slot' => $mappoolFormat->slot.($number++),
+                    'is_freemod' => $mappoolFormat->is_freemod,
                 ]);
             }
 
