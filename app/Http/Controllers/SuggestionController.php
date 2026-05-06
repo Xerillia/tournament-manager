@@ -18,7 +18,6 @@ class SuggestionController extends Controller
         $validated = $request->validated();
         $beatmapId = $validated['beatmap_id'];
         $mods = $validated['mods'];
-        $round = $validated['round'];
 
         // manipulate string with array methods
         $array_mods = str_split($mods, 2);

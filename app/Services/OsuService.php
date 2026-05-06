@@ -145,11 +145,13 @@ class OsuService
      * @var int the id of the beatmap.
      * @var string[] the mods used for query.
      */
-    public function getBeatmap(AccessToken $accessToken, int $id, array $mods, Mode $mode = Mode::STANDARD): Beatmap
+    public function getBeatmap(AccessToken $accessToken, int $id, array $mods = [], Mode $mode = Mode::STANDARD): Beatmap
     {
-        $mods = array_filter($mods, function ($value) {
-            return $value != 'NM'; // osu api endpoint does not cast NM as no mod, so it needs to be filtered
-        });
+        // check for FM
+        $hasFreemod = in_array('FM', $mods);
+
+        // remove FM and NM from mods as osu endpoint does not support these
+        $mods = array_diff($mods, ['FM', 'NM']);
 
         $beatmapAttributes = Http::withToken($accessToken->access_token)->get($this->baseApi.'/beatmaps/'.$id);
         $beatmapAttributes->throw();
@@ -177,6 +179,10 @@ class OsuService
         );
 
         $beatmapset = $parsed_attributes->beatmapset;
+
+        if ($hasFreemod) {
+            array_unshift($mods, 'FM');
+        }
 
         $beatmap = new Beatmap((object) [
             'beatmap_id' => $id,

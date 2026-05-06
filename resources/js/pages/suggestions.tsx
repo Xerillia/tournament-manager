@@ -48,11 +48,6 @@ export default function Suggestions({ tournament, mappool, tags, slots }: Sugges
                             onBlur={() => validate('mods')}
                         />
                         {invalid('mods') && <p className="text-red-400">{errors.mods}</p>}
-                        <input
-                            type="hidden"
-                            name="round"
-                            value={mappool.round}
-                        />
                         <button
                             type="submit"
                             className="block bg-green-300 p-2 hover:cursor-pointer hover:bg-green-400"

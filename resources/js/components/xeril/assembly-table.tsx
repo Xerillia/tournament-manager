@@ -6,9 +6,10 @@ import { useEcho } from '@laravel/echo-react';
 import { SuggestionComment } from '@/types/comments';
 import TagsCell from './tags-cell';
 import { useDragDropMonitor, useDroppable } from '@dnd-kit/react';
-import { router } from '@inertiajs/react';
+import { Form, router } from '@inertiajs/react';
 import { Trash2Icon } from 'lucide-react';
 import { insertSuggestionToSlot, removeSuggestionFromSlot } from '@/routes/slots';
+import { overrideFreemodRules } from '@/routes/tournaments/pooling/slots/override';
 
 interface AssemblyTableProps {
     mappool: Mappool;
@@ -91,7 +92,85 @@ export default function AssemblyTable({ mappool, slots }: AssemblyTableProps) {
             }),
             columnHelper.accessor('suggestion.beatmap.mods', {
                 header: 'Mods',
-                cell: (props) => props.row.original.suggestion?.beatmap.mods,
+                cell: (props) => {
+                    const mods = props.row.original.suggestion?.beatmap.mods;
+
+                    if (!mods) return null; // empty cell
+
+                    if (props.row.original.is_freemod) {
+                        const [showModal, setShowModal] = useState<boolean>(false);
+
+                        return (
+                            <>
+                                {showModal && (
+                                    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/20">
+                                        <Form
+                                            className="w-xl rounded-md bg-white shadow-md"
+                                            action={overrideFreemodRules(props.row.original.id)}
+                                            method="POST"
+                                            onSuccess={() => setShowModal(false)}
+                                        >
+                                            <h1 className="mx-4 border-b py-4 pb-2 text-2xl font-bold">Override Freemod Multipliers</h1>
+                                            <div className="flex flex-col">
+                                                <div className="flex text-lg font-semibold">
+                                                    <p className="flex-1">Mod</p>
+                                                    <p className="flex-1">Multiplier</p>
+                                                </div>
+                                                {mappool.freemod_rules.map((rule) => {
+                                                    const overriddenRules = props.row.original.freemod_rules?.find((override) => override.mod === rule.mod);
+
+                                                    return (
+                                                        <div
+                                                            key={rule.id}
+                                                            className="flex items-center"
+                                                        >
+                                                            <input
+                                                                type="hidden"
+                                                                name={`rules[${rule.id}][mod]`}
+                                                                value={rule.mod}
+                                                            />
+                                                            <div className="flex-1">{rule.mod}</div>
+                                                            <input
+                                                                type="number"
+                                                                name={`rules[${rule.id}][multiplier]`}
+                                                                defaultValue={overriddenRules?.multiplier ?? rule.multiplier}
+                                                                step={0.01}
+                                                                className="flex-1 py-2 text-center focus:outline-0"
+                                                            />
+                                                        </div>
+                                                    );
+                                                })}
+                                            </div>
+                                            <div className="flex h-10">
+                                                <button
+                                                    type="submit"
+                                                    className="flex-1 cursor-pointer rounded-bl bg-green-300 hover:bg-green-200"
+                                                >
+                                                    Override
+                                                </button>
+                                                <button
+                                                    type="button"
+                                                    className="flex-1 cursor-pointer rounded-br bg-red-300 hover:bg-red-200"
+                                                    onClick={() => setShowModal(false)}
+                                                >
+                                                    Cancel
+                                                </button>
+                                            </div>
+                                        </Form>
+                                    </div>
+                                )}
+                                <button
+                                    className="cursor-pointer rounded-md bg-slate-700 p-1 text-white hover:bg-slate-500"
+                                    onClick={() => setShowModal(true)}
+                                >
+                                    {mods}
+                                </button>
+                            </>
+                        );
+                    }
+
+                    return mods;
+                },
             }),
             columnHelper.display({
                 id: 'comments',

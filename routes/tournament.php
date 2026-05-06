@@ -19,13 +19,17 @@ Route::middleware('auth')->group(function () {
         Route::put('/{tournament}', [TournamentController::class, 'updateTournament'])->middleware([HandlePrecognitiveRequests::class])->name('updateTournament');
         Route::delete('/{tournament}', [TournamentController::class, 'deleteTournament'])->name('deleteTournament');
 
+        // panel
         Route::get('/{tournament}/mappools/{mappool}/panel', [PoolingController::class, 'showPoolingPanel'])->name('mappools.showPoolingPanel');
 
-        Route::prefix('{tournament}/pooling/')->name('pooling.')->group(function () {
-            Route::get('/', [PoolingController::class, 'index'])->name('index');
-            Route::put('/', [PoolingController::class, 'update'])->name('update');
-            Route::delete('/', [PoolingController::class, 'destroy'])->name('destroy');
-        });
+        // formats
+        Route::get('/{tournament}/pooling/formats', [PoolingController::class, 'editMappoolsFormat'])->name('pooling.formats.editMappoolsFormat');
+        Route::put('/{tournament}/pooling/formats', [PoolingController::class, 'updateMappoolsFormat'])->name('pooling.formats.updateMappoolsFormat');
+        Route::delete('/pooling/formats/', [PoolingController::class, 'deleteMappoolsFormat'])->name('pooling.formats.deleteMappoolsFormat');
+
+        // freemod rules
+        Route::post('/pooling/freemod/rules', [PoolingController::class, 'updateFreemodRules'])->name('pooling.freemod.rules.updateFreemodRules');
+        Route::post('/pooling/slots/{slot}/override', [PoolingController::class, 'overrideFreemodRules'])->name('pooling.slots.override.overrideFreemodRules');
     });
 
     // suggestions
@@ -45,4 +49,5 @@ Route::middleware('auth')->group(function () {
     // assembly
     Route::post('/suggestions/{suggestion}/slots/{slot}', [AssemblyController::class, 'insertSuggestionToSlot'])->name('slots.insertSuggestionToSlot');
     Route::delete('/slots/{slot}', [AssemblyController::class, 'removeSuggestionFromSlot'])->name('slots.removeSuggestionFromSlot');
+
 });

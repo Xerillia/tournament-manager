@@ -12,7 +12,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 #[Table('mappool_formats')]
-#[Fillable(['mappool_id', 'slot', 'count'])]
+#[Fillable(['mappool_id', 'slot', 'count', 'is_freemod'])]
 #[ObservedBy(MappoolFormatObserver::class)]
 #[WithoutTimestamps]
 class MappoolFormat extends Model

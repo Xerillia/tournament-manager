@@ -50,4 +50,12 @@ class Mappool extends Model
     {
         return $this->hasMany(MappoolSuggestion::class);
     }
+
+    /**
+     * Get the freemod rules of this mappool
+     */
+    public function freemodRules(): HasMany
+    {
+        return $this->hasMany(FreemodRule::class);
+    }
 }

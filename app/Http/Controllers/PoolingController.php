@@ -3,10 +3,15 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\DeleteMappoolFormatRequest;
+use App\Http\Requests\OverrideFreemodRulesRequest;
+use App\Http\Requests\UpdateFreemodRulesRequest;
 use App\Http\Requests\UpdateMappoolFormatRequest;
 use App\Models\BeatmapTag;
+use App\Models\FreemodRule;
+use App\Models\FreemodSlot;
 use App\Models\Mappool;
 use App\Models\MappoolFormat;
+use App\Models\MappoolSlot;
 use App\Models\Tournament;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
@@ -14,6 +19,9 @@ use Inertia\Inertia;
 
 class PoolingController extends Controller
 {
+    /**
+     * Show the pooling panel
+     */
     public function showPoolingPanel(Tournament $tournament, Mappool $mappool)
     {
         $mappool->load([
@@ -26,6 +34,8 @@ class PoolingController extends Controller
             'formats.slots.suggestion.tags',
             'formats.slots.suggestion.comments.comment.user',
             'formats.slots.suggestion.comments.parent.comment.user',
+            'formats.slots.freemodRules',
+            'freemodRules',
         ]);
 
         $slots = collect($mappool->formats)->flatMap(fn ($item) => $item['slots']);
@@ -40,19 +50,23 @@ class PoolingController extends Controller
         ]);
     }
 
-    public function index(Tournament $tournament)
+    /**
+     * Show the edit mappools format form
+     */
+    public function editMappoolsFormat(Tournament $tournament)
     {
-        $tournament->load(['mappools.formats']);
+        $tournament->load(['mappools.formats', 'mappools.freemodRules']);
 
-        return Inertia::render('pooling', [
+        return Inertia::render('edit-mappools-format', [
             'tournament' => $tournament,
+            'mappools' => $tournament->mappools,
         ]);
     }
 
     /**
-     * Update the tournament's mappool format
+     * Update the mappools' format
      */
-    public function update(UpdateMappoolFormatRequest $request, Tournament $tournament)
+    public function updateMappoolsFormat(UpdateMappoolFormatRequest $request, Tournament $tournament)
     {
         foreach ($request->mappools as $mappool) {
             $retrieved_mappool = Mappool::updateOrCreate([
@@ -74,18 +88,19 @@ class PoolingController extends Controller
                     [
                         'slot' => $format['slot'],
                         'count' => $format['count'],
+                        'is_freemod' => $format['is_freemod'],
                     ]);
             }
 
         }
 
-        return to_route('tournaments.pooling.index', [$tournament]);
+        return redirect()->back();
     }
 
     /**
-     * Delete rounds from the tournament
+     * Delete the mappools' format
      */
-    public function destroy(DeleteMappoolFormatRequest $request, Tournament $tournament)
+    public function deleteMappoolsFormat(DeleteMappoolFormatRequest $request)
     {
         $collected = $request->safe()->collect();
 
@@ -113,6 +128,62 @@ class PoolingController extends Controller
             MappoolFormat::destroy($flatMapped->toArray());
         }
 
-        return to_route('tournaments.pooling.index', [$tournament]);
+        return redirect()->back();
+    }
+
+    /**
+     * Update the freemod rules
+     */
+    public function updateFreemodRules(UpdateFreemodRulesRequest $request)
+    {
+        $validated = $request->validated();
+        if (! Arr::has($validated, 'payload')) {
+            return redirect()->back()->withErrors(['empty_payload' => 'Freemod Rules Payload is missing!']);
+        }
+
+        foreach ($validated['payload'] as $payload) {
+            foreach ($payload['rules'] as $rule) {
+                if (! $rule['allowed']) {
+                    FreemodRule::whereMappoolId($payload['mappool_id'])->whereMod($rule['mod'])->delete();
+
+                    continue;
+                }
+
+                FreemodRule::updateOrCreate(
+                    [
+                        'mappool_id' => $payload['mappool_id'],
+                        'mod' => $rule['mod'],
+                    ],
+                    [
+                        'allowed' => $rule['allowed'],
+                        'multiplier' => $rule['multiplier'],
+                    ]);
+            }
+        }
+
+        return redirect()->back();
+    }
+
+    /**
+     * Override the freemod rules
+     */
+    public function overrideFreemodRules(OverrideFreemodRulesRequest $request, MappoolSlot $slot)
+    {
+        $validated = $request->validated();
+        if (! Arr::has($validated, 'rules')) {
+            return redirect()->back()->withErrors(['empty_payload' => 'The freemod rules override payload is missing!']);
+        }
+
+        foreach ($validated['rules'] as $rule) {
+            FreemodSlot::updateOrCreate(
+                [
+                    'mappool_slot_id' => $slot->id,
+                    'mod' => $rule['mod'],
+                ],
+                [
+                    'multiplier' => $rule['multiplier'],
+                ],
+            );
+        }
     }
 }
