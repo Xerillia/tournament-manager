@@ -31,6 +31,7 @@ class PoolingController extends Controller
             'formats.slots.suggestion.tags',
             'formats.slots.suggestion.comments.comment.user',
             'formats.slots.suggestion.comments.parent.comment.user',
+            'freemodRules',
         ]);
 
         $slots = collect($mappool->formats)->flatMap(fn ($item) => $item['slots']);

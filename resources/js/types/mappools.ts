@@ -25,4 +25,5 @@ export type Slot = {
     mappool_format_id: number;
     suggestion: Suggestion;
     slot: string;
+    is_freemod: boolean;
 };
