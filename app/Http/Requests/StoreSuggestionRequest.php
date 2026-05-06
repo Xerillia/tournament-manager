@@ -25,7 +25,6 @@ class StoreSuggestionRequest extends FormRequest
         return [
             'beatmap_id' => ['required', 'integer'],
             'mods' => ['required', 'string', new ValidMods],
-            'round' => ['required', 'string', 'exists:mappools,round'],
             'tags' => ['nullable', 'string'],
         ];
     }
