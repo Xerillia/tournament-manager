@@ -1,3 +1,4 @@
+import { FreemodRule } from './freemodrule';
 import { Suggestion } from './suggestion';
 
 export type Mappool = {
@@ -7,6 +8,7 @@ export type Mappool = {
     slug: string;
     star_rating: number | string;
     suggestions: Suggestion[];
+    freemod_rules: FreemodRule[];
 };
 
 export type Format = {
