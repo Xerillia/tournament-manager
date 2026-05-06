@@ -145,7 +145,7 @@ class OsuService
      * @var int the id of the beatmap.
      * @var string[] the mods used for query.
      */
-    public function getBeatmap(AccessToken $accessToken, int $id, array $mods, Mode $mode = Mode::STANDARD): Beatmap
+    public function getBeatmap(AccessToken $accessToken, int $id, array $mods = [], Mode $mode = Mode::STANDARD): Beatmap
     {
         $mods = array_filter($mods, function ($value) {
             return $value != 'NM'; // osu api endpoint does not cast NM as no mod, so it needs to be filtered
