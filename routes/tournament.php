@@ -21,11 +21,12 @@ Route::middleware('auth')->group(function () {
 
         Route::get('/{tournament}/mappools/{mappool}/panel', [PoolingController::class, 'showPoolingPanel'])->name('mappools.showPoolingPanel');
 
-        Route::prefix('{tournament}/pooling/')->name('pooling.')->group(function () {
-            Route::get('/', [PoolingController::class, 'index'])->name('index');
-            Route::put('/', [PoolingController::class, 'update'])->name('update');
-            Route::delete('/', [PoolingController::class, 'destroy'])->name('destroy');
-        });
+        Route::prefix('{tournament}/pooling/settings')->name('pooling.settings.')->group(function () {});
+
+        // formats
+        Route::get('/{tournament}/pooling/formats', [PoolingController::class, 'editMappoolsFormat'])->name('pooling.formats.editMappoolsFormat');
+        Route::put('/{tournament}/pooling/formats', [PoolingController::class, 'updateMappoolsFormat'])->name('pooling.formats.updateMappoolsFormat');
+        Route::delete('/pooling/formats/', [PoolingController::class, 'deleteMappoolsFormat'])->name('pooling.formats.deleteMappoolsFormat');
     });
 
     // suggestions

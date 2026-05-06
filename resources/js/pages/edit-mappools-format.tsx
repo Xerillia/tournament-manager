@@ -1,18 +1,19 @@
-import { update, destroy } from '@/actions/App/Http/Controllers/PoolingController';
 import { Format, Mappool } from '@/types/mappools';
 import { Form, router } from '@inertiajs/react';
 import { ChangeEvent, useState } from 'react';
 import { isEqual, cloneDeep } from 'lodash';
+import { Tournament } from '@/types/tournament';
+import { deleteMappoolsFormat, updateMappoolsFormat } from '@/routes/tournaments/pooling/formats';
 
 interface EditMappoolFormatProps {
-    tournament_id: number;
+    tournament: Tournament;
     mappools: Mappool[];
 }
 
 let nextMappoolId = 0; // prevent arbitrary update or delete because database ids are unsigned integer
 let nextFormatId = 0; // ^
 
-export default function EditMappoolFormat({ tournament_id, mappools }: EditMappoolFormatProps) {
+export default function EditMappoolFormat({ tournament, mappools }: EditMappoolFormatProps) {
     const [getMappools, setMappools] = useState<Mappool[]>(cloneDeep(mappools));
     const [originalMappools, setOriginalMappools] = useState<Mappool[]>(cloneDeep(mappools));
     const [editMode, setEditMode] = useState<boolean>(false);
@@ -118,7 +119,7 @@ export default function EditMappoolFormat({ tournament_id, mappools }: EditMappo
 
     function handleSuccess() {
         if (deleteQueue.length > 0 || deleteFormatQueue.length > 0) {
-            router.delete(destroy(tournament_id).url, {
+            router.delete(deleteMappoolsFormat(), {
                 data: {
                     delete_queue: deleteQueue,
                     delete_format_queue: deleteFormatQueue,
@@ -140,9 +141,10 @@ export default function EditMappoolFormat({ tournament_id, mappools }: EditMappo
 
     return (
         <>
+            <h1 className="mb-4 text-4xl font-bold">Mappool Format Setting</h1>
             <Form
                 method="put"
-                onSubmit={() => update(tournament_id)}
+                onSubmit={() => updateMappoolsFormat(tournament.id)}
                 onSuccess={handleSuccess}
             >
                 {({ errors }) => (

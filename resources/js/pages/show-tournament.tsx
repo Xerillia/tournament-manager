@@ -1,3 +1,4 @@
+import { editMappoolsFormat } from '@/routes/tournaments/pooling/formats';
 import { showPoolingPanel } from '@/routes/tournaments/mappools';
 import { Tournament } from '@/types/tournament';
 import { Head, Link } from '@inertiajs/react';
@@ -43,7 +44,15 @@ export default function ShowTournament({ tournament }: ShowTournamentProps) {
             <p>Links:</p>
             {linkItems}
 
-            <div className="mt-2 flex gap-2">{mappools}</div>
+            <div className="mt-6">
+                <Link
+                    href={editMappoolsFormat(tournament)}
+                    className="rounded-md bg-orange-300 p-2 hover:cursor-pointer hover:bg-orange-200"
+                >
+                    Edit Mappool Format
+                </Link>
+            </div>
+            <div className="mt-6 flex gap-2">{mappools}</div>
         </>
     );
 }

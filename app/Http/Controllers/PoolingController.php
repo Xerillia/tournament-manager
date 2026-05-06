@@ -14,6 +14,9 @@ use Inertia\Inertia;
 
 class PoolingController extends Controller
 {
+    /**
+     * Show the pooling panel
+     */
     public function showPoolingPanel(Tournament $tournament, Mappool $mappool)
     {
         $mappool->load([
@@ -40,19 +43,23 @@ class PoolingController extends Controller
         ]);
     }
 
-    public function index(Tournament $tournament)
+    /**
+     * Show the edit mappools format form
+     */
+    public function editMappoolsFormat(Tournament $tournament)
     {
         $tournament->load(['mappools.formats']);
 
-        return Inertia::render('pooling', [
+        return Inertia::render('edit-mappools-format', [
             'tournament' => $tournament,
+            'mappools' => $tournament->mappools,
         ]);
     }
 
     /**
-     * Update the tournament's mappool format
+     * Update the mappools' format
      */
-    public function update(UpdateMappoolFormatRequest $request, Tournament $tournament)
+    public function updateMappoolsFormat(UpdateMappoolFormatRequest $request, Tournament $tournament)
     {
         foreach ($request->mappools as $mappool) {
             $retrieved_mappool = Mappool::updateOrCreate([
@@ -79,13 +86,13 @@ class PoolingController extends Controller
 
         }
 
-        return to_route('tournaments.pooling.index', [$tournament]);
+        return redirect()->back();
     }
 
     /**
-     * Delete rounds from the tournament
+     * Delete the mappools' format
      */
-    public function destroy(DeleteMappoolFormatRequest $request, Tournament $tournament)
+    public function deleteMappoolsFormat(DeleteMappoolFormatRequest $request)
     {
         $collected = $request->safe()->collect();
 
@@ -113,6 +120,6 @@ class PoolingController extends Controller
             MappoolFormat::destroy($flatMapped->toArray());
         }
 
-        return to_route('tournaments.pooling.index', [$tournament]);
+        return redirect()->back();
     }
 }
