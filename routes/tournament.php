@@ -27,6 +27,9 @@ Route::middleware('auth')->group(function () {
         Route::get('/{tournament}/pooling/formats', [PoolingController::class, 'editMappoolsFormat'])->name('pooling.formats.editMappoolsFormat');
         Route::put('/{tournament}/pooling/formats', [PoolingController::class, 'updateMappoolsFormat'])->name('pooling.formats.updateMappoolsFormat');
         Route::delete('/pooling/formats/', [PoolingController::class, 'deleteMappoolsFormat'])->name('pooling.formats.deleteMappoolsFormat');
+
+        // freemod rules
+        Route::post('/pooling/freemod/rules', [PoolingController::class, 'updateFreemodRules'])->name('pooling.freemod.rules.updateFreemodRules');
     });
 
     // suggestions
@@ -46,4 +49,5 @@ Route::middleware('auth')->group(function () {
     // assembly
     Route::post('/suggestions/{suggestion}/slots/{slot}', [AssemblyController::class, 'insertSuggestionToSlot'])->name('slots.insertSuggestionToSlot');
     Route::delete('/slots/{slot}', [AssemblyController::class, 'removeSuggestionFromSlot'])->name('slots.removeSuggestionFromSlot');
+
 });

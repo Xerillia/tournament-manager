@@ -11,6 +11,7 @@ use App\Models\Tournament;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
 use Inertia\Inertia;
+use Symfony\Component\HttpFoundation\Request;
 
 class PoolingController extends Controller
 {
@@ -121,5 +122,13 @@ class PoolingController extends Controller
         }
 
         return redirect()->back();
+    }
+
+    /**
+     * Update the freemod rules
+     */
+    public function updateFreemodRules(Request $request)
+    {
+        dd($request);
     }
 }

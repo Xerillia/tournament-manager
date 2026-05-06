@@ -1,9 +1,11 @@
 import { Format, Mappool } from '@/types/mappools';
 import { Form, router } from '@inertiajs/react';
-import { ChangeEvent, useState } from 'react';
+import { ChangeEvent, Fragment, useState } from 'react';
 import { isEqual, cloneDeep } from 'lodash';
 import { Tournament } from '@/types/tournament';
 import { deleteMappoolsFormat, updateMappoolsFormat } from '@/routes/tournaments/pooling/formats';
+import { ModsUtils } from '@/enums';
+import { updateFreemodRules } from '@/routes/tournaments/pooling/freemod/rules';
 
 interface EditMappoolFormatProps {
     tournament: Tournament;
@@ -118,6 +120,12 @@ export default function EditMappoolFormat({ tournament, mappools }: EditMappoolF
     }
 
     function handleSuccess() {
+        if (freemodPayload.length > 0) {
+            router.post(updateFreemodRules(), {
+                payload: freemodPayload,
+            });
+        }
+
         if (deleteQueue.length > 0 || deleteFormatQueue.length > 0) {
             router.delete(deleteMappoolsFormat(), {
                 data: {
@@ -137,6 +145,88 @@ export default function EditMappoolFormat({ tournament, mappools }: EditMappoolF
         setDeleteFormatQueue([]);
 
         setEditMode(false);
+    }
+
+    const [modal, setModal] = useState<{ id?: number }>({});
+
+    const [freemodPayload, setFreemodPayload] = useState<{ mappool_id: number; rules: { mod: string; allowed: boolean; multiplier: number }[] }[]>([]);
+
+    const openModal = (mappool_id: number) => {
+        setModal({ id: mappool_id });
+
+        if (!freemodPayload.find((obj) => obj.mappool_id === mappool_id)) {
+            setFreemodPayload((prevState) => [
+                ...prevState,
+                {
+                    mappool_id: mappool_id,
+                    rules: [
+                        ...ModsUtils.options()
+                            .filter((mod) => mod !== 'FM' && mod !== 'DT' && mod !== 'NC')
+                            .map((mod) => {
+                                return {
+                                    mod: mod,
+                                    allowed: mod === 'NM' || mod === 'HD' || mod === 'HR' || mod === 'EZ',
+                                    multiplier: mod === 'EZ' ? 1.8 : 1,
+                                };
+                            }),
+                    ],
+                },
+            ]);
+        }
+    };
+
+    const loadPayload = (mappool_id: number) => {
+        const payload = freemodPayload.find((obj) => obj.mappool_id === mappool_id);
+
+        return payload;
+    };
+
+    const cancelPayload = (mappool_id: number) => {
+        setFreemodPayload((prevState) => {
+            const filtered = prevState.filter((obj) => obj.mappool_id !== mappool_id);
+            return filtered;
+        });
+
+        setModal({});
+    };
+
+    function toggleTick(mappool_id: number, rule: { mod: string; allowed: boolean; multiplier: number }) {
+        const payload = freemodPayload.find((obj) => obj.mappool_id === mappool_id);
+
+        if (!payload) return;
+
+        const index = payload.rules.findIndex((obj) => obj.mod === rule.mod);
+
+        payload.rules[index] = {
+            ...payload.rules[index],
+            allowed: !rule.allowed,
+        };
+
+        updatePayloadState(payload);
+    }
+
+    function changeMultiplier(mappool_id: number, rule: { mod: string; allowed: boolean; multiplier: number }, new_multiplier: number) {
+        const payload = freemodPayload.find((obj) => obj.mappool_id === mappool_id);
+
+        if (!payload) return;
+
+        const index = payload.rules.findIndex((obj) => obj.mod === rule.mod);
+
+        payload.rules[index] = {
+            ...payload.rules[index],
+            multiplier: new_multiplier,
+        };
+
+        updatePayloadState(payload);
+    }
+
+    function updatePayloadState(payload: { mappool_id: number; rules: { mod: string; allowed: boolean; multiplier: number }[] }) {
+        setFreemodPayload((prevState) => {
+            const index = prevState.indexOf(payload);
+            const excluded = prevState.filter((obj) => obj.mappool_id !== payload.mappool_id);
+
+            return [...excluded.slice(0, index), payload, ...excluded.slice(index)];
+        });
     }
 
     return (
@@ -312,13 +402,77 @@ export default function EditMappoolFormat({ tournament, mappools }: EditMappoolF
                                         </div>
                                     ))}
                                     {editMode && (
-                                        <button
-                                            type="button"
-                                            className="block h-full w-12 self-center rounded-md bg-green-200 hover:cursor-pointer hover:bg-green-300"
-                                            onClick={() => addFormat(mappool)}
-                                        >
-                                            Add
-                                        </button>
+                                        <>
+                                            <button
+                                                type="button"
+                                                className="block h-full w-12 self-center rounded-md bg-green-200 hover:cursor-pointer hover:bg-green-300"
+                                                onClick={() => addFormat(mappool)}
+                                            >
+                                                Add
+                                            </button>
+
+                                            <div className="self-center">
+                                                {modal?.id === mappool.id && (
+                                                    <>
+                                                        <div className="fixed inset-0 z-2 h-full w-full bg-black/30" />
+                                                        <div className="fixed inset-0 top-1/2 left-1/2 z-3 h-fit w-xl -translate-1/2 rounded-md bg-white">
+                                                            <h1 className="flex items-center justify-center border-b pt-4 pb-2 text-center text-2xl font-bold">
+                                                                {mappool.round} FM Rules
+                                                            </h1>
+                                                            <div className="grid w-full grid-cols-3 gap-4 px-4 py-2 text-center">
+                                                                <h1 className="text-xl font-bold">Available Mods</h1>
+                                                                <h1 className="text-xl font-bold">Allowed?</h1>
+                                                                <h1 className="text-xl font-bold">Multiplier</h1>
+                                                                {loadPayload(mappool.id)?.rules.map((rule) => (
+                                                                    <Fragment key={rule.mod}>
+                                                                        <p className="border-b">{rule.mod}</p>
+                                                                        <div className="border-b">
+                                                                            <input
+                                                                                type="checkbox"
+                                                                                checked={rule.allowed}
+                                                                                onChange={() => toggleTick(mappool.id, rule)}
+                                                                                className="size-4"
+                                                                            />
+                                                                        </div>
+                                                                        <input
+                                                                            id={`${mappool.id}_${rule.mod}`}
+                                                                            type="number"
+                                                                            value={rule.multiplier}
+                                                                            onChange={(e) => changeMultiplier(mappool.id, rule, Number(e.target.value))}
+                                                                            step={0.1}
+                                                                            className="border-b text-center focus:outline-0"
+                                                                        />
+                                                                    </Fragment>
+                                                                ))}
+                                                            </div>
+                                                            <div className="mt-5 flex">
+                                                                <button
+                                                                    type="button"
+                                                                    className="flex-1 cursor-pointer bg-green-300 p-3 hover:bg-green-400"
+                                                                    onClick={() => setModal({})}
+                                                                >
+                                                                    Save
+                                                                </button>
+                                                                <button
+                                                                    type="button"
+                                                                    className="flex-1 cursor-pointer bg-red-300 p-3 hover:bg-red-400"
+                                                                    onClick={() => cancelPayload(mappool.id)}
+                                                                >
+                                                                    Reset and Close
+                                                                </button>
+                                                            </div>
+                                                        </div>
+                                                    </>
+                                                )}
+                                                <button
+                                                    type="button"
+                                                    className="block rounded-md bg-orange-200 p-2 hover:cursor-pointer hover:bg-orange-300"
+                                                    onClick={() => openModal(mappool.id)}
+                                                >
+                                                    Set Default FM Multiplier
+                                                </button>
+                                            </div>
+                                        </>
                                     )}
                                 </div>
                             </div>
