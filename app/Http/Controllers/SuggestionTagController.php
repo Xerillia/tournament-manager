@@ -9,7 +9,7 @@ use App\Models\MappoolSuggestion;
 
 class SuggestionTagController extends Controller
 {
-    public function addTagToSuggestion(BeatmapTag $tag, MappoolSuggestion $suggestion)
+    public function addTagToSuggestion(MappoolSuggestion $suggestion, BeatmapTag $tag)
     {
         $suggestion->tags()->attach($tag->id);
 
@@ -18,7 +18,7 @@ class SuggestionTagController extends Controller
         return redirect()->back();
     }
 
-    public function removeTagFromSuggestion(BeatmapTag $tag, MappoolSuggestion $suggestion)
+    public function removeTagFromSuggestion(MappoolSuggestion $suggestion, BeatmapTag $tag)
     {
         $suggestion->tags()->detach($tag->id);
 
