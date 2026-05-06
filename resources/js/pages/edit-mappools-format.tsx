@@ -26,7 +26,8 @@ export default function EditMappoolFormat({ tournament, mappools }: EditMappoolF
         setOriginalMappools(cloneDeep(mappools));
     }
 
-    const addRound = () => setMappools([...getMappools, { id: nextMappoolId--, round: '', formats: [], suggestions: [], slug: '', star_rating: 0 }]);
+    const addRound = () =>
+        setMappools([...getMappools, { id: nextMappoolId--, round: '', formats: [], suggestions: [], slug: '', star_rating: 0, freemod_rules: [] }]);
 
     function removeMappool(mappool: Mappool) {
         setMappools((prevState) => {
@@ -151,22 +152,24 @@ export default function EditMappoolFormat({ tournament, mappools }: EditMappoolF
 
     const [freemodPayload, setFreemodPayload] = useState<{ mappool_id: number; rules: { mod: string; allowed: boolean; multiplier: number }[] }[]>([]);
 
-    const openModal = (mappool_id: number) => {
-        setModal({ id: mappool_id });
+    const openModal = (mappool: Mappool) => {
+        setModal({ id: mappool.id });
 
-        if (!freemodPayload.find((obj) => obj.mappool_id === mappool_id)) {
+        if (!freemodPayload.find((obj) => obj.mappool_id === mappool.id)) {
             setFreemodPayload((prevState) => [
                 ...prevState,
                 {
-                    mappool_id: mappool_id,
+                    mappool_id: mappool.id,
                     rules: [
                         ...ModsUtils.options()
                             .filter((mod) => mod !== 'FM' && mod !== 'DT' && mod !== 'NC')
                             .map((mod) => {
+                                const loadedFromProps = mappool.freemod_rules.find((obj) => obj.mod === mod);
+
                                 return {
                                     mod: mod,
-                                    allowed: mod === 'NM' || mod === 'HD' || mod === 'HR' || mod === 'EZ',
-                                    multiplier: mod === 'EZ' ? 1.8 : 1,
+                                    allowed: loadedFromProps?.allowed ?? (mod === 'NM' || mod === 'HD' || mod === 'HR' || mod === 'EZ'),
+                                    multiplier: loadedFromProps?.multiplier ?? (mod === 'EZ' ? 1.8 : 1),
                                 };
                             }),
                     ],
@@ -467,7 +470,7 @@ export default function EditMappoolFormat({ tournament, mappools }: EditMappoolF
                                                 <button
                                                     type="button"
                                                     className="block rounded-md bg-orange-200 p-2 hover:cursor-pointer hover:bg-orange-300"
-                                                    onClick={() => openModal(mappool.id)}
+                                                    onClick={() => openModal(mappool)}
                                                 >
                                                     Set Default FM Multiplier
                                                 </button>

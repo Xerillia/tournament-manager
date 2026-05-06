@@ -50,7 +50,7 @@ class PoolingController extends Controller
      */
     public function editMappoolsFormat(Tournament $tournament)
     {
-        $tournament->load(['mappools.formats']);
+        $tournament->load(['mappools.formats', 'mappools.freemodRules']);
 
         return Inertia::render('edit-mappools-format', [
             'tournament' => $tournament,
