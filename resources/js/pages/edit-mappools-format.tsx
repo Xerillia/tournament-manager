@@ -227,7 +227,11 @@ export default function EditMappoolFormat({ tournament, mappools }: EditMappoolF
                                         </div>
                                     </label>
                                     <p className="flex flex-col self-center">Slots: </p>
-                                    <div className="flex flex-col gap-4 self-center text-right">
+                                    <div className="flex flex-col gap-3 self-center text-right">
+                                        <span></span>
+                                        <span></span>
+                                        <span></span>
+                                        <span></span>
                                         <span>Slot</span>
                                         <span>Count</span>
                                     </div>
@@ -236,6 +240,21 @@ export default function EditMappoolFormat({ tournament, mappools }: EditMappoolF
                                             key={format.id}
                                             className="flex flex-col"
                                         >
+                                            <label className="2 mb-2 flex flex-col items-center">
+                                                Freemod
+                                                <input
+                                                    type="hidden"
+                                                    name={'mappools[' + mappool.id + '][formats][' + format.id + '][is_freemod]'}
+                                                    value="0"
+                                                />
+                                                <input
+                                                    type="checkbox"
+                                                    name={'mappools[' + mappool.id + '][formats][' + format.id + '][is_freemod]'}
+                                                    className="size-5"
+                                                    value="1"
+                                                    disabled={!editMode}
+                                                />
+                                            </label>
                                             {editMode && (
                                                 <div className="flex justify-center">
                                                     {format !== mappool.formats.at(0) && (
@@ -266,7 +285,7 @@ export default function EditMappoolFormat({ tournament, mappools }: EditMappoolF
                                             <input
                                                 type="text"
                                                 name={'mappools[' + mappool.id + '][formats][' + format.id + '][slot]'}
-                                                className="w-12 rounded-md border border-slate-800 p-2 text-center"
+                                                className="w-12 self-center rounded-md border border-slate-800 p-2 text-center"
                                                 placeholder="NM"
                                                 value={format.slot}
                                                 onChange={(e) => setFormatSlot(format, e.target.value, mappool)}
@@ -275,7 +294,7 @@ export default function EditMappoolFormat({ tournament, mappools }: EditMappoolF
                                             <input
                                                 type="number"
                                                 name={'mappools[' + mappool.id + '][formats][' + format.id + '][count]'}
-                                                className="w-12 rounded-md border border-slate-800 p-2 text-center"
+                                                className="w-12 self-center rounded-md border border-slate-800 p-2 text-center"
                                                 placeholder="6"
                                                 value={format.count}
                                                 onChange={(e) => setFormatCount(format, Number(e.target.value), mappool)}
@@ -284,7 +303,7 @@ export default function EditMappoolFormat({ tournament, mappools }: EditMappoolF
                                             {editMode && (
                                                 <button
                                                     type="button"
-                                                    className="w-12 self-end rounded-md bg-red-200 hover:cursor-pointer hover:bg-red-300"
+                                                    className="w-12 self-center rounded-md bg-red-200 hover:cursor-pointer hover:bg-red-300"
                                                     onClick={() => handleDeleteFormat(format, mappool)}
                                                 >
                                                     Del
