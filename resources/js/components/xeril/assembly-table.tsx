@@ -1,9 +1,7 @@
 import { Mappool, Slot } from '@/types/mappools';
 import { createColumnHelper, flexRender, getCoreRowModel, useReactTable } from '@tanstack/react-table';
-import { useEffect, useMemo, useState } from 'react';
+import { useMemo, useState } from 'react';
 import CommentsCell from './comments-cell';
-import { useEcho } from '@laravel/echo-react';
-import { SuggestionComment } from '@/types/comments';
 import TagsCell from './tags-cell';
 import { useDragDropMonitor, useDroppable } from '@dnd-kit/react';
 import { Form, router } from '@inertiajs/react';
@@ -30,14 +28,6 @@ function secondToTime(num: number) {
 const columnHelper = createColumnHelper<Slot>();
 
 export default function AssemblyTable({ mappool, slots }: AssemblyTableProps) {
-    useEcho('mappools.' + mappool.id + '.suggestions', 'SuggestionCommentCreated', (e: { suggestionComment: SuggestionComment }) => {
-        console.log(e);
-    });
-
-    useEcho('mappools.' + mappool.id + '.suggestions', 'SuggestionCommentDeleted', (e: { suggestionComment: SuggestionComment }) => {
-        console.log(e);
-    });
-
     useDragDropMonitor({
         onDragEnd(event) {
             const { operation } = event;
@@ -211,9 +201,7 @@ export default function AssemblyTable({ mappool, slots }: AssemblyTableProps) {
             }),
             columnHelper.accessor('suggestion.beatmap.star_rating', {
                 header: 'SR',
-                cell: (props) => {
-                    props.row.original.suggestion ? <span className="whitespace-nowrap">{`${props.getValue().toFixed(2)} ★`}</span> : null;
-                },
+                cell: (props) => (props.row.original.suggestion ? <span className="whitespace-nowrap">{`${props.getValue().toFixed(2)} ★`}</span> : null),
                 size: 75,
             }),
             columnHelper.accessor('suggestion.beatmap.bpm', {
@@ -249,14 +237,8 @@ export default function AssemblyTable({ mappool, slots }: AssemblyTableProps) {
         [],
     );
 
-    const [data, setData] = useState<Slot[]>(slots);
-
-    useEffect(() => {
-        setData(slots);
-    }, [slots]);
-
     const table = useReactTable({
-        data,
+        data: slots,
         columns,
         getCoreRowModel: getCoreRowModel(),
     });

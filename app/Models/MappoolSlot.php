@@ -17,7 +17,7 @@ class MappoolSlot extends Model
      */
     public function format(): BelongsTo
     {
-        return $this->belongsTo(MappoolFormat::class);
+        return $this->belongsTo(MappoolFormat::class, 'mappool_format_id');
     }
 
     /**

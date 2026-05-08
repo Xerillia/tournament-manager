@@ -6,15 +6,13 @@ import { createColumnHelper, flexRender, getCoreRowModel, useReactTable } from '
 import { Trash2Icon } from 'lucide-react';
 import { useEffect, useMemo, useState } from 'react';
 import CommentsCell from './comments-cell';
-import { useEcho } from '@laravel/echo-react';
-import { SuggestionComment } from '@/types/comments';
 import { BeatmapTag } from '@/types/beatmaptag';
 import TagsCell from './tags-cell';
 import { useDraggable } from '@dnd-kit/react';
 
 interface SuggestionTableProps {
-    mappool: Mappool;
     tags: BeatmapTag[];
+    suggestions: Suggestion[];
 }
 
 function secondToTime(num: number) {
@@ -30,154 +28,7 @@ function secondToTime(num: number) {
 
 const columnHelper = createColumnHelper<Suggestion>();
 
-export default function SuggestionTable({ mappool, tags }: SuggestionTableProps) {
-    useEcho('mappools.' + mappool.id + '.suggestions', 'MappoolSuggestionCreated', (e: { mappoolSuggestion: Suggestion }) => {
-        addSuggestion(e);
-    });
-
-    useEcho('mappools.' + mappool.id + '.suggestions', 'MappoolSuggestionEdited', (e: { mappoolSuggestion: Suggestion }) => {
-        editSuggestion(e);
-    });
-
-    useEcho('mappools.' + mappool.id + '.suggestions', 'MappoolSuggestionDeleted', (e: { mappoolSuggestion: Suggestion }) => {
-        removeSuggestion(e);
-    });
-
-    useEcho('mappools.' + mappool.id + '.suggestions', 'SuggestionCommentCreated', (e: { suggestionComment: SuggestionComment }) => {
-        addNewComment(e);
-    });
-
-    useEcho('mappools.' + mappool.id + '.suggestions', 'SuggestionCommentDeleted', (e: { suggestionComment: SuggestionComment }) => {
-        removeComment(e);
-    });
-
-    useEcho('mappools.' + mappool.id + '.suggestions', 'SuggestionCommentEdited', (e: { suggestionComment: SuggestionComment }) => {
-        editComment(e);
-    });
-
-    useEcho('mappools.' + mappool.id + '.suggestions', 'MappoolSuggestionTagAdded', (e: { beatmapTag: BeatmapTag; mappoolSuggestion: Suggestion }) => {
-        addTagToBeatmap(e);
-    });
-
-    useEcho('mappools.' + mappool.id + '.suggestions', 'MappoolSuggestionTagRemoved', (e: { beatmapTag: BeatmapTag; mappoolSuggestion: Suggestion }) => {
-        removeTagFromBeatmap(e);
-    });
-
-    const [data, setData] = useState<Suggestion[]>(mappool.suggestions);
-
-    function addSuggestion(e: { mappoolSuggestion: Suggestion }) {
-        setData((prevState) => [...prevState, e.mappoolSuggestion]);
-    }
-
-    function editSuggestion(e: { mappoolSuggestion: Suggestion }) {
-        // find the suggestion
-        const suggestion = data.find((suggestion) => suggestion.id === e.mappoolSuggestion.id);
-
-        // safe guard
-        if (!suggestion) return;
-
-        // update the property
-        suggestion.beatmap_id = e.mappoolSuggestion.beatmap_id;
-        suggestion.beatmap = e.mappoolSuggestion.beatmap;
-
-        updateSuggestionState(suggestion);
-    }
-
-    function removeSuggestion(e: { mappoolSuggestion: Suggestion }) {
-        setData((prevState) => prevState.filter((suggestion) => suggestion.id !== e.mappoolSuggestion.id));
-    }
-
-    function updateSuggestionState(suggestion: Suggestion) {
-        // update the state
-        setData((prevState) => {
-            // find the index of the suggestion
-            const index = prevState.indexOf(suggestion);
-
-            // get the data without the suggestion
-            const excluded = prevState.filter((value) => value.id !== suggestion.id);
-
-            return [
-                ...excluded.slice(0, index), // elements before insertion index
-                suggestion,
-                ...excluded.slice(index), // elements after insertion index
-            ];
-        });
-    }
-
-    function addNewComment(e: { suggestionComment: SuggestionComment }) {
-        // find the suggestion
-        const suggestion = data.find((suggestion) => suggestion.id === e.suggestionComment.mappool_suggestion_id);
-
-        // safe guard
-        if (!suggestion) return;
-
-        // check if the comment has already existed
-        if (suggestion.comments.find((comment) => comment.comment.id === e.suggestionComment.comment_id)) return;
-
-        // otherwise append it
-        suggestion.comments.push({ id: e.suggestionComment.id, comment: e.suggestionComment.comment, parent: e.suggestionComment.parent });
-
-        updateSuggestionState(suggestion);
-    }
-
-    function removeComment(e: { suggestionComment: SuggestionComment }) {
-        // find the suggestion
-        const suggestion = data.find((suggestion) => suggestion.id === e.suggestionComment.mappool_suggestion_id);
-
-        // safe guard
-        if (!suggestion) return;
-
-        // filter out the comment
-        suggestion.comments = suggestion.comments.filter((comment) => comment.comment.id !== e.suggestionComment.comment_id);
-
-        updateSuggestionState(suggestion);
-    }
-
-    function editComment(e: { suggestionComment: SuggestionComment }) {
-        // find the suggestion
-        const suggestion = data.find((suggestion) => suggestion.id === e.suggestionComment.mappool_suggestion_id);
-
-        // safe guard
-        if (!suggestion) return;
-
-        // find the edited comment index
-        const commentIndex = suggestion.comments.findIndex((comment) => comment.comment.id === e.suggestionComment.comment_id);
-
-        // safety
-        if (!commentIndex) return;
-
-        // set the edited comment
-        suggestion.comments[commentIndex] = e.suggestionComment;
-
-        updateSuggestionState(suggestion);
-    }
-
-    function addTagToBeatmap(e: { beatmapTag: BeatmapTag; mappoolSuggestion: Suggestion }) {
-        // find the suggestion
-        const suggestion = data.find((suggestion) => suggestion.id === e.mappoolSuggestion.id);
-
-        // safe guard
-        if (!suggestion) return;
-
-        // update the tags
-        suggestion.tags.push(e.beatmapTag);
-
-        updateSuggestionState(suggestion);
-    }
-
-    function removeTagFromBeatmap(e: { beatmapTag: BeatmapTag; mappoolSuggestion: Suggestion }) {
-        // find the suggestion
-        const suggestion = data.find((suggestion) => suggestion.id === e.mappoolSuggestion.id);
-
-        // safe guard
-        if (!suggestion) return;
-
-        // update the tags
-        suggestion.tags = suggestion.tags.filter((tag) => tag.id !== e.beatmapTag.id);
-
-        updateSuggestionState(suggestion);
-    }
-
+export default function SuggestionTable({ tags, suggestions }: SuggestionTableProps) {
     const columns = useMemo(
         () => [
             columnHelper.display({
@@ -450,16 +301,13 @@ export default function SuggestionTable({ mappool, tags }: SuggestionTableProps)
     );
 
     const table = useReactTable({
-        data,
+        data: suggestions,
         columns,
         getCoreRowModel: getCoreRowModel(),
     });
 
     return (
-        <div className="container mx-auto py-10">
-            <h1 className="mb-2 text-center text-4xl font-bold">
-                {mappool.round} Suggestions &mdash; SR: {typeof mappool.star_rating === 'number' && mappool.star_rating.toFixed(2)} &#9733;
-            </h1>
+        <div className="container mx-auto mt-6">
             <table>
                 <thead className="border-b bg-gray-300">
                     {table.getHeaderGroups().map((headerGroup) => (

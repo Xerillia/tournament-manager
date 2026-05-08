@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Events\MappoolSlotUpdated;
 use App\Models\MappoolSlot;
 use App\Models\MappoolSuggestion;
 
@@ -16,6 +17,8 @@ class AssemblyController extends Controller
             'mappool_suggestion_id' => $suggestion->id,
         ]);
 
+        broadcast(new MappoolSlotUpdated($slot));
+
         return redirect()->back();
     }
 
@@ -27,6 +30,8 @@ class AssemblyController extends Controller
         $slot->update([
             'mappool_suggestion_id' => null,
         ]);
+
+        broadcast(new MappoolSlotUpdated($slot));
 
         return redirect()->back();
     }
