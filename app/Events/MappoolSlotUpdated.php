@@ -18,7 +18,7 @@ class MappoolSlotUpdated implements ShouldBroadcastNow
      */
     public function __construct(public MappoolSlot $slot)
     {
-        $slot->load('format');
+        $slot->load(['format', 'suggestion.beatmap', 'suggestion.tags', 'suggestion.comments']);
     }
 
     /**

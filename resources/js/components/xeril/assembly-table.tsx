@@ -38,6 +38,10 @@ export default function AssemblyTable({ mappool, slots }: AssemblyTableProps) {
         console.log(e);
     });
 
+    useEcho('mappools.' + mappool.id + '.suggestions', 'MappoolSlotUpdated', (e: { slot: Slot }) => {
+        insertSlot(e);
+    });
+
     useDragDropMonitor({
         onDragEnd(event) {
             const { operation } = event;
@@ -251,15 +255,31 @@ export default function AssemblyTable({ mappool, slots }: AssemblyTableProps) {
 
     const [data, setData] = useState<Slot[]>(slots);
 
-    useEffect(() => {
-        setData(slots);
-    }, [slots]);
-
     const table = useReactTable({
         data,
         columns,
         getCoreRowModel: getCoreRowModel(),
     });
+
+    function insertSlot(e: { slot: Slot }) {
+        const slot = data.find((obj) => obj.id === e.slot.id);
+
+        if (!slot) return;
+
+        slot.suggestion = e.slot.suggestion;
+
+        updateState(slot);
+    }
+
+    function updateState(slot: Slot) {
+        setData((prevState) => {
+            const index = prevState.findIndex((obj) => obj.id === slot.id);
+
+            const filtered = prevState.filter((obj) => obj.id !== slot.id);
+
+            return [...filtered.slice(0, index), slot, ...filtered.slice(index)];
+        });
+    }
 
     return (
         <div className="container mx-auto py-10">
