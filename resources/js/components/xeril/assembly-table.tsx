@@ -201,9 +201,7 @@ export default function AssemblyTable({ mappool, slots }: AssemblyTableProps) {
             }),
             columnHelper.accessor('suggestion.beatmap.star_rating', {
                 header: 'SR',
-                cell: (props) => {
-                    props.row.original.suggestion ? <span className="whitespace-nowrap">{`${props.getValue().toFixed(2)} ★`}</span> : null;
-                },
+                cell: (props) => (props.row.original.suggestion ? <span className="whitespace-nowrap">{`${props.getValue().toFixed(2)} ★`}</span> : null),
                 size: 75,
             }),
             columnHelper.accessor('suggestion.beatmap.bpm', {
