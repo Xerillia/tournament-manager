@@ -1,9 +1,7 @@
 import { Mappool, Slot } from '@/types/mappools';
 import { createColumnHelper, flexRender, getCoreRowModel, useReactTable } from '@tanstack/react-table';
-import { useEffect, useMemo, useState } from 'react';
+import { useMemo, useState } from 'react';
 import CommentsCell from './comments-cell';
-import { useEcho } from '@laravel/echo-react';
-import { SuggestionComment } from '@/types/comments';
 import TagsCell from './tags-cell';
 import { useDragDropMonitor, useDroppable } from '@dnd-kit/react';
 import { Form, router } from '@inertiajs/react';
@@ -30,18 +28,6 @@ function secondToTime(num: number) {
 const columnHelper = createColumnHelper<Slot>();
 
 export default function AssemblyTable({ mappool, slots }: AssemblyTableProps) {
-    useEcho('mappools.' + mappool.id + '.suggestions', 'SuggestionCommentCreated', (e: { suggestionComment: SuggestionComment }) => {
-        console.log(e);
-    });
-
-    useEcho('mappools.' + mappool.id + '.suggestions', 'SuggestionCommentDeleted', (e: { suggestionComment: SuggestionComment }) => {
-        console.log(e);
-    });
-
-    useEcho('mappools.' + mappool.id + '.suggestions', 'MappoolSlotUpdated', (e: { slot: Slot }) => {
-        insertSlot(e);
-    });
-
     useDragDropMonitor({
         onDragEnd(event) {
             const { operation } = event;
@@ -253,33 +239,11 @@ export default function AssemblyTable({ mappool, slots }: AssemblyTableProps) {
         [],
     );
 
-    const [data, setData] = useState<Slot[]>(slots);
-
     const table = useReactTable({
-        data,
+        data: slots,
         columns,
         getCoreRowModel: getCoreRowModel(),
     });
-
-    function insertSlot(e: { slot: Slot }) {
-        const slot = data.find((obj) => obj.id === e.slot.id);
-
-        if (!slot) return;
-
-        slot.suggestion = e.slot.suggestion;
-
-        updateState(slot);
-    }
-
-    function updateState(slot: Slot) {
-        setData((prevState) => {
-            const index = prevState.findIndex((obj) => obj.id === slot.id);
-
-            const filtered = prevState.filter((obj) => obj.id !== slot.id);
-
-            return [...filtered.slice(0, index), slot, ...filtered.slice(index)];
-        });
-    }
 
     return (
         <div className="container mx-auto py-10">

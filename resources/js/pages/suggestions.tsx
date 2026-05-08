@@ -51,29 +51,11 @@ export default function Suggestions({ tournament, mappool, tags, slots }: Sugges
         removeTagFromBeatmap(e);
     });
 
+    useEcho('mappools.' + mappool.id + '.suggestions', 'MappoolSlotUpdated', (e: { slot: Slot }) => {
+        updateSlot(e);
+    });
+
     const [suggestionsState, setSuggestionsState] = useState<Suggestion[]>(mappool.suggestions);
-
-    function insertSuggestion(e: { mappoolSuggestion: Suggestion }) {
-        setSuggestionsState((prevState) => [...prevState, e.mappoolSuggestion]);
-    }
-
-    function editSuggestion(e: { mappoolSuggestion: Suggestion }) {
-        // find the suggestion
-        const suggestion = suggestionsState.find((suggestion) => suggestion.id === e.mappoolSuggestion.id);
-
-        // safe guard
-        if (!suggestion) return;
-
-        // update the property
-        suggestion.beatmap_id = e.mappoolSuggestion.beatmap_id;
-        suggestion.beatmap = e.mappoolSuggestion.beatmap;
-
-        updateSuggestionState(suggestion);
-    }
-
-    function removeSuggestion(e: { mappoolSuggestion: Suggestion }) {
-        setSuggestionsState((prevState) => prevState.filter((suggestion) => suggestion.id !== e.mappoolSuggestion.id));
-    }
 
     function updateSuggestionState(suggestion: Suggestion) {
         // update the state
@@ -92,78 +74,169 @@ export default function Suggestions({ tournament, mappool, tags, slots }: Sugges
         });
     }
 
+    function insertSuggestion(e: { mappoolSuggestion: Suggestion }) {
+        setSuggestionsState((prevState) => [...prevState, e.mappoolSuggestion]);
+    }
+
+    function editSuggestion(e: { mappoolSuggestion: Suggestion }) {
+        // find the suggestion
+        const suggestion = suggestionsState.find((suggestion) => suggestion.id === e.mappoolSuggestion.id);
+
+        if (suggestion) {
+            suggestion.beatmap_id = e.mappoolSuggestion.beatmap_id;
+            suggestion.beatmap = e.mappoolSuggestion.beatmap;
+
+            updateSuggestionState(suggestion);
+        }
+
+        // find the slots
+        const foundSlots = slotsState.filter((slot) => slot.suggestion?.id === e.mappoolSuggestion.id);
+
+        foundSlots.map((slot) => {
+            slot.suggestion.beatmap_id = e.mappoolSuggestion.beatmap_id;
+            slot.suggestion.beatmap = e.mappoolSuggestion.beatmap;
+
+            updateSlotsState(slot);
+        });
+    }
+
+    function removeSuggestion(e: { mappoolSuggestion: Suggestion }) {
+        setSuggestionsState((prevState) => prevState.filter((suggestion) => suggestion.id !== e.mappoolSuggestion.id));
+    }
+
     function addNewComment(e: { suggestionComment: SuggestionComment }) {
         // find the suggestion
         const suggestion = suggestionsState.find((suggestion) => suggestion.id === e.suggestionComment.mappool_suggestion_id);
 
-        // safe guard
-        if (!suggestion) return;
+        // build the comment
+        const comment = { id: e.suggestionComment.id, comment: e.suggestionComment.comment, parent: e.suggestionComment.parent };
 
-        // check if the comment has already existed
-        if (suggestion.comments.find((comment) => comment.comment.id === e.suggestionComment.comment_id)) return;
+        // if suggestion exists and the comment hasn't already existed
+        if (suggestion && !suggestion.comments.find((comment) => comment.comment.id === e.suggestionComment.comment_id)) {
+            // push
+            suggestion.comments.push(comment);
 
-        // otherwise append it
-        suggestion.comments.push({ id: e.suggestionComment.id, comment: e.suggestionComment.comment, parent: e.suggestionComment.parent });
+            updateSuggestionState(suggestion);
+        }
 
-        updateSuggestionState(suggestion);
+        // find the slots
+        const foundSlots = slotsState.filter((slot) => slot.suggestion?.id === e.suggestionComment.mappool_suggestion_id);
+
+        foundSlots.map((slot) => {
+            slot.suggestion.comments = [...slot.suggestion.comments, comment];
+        });
     }
 
     function removeComment(e: { suggestionComment: SuggestionComment }) {
         // find the suggestion
         const suggestion = suggestionsState.find((suggestion) => suggestion.id === e.suggestionComment.mappool_suggestion_id);
 
-        // safe guard
-        if (!suggestion) return;
+        if (suggestion) {
+            // filter out the comment
+            suggestion.comments = suggestion.comments.filter((comment) => comment.comment.id !== e.suggestionComment.comment_id);
 
-        // filter out the comment
-        suggestion.comments = suggestion.comments.filter((comment) => comment.comment.id !== e.suggestionComment.comment_id);
+            updateSuggestionState(suggestion);
+        }
 
-        updateSuggestionState(suggestion);
+        // find the slots
+        const foundSlots = slots.filter((slot) => slot.suggestion?.id === e.suggestionComment.mappool_suggestion_id);
+
+        foundSlots.map((slot) => {
+            slot.suggestion.comments = slot.suggestion.comments.filter((comment) => comment.comment.id !== e.suggestionComment.comment_id);
+        });
     }
 
     function editComment(e: { suggestionComment: SuggestionComment }) {
         // find the suggestion
         const suggestion = suggestionsState.find((suggestion) => suggestion.id === e.suggestionComment.mappool_suggestion_id);
 
-        // safe guard
-        if (!suggestion) return;
+        if (suggestion) {
+            // find the edited comment index
+            const commentIndex = suggestion.comments.findIndex((comment) => comment.comment.id === e.suggestionComment.comment_id);
 
-        // find the edited comment index
-        const commentIndex = suggestion.comments.findIndex((comment) => comment.comment.id === e.suggestionComment.comment_id);
+            // set the edited comment
+            suggestion.comments[commentIndex] = e.suggestionComment;
 
-        // safety
-        if (!commentIndex) return;
+            updateSuggestionState(suggestion);
+        }
 
-        // set the edited comment
-        suggestion.comments[commentIndex] = e.suggestionComment;
+        // find the slots
+        const foundSlots = slots.filter((slot) => slot.suggestion?.id === e.suggestionComment.mappool_suggestion_id);
 
-        updateSuggestionState(suggestion);
+        foundSlots.map((slot) => {
+            // find the edited comment index
+            const commentIndex = slot.suggestion.comments.findIndex((comment) => comment.comment.id === e.suggestionComment.comment_id);
+
+            slot.suggestion.comments[commentIndex] = e.suggestionComment;
+        });
     }
 
     function addTagToBeatmap(e: { beatmapTag: BeatmapTag; mappoolSuggestion: Suggestion }) {
         // find the suggestion
         const suggestion = suggestionsState.find((suggestion) => suggestion.id === e.mappoolSuggestion.id);
 
-        // safe guard
-        if (!suggestion) return;
+        if (suggestion) {
+            // update the tags
+            suggestion.tags = [...suggestion.tags, e.beatmapTag];
 
-        // update the tags
-        suggestion.tags.push(e.beatmapTag);
+            updateSuggestionState(suggestion);
+        }
 
-        updateSuggestionState(suggestion);
+        // find the slots
+        const foundSlots = slots.filter((slot) => slot.suggestion?.id === e.mappoolSuggestion.id);
+
+        foundSlots.map((slot) => {
+            slot.suggestion.tags = [...slot.suggestion.tags, e.beatmapTag];
+        });
     }
 
     function removeTagFromBeatmap(e: { beatmapTag: BeatmapTag; mappoolSuggestion: Suggestion }) {
         // find the suggestion
         const suggestion = suggestionsState.find((suggestion) => suggestion.id === e.mappoolSuggestion.id);
 
-        // safe guard
-        if (!suggestion) return;
+        if (suggestion) {
+            // update the tags
+            suggestion.tags = suggestion.tags.filter((tag) => tag.id !== e.beatmapTag.id);
 
-        // update the tags
-        suggestion.tags = suggestion.tags.filter((tag) => tag.id !== e.beatmapTag.id);
+            updateSuggestionState(suggestion);
+        }
 
-        updateSuggestionState(suggestion);
+        // find the slots
+        const foundSlots = slots.filter((slot) => slot.suggestion?.id === e.mappoolSuggestion.id);
+
+        foundSlots.map((slot) => {
+            slot.suggestion.tags = slot.suggestion.tags.filter((tag) => tag.id !== e.beatmapTag.id);
+        });
+    }
+
+    const [slotsState, setSlotsState] = useState<Slot[]>(slots);
+
+    function updateSlotsState(slot: Slot) {
+        // update the state
+        setSlotsState((prevState) => {
+            // find the index of the slot
+            const index = prevState.indexOf(slot);
+
+            // get the data without the slot
+            const excluded = prevState.filter((value) => value.id !== slot.id);
+
+            return [
+                ...excluded.slice(0, index), // elements before insertion index
+                slot,
+                ...excluded.slice(index), // elements after insertion index
+            ];
+        });
+    }
+
+    function updateSlot(e: { slot: Slot }) {
+        const slot = slotsState.find((slot) => slot.id === e.slot.id);
+
+        if (!slot) return;
+
+        slot.suggestion = e.slot.suggestion;
+        slot.mappool_suggestion_id = e.slot.mappool_suggestion_id;
+
+        updateSlotsState(slot);
     }
 
     const { flash } = usePage().props;
@@ -230,7 +303,7 @@ export default function Suggestions({ tournament, mappool, tags, slots }: Sugges
                     <div className="max-w-1/2 overflow-auto">
                         <AssemblyTable
                             mappool={mappool}
-                            slots={slots}
+                            slots={slotsState}
                         />
                     </div>
                 </div>

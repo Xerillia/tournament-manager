@@ -23,6 +23,7 @@ export type Format = {
 export type Slot = {
     id: number;
     mappool_format_id: number;
+    mappool_suggestion_id: number;
     suggestion: Suggestion;
     slot: string;
     is_freemod: boolean;

@@ -13,9 +13,8 @@ interface TagsCellProps {
 }
 
 export default function TagsCell({ originalTags, suggestionId, tags, showButton = true }: TagsCellProps) {
-    const [suggestionTags, setSuggestionTags] = useState<BeatmapTag[]>(originalTags);
     const [availableTags, setAvailableTags] = useState<BeatmapTag[]>(
-        tags ? tags.filter((tag) => !suggestionTags.some((existingTag) => existingTag.id === tag.id)) : [],
+        tags ? tags.filter((tag) => !originalTags.some((existingTag) => existingTag.id === tag.id)) : [],
     );
 
     const [showPopup, setShowPopup] = useState<boolean>(false);
@@ -33,28 +32,26 @@ export default function TagsCell({ originalTags, suggestionId, tags, showButton 
     }, [searchTerm, availableTags]);
 
     useEffect(() => {
-        setAvailableTags(tags ? tags.filter((tag) => !suggestionTags.some((existingTag) => existingTag.id === tag.id)) : []);
-    }, [suggestionTags]);
-
-    useEffect(() => {
-        setSuggestionTags(originalTags);
+        setAvailableTags(tags ? tags.filter((tag) => !originalTags.some((existingTag) => existingTag.id === tag.id)) : []);
     }, [originalTags]);
 
     function addTag(tag: BeatmapTag) {
-        setSuggestionTags([...suggestionTags, tag]);
-
-        router.post(addTagToSuggestion([suggestionId, tag]));
+        router.post(
+            addTagToSuggestion([suggestionId, tag]),
+            {},
+            {
+                onSuccess: () => console.log(originalTags),
+            },
+        );
     }
 
     function removeTag(tag: BeatmapTag) {
-        setSuggestionTags(suggestionTags.filter((obj) => obj.id !== tag.id));
-
         router.delete(removeTagFromSuggestion([suggestionId, tag]));
     }
     return (
         <div className="relative align-middle">
             <div className="flex w-32 flex-wrap gap-1 px-2 py-1">
-                {suggestionTags.map((tag) => (
+                {originalTags.map((tag) => (
                     <span
                         key={tag.id}
                         className="flex rounded-full bg-blue-200 px-1 text-xs"
