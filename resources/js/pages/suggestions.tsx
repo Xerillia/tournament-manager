@@ -1,6 +1,8 @@
 import AssemblyTable from '@/components/xeril/assembly-table';
+import SuggestionSearchbar from '@/components/xeril/suggestion-searchbar';
 import SuggestionTable from '@/components/xeril/suggestion-table';
 import { addSuggestion } from '@/routes/mappools';
+import { Beatmap } from '@/types/beatmaps';
 import { BeatmapTag } from '@/types/beatmaptag';
 import { SuggestionComment } from '@/types/comments';
 import { Mappool, Slot } from '@/types/mappools';
@@ -287,9 +289,67 @@ export default function Suggestions({ tournament, mappool, tags, slots }: Sugges
         </>
     );
 
+    const [filteredSuggestionsState, setFilteredSuggestionsState] = useState<Suggestion[]>(suggestionsState);
+
+    function filterSuggestions(term: string) {
+        if (!term) {
+            setFilteredSuggestionsState(suggestionsState);
+            return;
+        }
+
+        const terms = term
+            .replaceAll(/sr|star|stars/g, 'star_rating')
+            .replaceAll(/combo/g, 'max_combo')
+            .replaceAll(/length/g, 'drain')
+            .trim()
+            .split(/\s+/);
+
+        function match(label: string) {
+            return terms.filter((str) => str.match(new RegExp(`${label}(<=?|=|>=?)\\d+.?\\d*`, 'gi')));
+        }
+
+        function compare(first: number, operator: string = '', second: number) {
+            switch (operator) {
+                case '<':
+                    return first < second;
+                case '<=':
+                    return first <= second;
+                case '=':
+                    return first == second;
+                case '>=':
+                    return first >= second;
+                case '>':
+                    return first > second;
+                default:
+                    return true;
+            }
+        }
+
+        let filtered = suggestionsState;
+
+        const attributes: Array<keyof Beatmap> = ['star_rating', 'bpm', 'max_combo', 'drain', 'cs', 'ar', 'od'];
+
+        attributes.forEach((attribute) => {
+            const input = match(attribute);
+            if (input.length === 0) return;
+
+            input.forEach((filter) => {
+                const number = Number(filter.match(/\d+.?\d*/)?.at(0));
+                const operator = filter.match(/<=?|=|>=?/)?.at(0);
+
+                filtered = filtered.filter((suggestion) => {
+                    const beatmap = suggestion.beatmap;
+
+                    return compare(Number(beatmap[attribute]), operator, number);
+                });
+            });
+        });
+
+
     return (
         <>
             <div className="grid place-items-center">{suggestionPanel}</div>
+            <SuggestionSearchbar handleChange={handleChange} />
             <DragDropProvider>
                 <div className="mx-8 my-4 flex gap-4">
                     <div className="max-w-1/2 overflow-auto">
@@ -298,7 +358,7 @@ export default function Suggestions({ tournament, mappool, tags, slots }: Sugges
                         </h1>
                         <SuggestionTable
                             tags={tags}
-                            suggestions={suggestionsState}
+                            suggestions={filteredSuggestionsState}
                         />
                     </div>
                     <div className="max-w-1/2 overflow-auto">
