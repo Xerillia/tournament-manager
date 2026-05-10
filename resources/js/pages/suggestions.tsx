@@ -11,7 +11,8 @@ import { Tournament } from '@/types/tournament';
 import { DragDropProvider } from '@dnd-kit/react';
 import { Form, usePage } from '@inertiajs/react';
 import { useEcho } from '@laravel/echo-react';
-import { useState } from 'react';
+import Fuse from 'fuse.js';
+import { useEffect, useState } from 'react';
 
 interface SuggestionsProps {
     tournament: Tournament;
@@ -345,6 +346,28 @@ export default function Suggestions({ tournament, mappool, tags, slots }: Sugges
             });
         });
 
+        const fuse = new Fuse(filtered, {
+            keys: ['beatmap.title', 'beatmap.artist', 'beatmap.version'],
+            threshold: 0.4,
+        });
+
+        const search = fuse.search(term.replaceAll(/\S+(<=?|=|>=?)\S*\s?/g, ''));
+        filtered = search.map((result) => result.item);
+
+        setFilteredSuggestionsState(filtered);
+    }
+
+    const [searchTerm, setSearchTerm] = useState<string>('');
+
+    function handleChange(term: string) {
+        setSearchTerm(term);
+        filterSuggestions(term);
+    }
+
+    useEffect(() => {
+        setFilteredSuggestionsState(suggestionsState);
+        filterSuggestions(searchTerm);
+    }, [suggestionsState]);
 
     return (
         <>
