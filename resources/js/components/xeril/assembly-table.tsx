@@ -6,7 +6,7 @@ import TagsCell from './tags-cell';
 import { useDragDropMonitor, useDroppable } from '@dnd-kit/react';
 import { Form, router } from '@inertiajs/react';
 import { Trash2Icon } from 'lucide-react';
-import { insertSuggestionToSlot, removeSuggestionFromSlot } from '@/routes/slots';
+import { disableFreemod, insertSuggestionToSlot, reenableFreemod, removeSuggestionFromSlot } from '@/routes/slots';
 import { overrideFreemodRules } from '@/routes/tournaments/pooling/slots/override';
 
 interface AssemblyTableProps {
@@ -83,11 +83,12 @@ export default function AssemblyTable({ mappool, slots }: AssemblyTableProps) {
             columnHelper.accessor('suggestion.beatmap.mods', {
                 header: 'Mods',
                 cell: (props) => {
-                    const mods = props.row.original.suggestion?.beatmap.mods;
+                    const slot = props.row.original;
+                    const mods = slot.suggestion?.beatmap.mods;
 
                     if (!mods) return null; // empty cell
 
-                    if (props.row.original.is_freemod) {
+                    if (slot.is_freemod) {
                         const [showModal, setShowModal] = useState<boolean>(false);
 
                         return (
@@ -96,56 +97,88 @@ export default function AssemblyTable({ mappool, slots }: AssemblyTableProps) {
                                     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/20">
                                         <Form
                                             className="w-xl rounded-md bg-white shadow-md"
-                                            action={overrideFreemodRules(props.row.original.id)}
+                                            action={overrideFreemodRules(slot)}
                                             method="POST"
                                             onSuccess={() => setShowModal(false)}
                                         >
                                             <h1 className="mx-4 border-b py-4 pb-2 text-2xl font-bold">Override Freemod Multipliers</h1>
-                                            <div className="flex flex-col">
-                                                <div className="flex text-lg font-semibold">
-                                                    <p className="flex-1">Mod</p>
-                                                    <p className="flex-1">Multiplier</p>
-                                                </div>
-                                                {mappool.freemod_rules.map((rule) => {
-                                                    const overriddenRules = props.row.original.freemod_rules?.find((override) => override.mod === rule.mod);
-
-                                                    return (
-                                                        <div
-                                                            key={rule.id}
-                                                            className="flex items-center"
-                                                        >
-                                                            <input
-                                                                type="hidden"
-                                                                name={`rules[${rule.id}][mod]`}
-                                                                value={rule.mod}
-                                                            />
-                                                            <div className="flex-1">{rule.mod}</div>
-                                                            <input
-                                                                type="number"
-                                                                name={`rules[${rule.id}][multiplier]`}
-                                                                defaultValue={overriddenRules?.multiplier ?? rule.multiplier}
-                                                                step={0.01}
-                                                                className="flex-1 py-2 text-center focus:outline-0"
-                                                            />
-                                                        </div>
-                                                    );
-                                                })}
-                                            </div>
-                                            <div className="flex h-10">
-                                                <button
-                                                    type="submit"
-                                                    className="flex-1 cursor-pointer rounded-bl bg-green-300 hover:bg-green-200"
-                                                >
-                                                    Override
-                                                </button>
+                                            {!slot.freemod_disabled ? (
                                                 <button
                                                     type="button"
-                                                    className="flex-1 cursor-pointer rounded-br bg-red-300 hover:bg-red-200"
-                                                    onClick={() => setShowModal(false)}
+                                                    className="m-2 cursor-pointer rounded-md bg-red-300 p-2 hover:bg-red-200"
+                                                    onClick={() => router.post(disableFreemod(slot))}
                                                 >
-                                                    Cancel
+                                                    Disable Freemod for this Slot?
                                                 </button>
-                                            </div>
+                                            ) : (
+                                                <button
+                                                    type="button"
+                                                    className="m-2 cursor-pointer rounded-md bg-green-300 p-2 hover:bg-green-200"
+                                                    onClick={() => router.post(reenableFreemod(slot))}
+                                                >
+                                                    Reenable Freemod for this Slot?
+                                                </button>
+                                            )}
+                                            {!slot.freemod_disabled ? (
+                                                <>
+                                                    <div className="flex flex-col">
+                                                        <div className="flex text-lg font-semibold">
+                                                            <p className="flex-1">Mod</p>
+                                                            <p className="flex-1">Multiplier</p>
+                                                        </div>
+                                                        {mappool.freemod_rules.map((rule) => {
+                                                            const overriddenRules = slot.freemod_rules?.find((override) => override.mod === rule.mod);
+
+                                                            return (
+                                                                <div
+                                                                    key={rule.id}
+                                                                    className="flex items-center"
+                                                                >
+                                                                    <input
+                                                                        type="hidden"
+                                                                        name={`rules[${rule.id}][mod]`}
+                                                                        value={rule.mod}
+                                                                    />
+                                                                    <div className="flex-1">{rule.mod}</div>
+                                                                    <input
+                                                                        type="number"
+                                                                        name={`rules[${rule.id}][multiplier]`}
+                                                                        defaultValue={overriddenRules?.multiplier ?? rule.multiplier}
+                                                                        step={0.01}
+                                                                        className="flex-1 py-2 text-center focus:outline-0"
+                                                                    />
+                                                                </div>
+                                                            );
+                                                        })}
+                                                    </div>
+                                                    <div className="flex h-10">
+                                                        <button
+                                                            type="submit"
+                                                            className="flex-1 cursor-pointer rounded-bl bg-green-300 hover:bg-green-200"
+                                                        >
+                                                            Override
+                                                        </button>
+                                                        <button
+                                                            type="button"
+                                                            className="flex-1 cursor-pointer rounded-br bg-red-300 hover:bg-red-200"
+                                                            onClick={() => setShowModal(false)}
+                                                        >
+                                                            Cancel
+                                                        </button>
+                                                    </div>
+                                                </>
+                                            ) : (
+                                                <>
+                                                    <p className="mx-auto my-12">Freemod is disabled.</p>
+                                                    <button
+                                                        type="button"
+                                                        className="h-10 w-full cursor-pointer rounded-br bg-blue-300 hover:bg-blue-200"
+                                                        onClick={() => setShowModal(false)}
+                                                    >
+                                                        Close
+                                                    </button>
+                                                </>
+                                            )}
                                         </Form>
                                     </div>
                                 )}
