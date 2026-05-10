@@ -27,5 +27,6 @@ export type Slot = {
     suggestion: Suggestion;
     slot: string;
     is_freemod: boolean;
+    freemod_disabled: boolean;
     freemod_rules?: FreemodRule[];
 };

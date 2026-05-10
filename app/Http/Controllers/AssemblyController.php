@@ -35,4 +35,26 @@ class AssemblyController extends Controller
 
         return redirect()->back();
     }
+
+    public function disableFreemod(MappoolSlot $slot)
+    {
+        $slot->update([
+            'freemod_disabled' => true,
+        ]);
+
+        broadcast(new MappoolSlotUpdated($slot));
+
+        return redirect()->back();
+    }
+
+    public function reenableFreemod(MappoolSlot $slot)
+    {
+        $slot->update([
+            'freemod_disabled' => false,
+        ]);
+
+        broadcast(new MappoolSlotUpdated($slot));
+
+        return redirect()->back();
+    }
 }
