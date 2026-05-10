@@ -302,6 +302,7 @@ export default function Suggestions({ tournament, mappool, tags, slots }: Sugges
                         />
                     </div>
                     <div className="max-w-1/2 overflow-auto">
+                        <h1 className="text-center text-4xl font-bold">Assembly Zone</h1>
                         <AssemblyTable
                             mappool={mappool}
                             slots={slotsState}
