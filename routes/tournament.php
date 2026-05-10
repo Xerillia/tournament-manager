@@ -50,4 +50,7 @@ Route::middleware('auth')->group(function () {
     Route::post('/suggestions/{suggestion}/slots/{slot}', [AssemblyController::class, 'insertSuggestionToSlot'])->name('slots.insertSuggestionToSlot');
     Route::delete('/slots/{slot}', [AssemblyController::class, 'removeSuggestionFromSlot'])->name('slots.removeSuggestionFromSlot');
 
+    // toggle freemod
+    Route::post('/slots/{slot}/freemod/disable', [AssemblyController::class, 'disableFreemod'])->name('slots.disableFreemod');
+    Route::post('/slots/{slot}/freemod/reenable', [AssemblyController::class, 'reenableFreemod'])->name('slots.reenableFreemod');
 });
