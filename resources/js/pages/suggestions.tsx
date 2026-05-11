@@ -299,9 +299,10 @@ export default function Suggestions({ tournament, mappool, tags, slots }: Sugges
         }
 
         const terms = term
-            .replaceAll(/sr|star|stars/g, 'star_rating')
-            .replaceAll(/combo/g, 'max_combo')
-            .replaceAll(/length/g, 'drain')
+            .replaceAll(/sr|star|stars/gi, 'star_rating')
+            .replaceAll(/combo/gi, 'max_combo')
+            .replaceAll(/length/gi, 'drain')
+            .replaceAll(/mods/gi, 'mod')
             .trim()
             .split(/\s+/);
 
@@ -346,8 +347,19 @@ export default function Suggestions({ tournament, mappool, tags, slots }: Sugges
             });
         });
 
+        const searchMods = terms.filter((str) => str.match(/mod=[a-z]+/gi));
+        if (searchMods) {
+            searchMods.map((mods) => {
+                mods.replace(/mod=/gi, '')
+                    .match(/[a-z]{2}/gi)
+                    ?.forEach((mod) => {
+                        filtered = filtered.filter((suggestion) => suggestion.beatmap.mods.match(new RegExp(mod, 'gi')));
+                    });
+            });
+        }
+
         const fuse = new Fuse(filtered, {
-            keys: ['beatmap.title', 'beatmap.artist', 'beatmap.version'],
+            keys: ['beatmap.beatmap_id', 'beatmap.title', 'beatmap.artist', 'beatmap.version'],
             threshold: 0.4,
         });
 
