@@ -9,10 +9,12 @@ import { BeatmapTag } from '@/types/beatmaptag';
 import TagsCell from './tags-cell';
 import { useDraggable } from '@dnd-kit/react';
 import { ArrowUpIcon, ArrowDownIcon, ChevronsUpDownIcon } from 'lucide-react';
+import TagsHeader, { TagFilter } from './tags-header';
 
 interface SuggestionTableProps {
     tags: BeatmapTag[];
     suggestions: Suggestion[];
+    handleTagFilters: (tagFilters: TagFilter[]) => void;
 }
 
 function secondToTime(num: number) {
@@ -28,7 +30,7 @@ function secondToTime(num: number) {
 
 const columnHelper = createColumnHelper<Suggestion>();
 
-export default function SuggestionTable({ tags, suggestions }: SuggestionTableProps) {
+export default function SuggestionTable({ tags, suggestions, handleTagFilters }: SuggestionTableProps) {
     const columns = useMemo(
         () => [
             columnHelper.display({
@@ -238,7 +240,12 @@ export default function SuggestionTable({ tags, suggestions }: SuggestionTablePr
             }),
             columnHelper.display({
                 id: 'tags',
-                header: 'Tags',
+                header: () => (
+                    <TagsHeader
+                        tags={tags}
+                        handleTagFilters={handleTagFilters}
+                    />
+                ),
                 cell: (props) => (
                     <TagsCell
                         suggestionId={props.row.original.id}

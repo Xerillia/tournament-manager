@@ -1,6 +1,7 @@
 import AssemblyTable from '@/components/xeril/assembly-table';
 import SuggestionSearchbar from '@/components/xeril/suggestion-searchbar';
 import SuggestionTable from '@/components/xeril/suggestion-table';
+import { TagFilter } from '@/components/xeril/tags-header';
 import { addSuggestion } from '@/routes/mappools';
 import { Beatmap } from '@/types/beatmaps';
 import { BeatmapTag } from '@/types/beatmaptag';
@@ -292,9 +293,27 @@ export default function Suggestions({ tournament, mappool, tags, slots }: Sugges
 
     const [filteredSuggestionsState, setFilteredSuggestionsState] = useState<Suggestion[]>(suggestionsState);
 
-    function filterSuggestions(term: string) {
+    function filterSuggestions(term: string, tagFilters?: TagFilter[]) {
+        let filtered = suggestionsState;
+
+        if (tagFilters) {
+            tagFilters.forEach((tagFilter) => {
+                const filter = tagFilter.filter;
+                if (!filter) return;
+
+                switch (filter) {
+                    case 'include':
+                        filtered = filtered.filter((suggestion) => suggestion.tags.find((tag) => tag.id === tagFilter.id));
+                        break;
+                    case 'exclude':
+                        filtered = filtered.filter((suggestion) => suggestion.tags.length === 0 || !suggestion.tags.find((tag) => tag.id === tagFilter.id));
+                        break;
+                }
+            });
+        }
+
         if (!term) {
-            setFilteredSuggestionsState(suggestionsState);
+            setFilteredSuggestionsState(filtered);
             return;
         }
 
@@ -326,8 +345,6 @@ export default function Suggestions({ tournament, mappool, tags, slots }: Sugges
                     return true;
             }
         }
-
-        let filtered = suggestionsState;
 
         const attributes: Array<keyof Beatmap> = ['star_rating', 'bpm', 'max_combo', 'drain', 'cs', 'ar', 'od'];
 
@@ -377,9 +394,12 @@ export default function Suggestions({ tournament, mappool, tags, slots }: Sugges
     }
 
     useEffect(() => {
-        setFilteredSuggestionsState(suggestionsState);
         filterSuggestions(searchTerm);
     }, [suggestionsState]);
+
+    function handleTagFilters(tagFilters: TagFilter[]) {
+        filterSuggestions(searchTerm, tagFilters);
+    }
 
     return (
         <>
@@ -394,6 +414,7 @@ export default function Suggestions({ tournament, mappool, tags, slots }: Sugges
                         <SuggestionTable
                             tags={tags}
                             suggestions={filteredSuggestionsState}
+                            handleTagFilters={handleTagFilters}
                         />
                     </div>
                     <div className="max-w-1/2 overflow-auto">
