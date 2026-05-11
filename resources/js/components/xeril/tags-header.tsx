@@ -1,4 +1,5 @@
 import { BeatmapTag } from '@/types/beatmaptag';
+import Fuse from 'fuse.js';
 import { useEffect, useState } from 'react';
 
 interface TagsHeaderProps {
@@ -43,6 +44,13 @@ export default function TagsHeader({ tags, handleTagFilters }: TagsHeaderProps) 
 
     useEffect(() => handleTagFilters(tagsFilter), [tagsFilter]);
 
+    const fuse = new Fuse(tags, {
+        keys: ['name'],
+        threshold: 0.4,
+    });
+
+    const [searchTerm, setSearchTerm] = useState<string>('');
+
     return (
         <div className="relative -mx-2 -my-5 h-16 w-32">
             <button
@@ -60,29 +68,41 @@ export default function TagsHeader({ tags, handleTagFilters }: TagsHeaderProps) 
                         <span className="ml-2 h-6 w-6 bg-red-300" /> Excluded
                         <span className="ml-2 h-6 w-6 border" /> None
                     </div>
+                    <input
+                        type="text"
+                        autoComplete="off"
+                        className="w-full p-2 text-center font-normal focus:outline-0"
+                        placeholder="Search a tag..."
+                        autoFocus={true}
+                        value={searchTerm}
+                        onChange={(e) => setSearchTerm(e.target.value)}
+                    />
                     <div className="grid max-h-100 grid-cols-1 overflow-y-auto select-none">
-                        {tags.map((tag) => {
-                            const tagFilter = tagsFilter.find((filter) => filter.id === tag.id);
-                            let color = ' ';
-                            switch (tagFilter?.filter) {
-                                case 'include':
-                                    color = 'bg-green-300 ';
-                                    break;
-                                case 'exclude':
-                                    color = 'bg-red-300 ';
-                                    break;
-                            }
-                            return (
-                                <button
-                                    key={tag.id}
-                                    type="button"
-                                    className={color + 'cursor-pointer border-y py-1.5 font-normal'}
-                                    onClick={() => filter(tag.id)}
-                                >
-                                    {tag.name}
-                                </button>
-                            );
-                        })}
+                        {fuse
+                            .search(searchTerm)
+                            .map((result) => result.item)
+                            .map((tag) => {
+                                const tagFilter = tagsFilter.find((filter) => filter.id === tag.id);
+                                let color = ' ';
+                                switch (tagFilter?.filter) {
+                                    case 'include':
+                                        color = 'bg-green-300 ';
+                                        break;
+                                    case 'exclude':
+                                        color = 'bg-red-300 ';
+                                        break;
+                                }
+                                return (
+                                    <button
+                                        key={tag.id}
+                                        type="button"
+                                        className={color + 'cursor-pointer border-y py-1.5 font-normal'}
+                                        onClick={() => filter(tag.id)}
+                                    >
+                                        {tag.name}
+                                    </button>
+                                );
+                            })}
                     </div>
                 </div>
             )}
