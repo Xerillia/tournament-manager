@@ -1,18 +1,20 @@
 import { deleteSuggestion, updateSuggestion } from '@/routes/suggestions';
-import { Mappool } from '@/types/mappools';
 import { Suggestion } from '@/types/suggestion';
 import { router } from '@inertiajs/react';
-import { createColumnHelper, flexRender, getCoreRowModel, useReactTable } from '@tanstack/react-table';
+import { createColumnHelper, flexRender, getCoreRowModel, getSortedRowModel, useReactTable } from '@tanstack/react-table';
 import { Trash2Icon } from 'lucide-react';
 import { useEffect, useMemo, useState } from 'react';
 import CommentsCell from './comments-cell';
 import { BeatmapTag } from '@/types/beatmaptag';
 import TagsCell from './tags-cell';
 import { useDraggable } from '@dnd-kit/react';
+import { ArrowUpIcon, ArrowDownIcon, ChevronsUpDownIcon } from 'lucide-react';
+import TagsHeader, { TagFilter } from './tags-header';
 
 interface SuggestionTableProps {
     tags: BeatmapTag[];
     suggestions: Suggestion[];
+    handleTagFilters: (tagFilters: TagFilter[]) => void;
 }
 
 function secondToTime(num: number) {
@@ -28,18 +30,27 @@ function secondToTime(num: number) {
 
 const columnHelper = createColumnHelper<Suggestion>();
 
-export default function SuggestionTable({ tags, suggestions }: SuggestionTableProps) {
+export default function SuggestionTable({ tags, suggestions, handleTagFilters }: SuggestionTableProps) {
     const columns = useMemo(
         () => [
             columnHelper.display({
                 id: 'delete_button',
+                header: ({ table }) => (
+                    <button
+                        type="button"
+                        className="hover- -mx-2 -my-5 h-16 w-24 cursor-pointer text-red-600 hover:bg-black/10"
+                        onClick={() => table.resetSorting()}
+                    >
+                        Clear Sort
+                    </button>
+                ),
                 cell: (props) => (
                     <button
                         type="button"
-                        className="rounded-md bg-red-200 p-1 align-middle hover:cursor-pointer hover:bg-red-300"
+                        className="hover:text-700 flex justify-self-center rounded-md bg-red-200 p-1 align-middle font-medium whitespace-nowrap text-red-800 hover:cursor-pointer hover:bg-red-300"
                         onClick={() => router.delete(deleteSuggestion(props.row.original.id))}
                     >
-                        <Trash2Icon className="hover:text-700 text-red-800" />
+                        <Trash2Icon /> Delete
                     </button>
                 ),
             }),
@@ -119,6 +130,7 @@ export default function SuggestionTable({ tags, suggestions }: SuggestionTablePr
                         </>
                     );
                 },
+                sortDescFirst: false,
             }),
             columnHelper.accessor('beatmap.mods', {
                 header: 'Mods',
@@ -210,14 +222,30 @@ export default function SuggestionTable({ tags, suggestions }: SuggestionTablePr
                     </a>
                 ),
             }),
-            columnHelper.display({
+            columnHelper.accessor('id', {
+                // hacking by using `accessor` instead of `display` is necessary to use sorting :/ , misuse but it works lol.
                 id: 'comments',
                 header: 'Comments',
                 cell: (props) => <CommentsCell suggestion={props.row.original} />,
+                sortingFn: (rowA, rowB) => {
+                    const first = rowA.original.comments.at(-1);
+                    const second = rowB.original.comments.at(-1);
+                    if (!second) return 1;
+                    if (!first) return -1;
+                    return new Date(first.comment.updated_at).getTime() - new Date(second.comment.updated_at).getTime();
+                },
+                meta: {
+                    tooltip: 'Sort by latest comment updated or created',
+                },
             }),
             columnHelper.display({
                 id: 'tags',
-                header: 'Tags',
+                header: () => (
+                    <TagsHeader
+                        tags={tags}
+                        handleTagFilters={handleTagFilters}
+                    />
+                ),
                 cell: (props) => (
                     <TagsCell
                         suggestionId={props.row.original.id}
@@ -230,6 +258,7 @@ export default function SuggestionTable({ tags, suggestions }: SuggestionTablePr
                 id: 'banner',
                 header: 'Banner',
                 cell: (props) => <img src={`https://assets.ppy.sh/beatmaps/${props.getValue().beatmapset_id}/covers/cover.jpg`} />,
+                enableSorting: false,
             }),
             columnHelper.accessor((row) => row.beatmap, {
                 id: 'beatmap_name',
@@ -243,40 +272,53 @@ export default function SuggestionTable({ tags, suggestions }: SuggestionTablePr
                     </a>
                 ),
                 size: 800,
+                sortingFn: (rowA, rowB) => {
+                    const first = rowA.original.beatmap.artist + rowA.original.beatmap.title + rowA.original.beatmap.version;
+                    const second = rowB.original.beatmap.artist + rowB.original.beatmap.title + rowB.original.beatmap.version;
+                    return first.localeCompare(second);
+                },
+                sortDescFirst: false,
             }),
             columnHelper.accessor('beatmap.star_rating', {
                 header: 'SR',
                 cell: (props) => <span className="whitespace-nowrap">{`${props.getValue().toFixed(2)} ★`}</span>,
                 size: 75,
+                sortDescFirst: false,
             }),
             columnHelper.accessor('beatmap.bpm', {
                 header: 'BPM',
                 cell: (props) => +props.getValue().toFixed(2),
                 size: 75,
+                sortDescFirst: false,
             }),
             columnHelper.accessor('beatmap.max_combo', {
                 header: 'Max Combo',
                 cell: (props) => `${props.getValue()}x`,
+                sortDescFirst: false,
             }),
             columnHelper.accessor('beatmap.drain', {
                 header: 'Drain',
                 cell: (props) => secondToTime(props.getValue()),
                 size: 75,
+                sortDescFirst: false,
             }),
             columnHelper.accessor('beatmap.cs', {
                 header: 'CS',
                 cell: (props) => +props.getValue().toFixed(2),
                 size: 75,
+                sortDescFirst: false,
             }),
             columnHelper.accessor('beatmap.ar', {
                 header: 'AR',
                 cell: (props) => +props.getValue().toFixed(2),
                 size: 75,
+                sortDescFirst: false,
             }),
             columnHelper.accessor('beatmap.od', {
                 header: 'OD',
                 cell: (props) => +props.getValue().toFixed(2),
                 size: 75,
+                sortDescFirst: false,
             }),
             columnHelper.display({
                 id: 'draggable',
@@ -304,6 +346,7 @@ export default function SuggestionTable({ tags, suggestions }: SuggestionTablePr
         data: suggestions,
         columns,
         getCoreRowModel: getCoreRowModel(),
+        getSortedRowModel: getSortedRowModel(),
     });
 
     return (
@@ -316,12 +359,27 @@ export default function SuggestionTable({ tags, suggestions }: SuggestionTablePr
                                 return (
                                     <th
                                         key={header.id}
-                                        className="p-2 text-center"
+                                        className="text-center"
                                         style={{
                                             width: header.column.getSize(),
                                         }}
+                                        title={header.column.columnDef.meta?.tooltip}
                                     >
-                                        {header.isPlaceholder ? null : flexRender(header.column.columnDef.header, header.getContext())}
+                                        {header.isPlaceholder ? null : (
+                                            <div
+                                                className={
+                                                    (header.column.getCanSort() ? 'cursor-pointer select-none hover:bg-black/10 ' : '') +
+                                                    'flex items-center justify-center px-2 py-5 whitespace-nowrap'
+                                                }
+                                                onClick={header.column.getToggleSortingHandler()}
+                                            >
+                                                {flexRender(header.column.columnDef.header, header.getContext())}
+                                                {(header.column.getCanSort() &&
+                                                    { asc: <ArrowUpIcon />, desc: <ArrowDownIcon /> }[header.column.getIsSorted() as string]) ?? (
+                                                    <ChevronsUpDownIcon />
+                                                )}
+                                            </div>
+                                        )}
                                     </th>
                                 );
                             })}

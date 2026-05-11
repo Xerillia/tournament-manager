@@ -1,6 +1,9 @@
 import AssemblyTable from '@/components/xeril/assembly-table';
+import SuggestionSearchbar from '@/components/xeril/suggestion-searchbar';
 import SuggestionTable from '@/components/xeril/suggestion-table';
+import { TagFilter } from '@/components/xeril/tags-header';
 import { addSuggestion } from '@/routes/mappools';
+import { Beatmap } from '@/types/beatmaps';
 import { BeatmapTag } from '@/types/beatmaptag';
 import { SuggestionComment } from '@/types/comments';
 import { Mappool, Slot } from '@/types/mappools';
@@ -9,7 +12,8 @@ import { Tournament } from '@/types/tournament';
 import { DragDropProvider } from '@dnd-kit/react';
 import { Form, usePage } from '@inertiajs/react';
 import { useEcho } from '@laravel/echo-react';
-import { useState } from 'react';
+import Fuse from 'fuse.js';
+import { useEffect, useState } from 'react';
 
 interface SuggestionsProps {
     tournament: Tournament;
@@ -287,9 +291,126 @@ export default function Suggestions({ tournament, mappool, tags, slots }: Sugges
         </>
     );
 
+    const [filteredSuggestionsState, setFilteredSuggestionsState] = useState<Suggestion[]>(suggestionsState);
+
+    function filterSuggestions(term: string, tagFilters?: TagFilter[]) {
+        let filtered = suggestionsState;
+
+        if (tagFilters) {
+            tagFilters.forEach((tagFilter) => {
+                const filter = tagFilter.filter;
+                if (!filter) return;
+
+                switch (filter) {
+                    case 'include':
+                        filtered = filtered.filter((suggestion) => suggestion.tags.find((tag) => tag.id === tagFilter.id));
+                        break;
+                    case 'exclude':
+                        filtered = filtered.filter((suggestion) => suggestion.tags.length === 0 || !suggestion.tags.find((tag) => tag.id === tagFilter.id));
+                        break;
+                }
+            });
+        }
+
+        if (!term) {
+            setFilteredSuggestionsState(filtered);
+            return;
+        }
+
+        const terms = term
+            .replaceAll(/sr|star|stars/gi, 'star_rating')
+            .replaceAll(/combo/gi, 'max_combo')
+            .replaceAll(/length/gi, 'drain')
+            .replaceAll(/mods/gi, 'mod')
+            .trim()
+            .split(/\s+/);
+
+        function match(label: string) {
+            return terms.filter((str) => str.match(new RegExp(`${label}(<=?|=|>=?)\\d+`, 'gi')));
+        }
+
+        function compare(first: number, operator: string = '', second: number) {
+            switch (operator) {
+                case '<':
+                    return first < second;
+                case '<=':
+                    return first <= second;
+                case '=':
+                    return first == second;
+                case '>=':
+                    return first >= second;
+                case '>':
+                    return first > second;
+                default:
+                    return true;
+            }
+        }
+
+        const attributes: Array<keyof Beatmap> = ['star_rating', 'bpm', 'max_combo', 'drain', 'cs', 'ar', 'od'];
+
+        attributes.forEach((attribute) => {
+            const input = match(attribute);
+            if (input.length === 0) return;
+
+            input.forEach((filter) => {
+                const number = Number(filter.match(/\d+/)?.at(0));
+                const operator = filter.match(/<=?|=|>=?/)?.at(0);
+
+                filtered = filtered.filter((suggestion) => {
+                    const beatmap = suggestion.beatmap;
+
+                    return compare(Number(beatmap[attribute]), operator, number);
+                });
+            });
+        });
+
+        const searchMods = terms.filter((str) => str.match(/mod=[a-z]+/gi));
+        if (searchMods) {
+            searchMods.map((mods) => {
+                mods.replace(/mod=/gi, '')
+                    .match(/[a-z]{2}/gi)
+                    ?.forEach((mod) => {
+                        filtered = filtered.filter((suggestion) => suggestion.beatmap.mods.match(new RegExp(mod, 'gi')));
+                    });
+            });
+        }
+
+        const fuse = new Fuse(filtered, {
+            keys: ['beatmap.beatmap_id', 'beatmap.title', 'beatmap.artist', 'beatmap.version'],
+            threshold: 0.4,
+        });
+
+        const search = fuse.search(term.replaceAll(/\S+(<=?|=|>=?)\S*\s?/g, ''));
+        filtered = search.map((result) => result.item);
+
+        setFilteredSuggestionsState(filtered);
+    }
+
+    const [searchTerm, setSearchTerm] = useState<string>(() => {
+        const saved = localStorage.getItem('searchTerm');
+        return saved ?? '';
+    });
+
+    function handleChange(term: string) {
+        setSearchTerm(term);
+        filterSuggestions(term);
+    }
+
+    useEffect(() => {
+        filterSuggestions(searchTerm, tagFilters);
+    }, [suggestionsState]);
+
+    const [tagFilters, setTagFilters] = useState<TagFilter[]>([]);
+
+    function handleTagFilters(tagFilters: TagFilter[]) {
+        setTagFilters(tagFilters);
+        filterSuggestions(searchTerm, tagFilters);
+    }
+
     return (
         <>
             <div className="grid place-items-center">{suggestionPanel}</div>
+            <SuggestionSearchbar handleChange={handleChange} />
             <DragDropProvider>
                 <div className="mx-8 my-4 flex gap-4">
                     <div className="max-w-1/2 overflow-auto">
@@ -298,10 +419,12 @@ export default function Suggestions({ tournament, mappool, tags, slots }: Sugges
                         </h1>
                         <SuggestionTable
                             tags={tags}
-                            suggestions={suggestionsState}
+                            suggestions={filteredSuggestionsState}
+                            handleTagFilters={handleTagFilters}
                         />
                     </div>
                     <div className="max-w-1/2 overflow-auto">
+                        <h1 className="text-center text-4xl font-bold">Assembly Zone</h1>
                         <AssemblyTable
                             mappool={mappool}
                             slots={slotsState}

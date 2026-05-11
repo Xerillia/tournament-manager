@@ -13,3 +13,9 @@ declare module '@inertiajs/core' {
         };
     }
 }
+
+declare module '@tanstack/react-table' {
+    interface ColumnMeta<TData, TValue> {
+        tooltip?: string;
+    }
+}

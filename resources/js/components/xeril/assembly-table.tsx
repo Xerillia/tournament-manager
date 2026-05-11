@@ -277,8 +277,7 @@ export default function AssemblyTable({ mappool, slots }: AssemblyTableProps) {
     });
 
     return (
-        <div className="container mx-auto py-10">
-            <h1 className="mb-2 text-center text-4xl font-bold">Assembly Zone</h1>
+        <div className="container mx-auto mt-6">
             <table>
                 <thead className="border-b bg-gray-300">
                     {table.getHeaderGroups().map((headerGroup) => (
