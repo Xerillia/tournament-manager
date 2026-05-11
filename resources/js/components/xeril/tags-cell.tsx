@@ -23,8 +23,8 @@ export default function TagsCell({ originalTags, suggestionId, tags, showButton 
     const [foundTags, setFoundTags] = useState<FuseResult<BeatmapTag>[]>([]);
 
     const fuse = new Fuse(availableTags, {
-        keys: ['id', 'name'],
-        threshold: 0.5,
+        keys: ['name'],
+        threshold: 0.4,
     });
 
     useEffect(() => {
@@ -92,6 +92,7 @@ export default function TagsCell({ originalTags, suggestionId, tags, showButton 
                             placeholder="Search a tag..."
                             value={searchTerm}
                             onChange={(e) => setSearchTerm(e.target.value)}
+                            autoFocus={true}
                         />
                         <div className="max-h-80 min-h-40 w-80 flex-col overflow-y-auto">
                             {!searchTerm &&
