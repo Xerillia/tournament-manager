@@ -36,7 +36,7 @@ export default function SuggestionTable({ tags, suggestions }: SuggestionTablePr
                 header: ({ table }) => (
                     <button
                         type="button"
-                        className="cursor-pointer text-red-600"
+                        className="hover- -mx-2 -my-5 h-16 w-24 cursor-pointer text-red-600 hover:bg-black/10"
                         onClick={() => table.resetSorting()}
                     >
                         Clear Sort
@@ -352,7 +352,7 @@ export default function SuggestionTable({ tags, suggestions }: SuggestionTablePr
                                 return (
                                     <th
                                         key={header.id}
-                                        className="px-2 py-5 text-center"
+                                        className="text-center"
                                         style={{
                                             width: header.column.getSize(),
                                         }}
@@ -361,8 +361,8 @@ export default function SuggestionTable({ tags, suggestions }: SuggestionTablePr
                                         {header.isPlaceholder ? null : (
                                             <div
                                                 className={
-                                                    (header.column.getCanSort() ? 'cursor-pointer select-none' : '') +
-                                                    ' flex items-center justify-center whitespace-nowrap'
+                                                    (header.column.getCanSort() ? 'cursor-pointer select-none hover:bg-black/10 ' : '') +
+                                                    'flex items-center justify-center px-2 py-5 whitespace-nowrap'
                                                 }
                                                 onClick={header.column.getToggleSortingHandler()}
                                             >
