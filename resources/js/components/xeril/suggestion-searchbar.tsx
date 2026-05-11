@@ -7,10 +7,14 @@ interface SuggestionSearchbar {
 let timer: number;
 
 export default function SuggestionSearchbar({ handleChange }: SuggestionSearchbar) {
-    const [searchTerm, setSearchTerm] = useState<string>('');
+    const [searchTerm, setSearchTerm] = useState<string>(() => {
+        const saved = localStorage.getItem('searchTerm');
+        return saved ?? '';
+    });
 
     function handle(term: string) {
         setSearchTerm(term);
+        localStorage.setItem('searchTerm', term);
 
         clearTimeout(timer);
         timer = setTimeout(() => {

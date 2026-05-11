@@ -386,7 +386,10 @@ export default function Suggestions({ tournament, mappool, tags, slots }: Sugges
         setFilteredSuggestionsState(filtered);
     }
 
-    const [searchTerm, setSearchTerm] = useState<string>('');
+    const [searchTerm, setSearchTerm] = useState<string>(() => {
+        const saved = localStorage.getItem('searchTerm');
+        return saved ?? '';
+    });
 
     function handleChange(term: string) {
         setSearchTerm(term);
