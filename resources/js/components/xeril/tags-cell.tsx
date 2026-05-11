@@ -36,13 +36,7 @@ export default function TagsCell({ originalTags, suggestionId, tags, showButton 
     }, [originalTags]);
 
     function addTag(tag: BeatmapTag) {
-        router.post(
-            addTagToSuggestion([suggestionId, tag]),
-            {},
-            {
-                onSuccess: () => console.log(originalTags),
-            },
-        );
+        router.post(addTagToSuggestion([suggestionId, tag]));
     }
 
     function removeTag(tag: BeatmapTag) {
