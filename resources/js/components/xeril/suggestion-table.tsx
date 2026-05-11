@@ -220,10 +220,21 @@ export default function SuggestionTable({ tags, suggestions }: SuggestionTablePr
                     </a>
                 ),
             }),
-            columnHelper.display({
+            columnHelper.accessor('id', {
+                // hacking by using `accessor` instead of `display` is necessary to use sorting :/ , misuse but it works lol.
                 id: 'comments',
                 header: 'Comments',
                 cell: (props) => <CommentsCell suggestion={props.row.original} />,
+                sortingFn: (rowA, rowB) => {
+                    const first = rowA.original.comments.at(-1);
+                    const second = rowB.original.comments.at(-1);
+                    if (!second) return 1;
+                    if (!first) return -1;
+                    return new Date(first.comment.updated_at).getTime() - new Date(second.comment.updated_at).getTime();
+                },
+                meta: {
+                    tooltip: 'Sort by latest comment updated or created',
+                },
             }),
             columnHelper.display({
                 id: 'tags',
@@ -345,6 +356,7 @@ export default function SuggestionTable({ tags, suggestions }: SuggestionTablePr
                                         style={{
                                             width: header.column.getSize(),
                                         }}
+                                        title={header.column.columnDef.meta?.tooltip}
                                     >
                                         {header.isPlaceholder ? null : (
                                             <div
