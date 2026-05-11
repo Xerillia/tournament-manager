@@ -307,7 +307,7 @@ export default function Suggestions({ tournament, mappool, tags, slots }: Sugges
             .split(/\s+/);
 
         function match(label: string) {
-            return terms.filter((str) => str.match(new RegExp(`${label}(<=?|=|>=?)\\d+.?\\d*`, 'gi')));
+            return terms.filter((str) => str.match(new RegExp(`${label}(<=?|=|>=?)\\d+`, 'gi')));
         }
 
         function compare(first: number, operator: string = '', second: number) {
@@ -336,7 +336,7 @@ export default function Suggestions({ tournament, mappool, tags, slots }: Sugges
             if (input.length === 0) return;
 
             input.forEach((filter) => {
-                const number = Number(filter.match(/\d+.?\d*/)?.at(0));
+                const number = Number(filter.match(/\d+/)?.at(0));
                 const operator = filter.match(/<=?|=|>=?/)?.at(0);
 
                 filtered = filtered.filter((suggestion) => {
