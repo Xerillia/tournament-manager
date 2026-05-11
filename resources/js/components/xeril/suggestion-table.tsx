@@ -33,6 +33,15 @@ export default function SuggestionTable({ tags, suggestions }: SuggestionTablePr
         () => [
             columnHelper.display({
                 id: 'delete_button',
+                header: ({ table }) => (
+                    <button
+                        type="button"
+                        className="cursor-pointer text-red-600"
+                        onClick={() => table.resetSorting()}
+                    >
+                        Clear Sort
+                    </button>
+                ),
                 cell: (props) => (
                     <button
                         type="button"
