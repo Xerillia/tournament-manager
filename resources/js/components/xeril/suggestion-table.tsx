@@ -1,14 +1,14 @@
 import { deleteSuggestion, updateSuggestion } from '@/routes/suggestions';
-import { Mappool } from '@/types/mappools';
 import { Suggestion } from '@/types/suggestion';
 import { router } from '@inertiajs/react';
-import { createColumnHelper, flexRender, getCoreRowModel, useReactTable } from '@tanstack/react-table';
+import { createColumnHelper, flexRender, getCoreRowModel, getSortedRowModel, useReactTable } from '@tanstack/react-table';
 import { Trash2Icon } from 'lucide-react';
 import { useEffect, useMemo, useState } from 'react';
 import CommentsCell from './comments-cell';
 import { BeatmapTag } from '@/types/beatmaptag';
 import TagsCell from './tags-cell';
 import { useDraggable } from '@dnd-kit/react';
+import { ArrowUpIcon, ArrowDownIcon, ChevronsUpDownIcon } from 'lucide-react';
 
 interface SuggestionTableProps {
     tags: BeatmapTag[];
@@ -119,6 +119,7 @@ export default function SuggestionTable({ tags, suggestions }: SuggestionTablePr
                         </>
                     );
                 },
+                sortDescFirst: false,
             }),
             columnHelper.accessor('beatmap.mods', {
                 header: 'Mods',
@@ -230,6 +231,7 @@ export default function SuggestionTable({ tags, suggestions }: SuggestionTablePr
                 id: 'banner',
                 header: 'Banner',
                 cell: (props) => <img src={`https://assets.ppy.sh/beatmaps/${props.getValue().beatmapset_id}/covers/cover.jpg`} />,
+                enableSorting: false,
             }),
             columnHelper.accessor((row) => row.beatmap, {
                 id: 'beatmap_name',
@@ -243,40 +245,53 @@ export default function SuggestionTable({ tags, suggestions }: SuggestionTablePr
                     </a>
                 ),
                 size: 800,
+                sortingFn: (rowA, rowB) => {
+                    const first = rowA.original.beatmap.artist + rowA.original.beatmap.title + rowA.original.beatmap.version;
+                    const second = rowB.original.beatmap.artist + rowB.original.beatmap.title + rowB.original.beatmap.version;
+                    return first.localeCompare(second);
+                },
+                sortDescFirst: false,
             }),
             columnHelper.accessor('beatmap.star_rating', {
                 header: 'SR',
                 cell: (props) => <span className="whitespace-nowrap">{`${props.getValue().toFixed(2)} ★`}</span>,
                 size: 75,
+                sortDescFirst: false,
             }),
             columnHelper.accessor('beatmap.bpm', {
                 header: 'BPM',
                 cell: (props) => +props.getValue().toFixed(2),
                 size: 75,
+                sortDescFirst: false,
             }),
             columnHelper.accessor('beatmap.max_combo', {
                 header: 'Max Combo',
                 cell: (props) => `${props.getValue()}x`,
+                sortDescFirst: false,
             }),
             columnHelper.accessor('beatmap.drain', {
                 header: 'Drain',
                 cell: (props) => secondToTime(props.getValue()),
                 size: 75,
+                sortDescFirst: false,
             }),
             columnHelper.accessor('beatmap.cs', {
                 header: 'CS',
                 cell: (props) => +props.getValue().toFixed(2),
                 size: 75,
+                sortDescFirst: false,
             }),
             columnHelper.accessor('beatmap.ar', {
                 header: 'AR',
                 cell: (props) => +props.getValue().toFixed(2),
                 size: 75,
+                sortDescFirst: false,
             }),
             columnHelper.accessor('beatmap.od', {
                 header: 'OD',
                 cell: (props) => +props.getValue().toFixed(2),
                 size: 75,
+                sortDescFirst: false,
             }),
             columnHelper.display({
                 id: 'draggable',
@@ -304,6 +319,7 @@ export default function SuggestionTable({ tags, suggestions }: SuggestionTablePr
         data: suggestions,
         columns,
         getCoreRowModel: getCoreRowModel(),
+        getSortedRowModel: getSortedRowModel(),
     });
 
     return (
@@ -316,12 +332,26 @@ export default function SuggestionTable({ tags, suggestions }: SuggestionTablePr
                                 return (
                                     <th
                                         key={header.id}
-                                        className="p-2 text-center"
+                                        className="px-2 py-5 text-center"
                                         style={{
                                             width: header.column.getSize(),
                                         }}
                                     >
-                                        {header.isPlaceholder ? null : flexRender(header.column.columnDef.header, header.getContext())}
+                                        {header.isPlaceholder ? null : (
+                                            <div
+                                                className={
+                                                    (header.column.getCanSort() ? 'cursor-pointer select-none' : '') +
+                                                    ' flex items-center justify-center whitespace-nowrap'
+                                                }
+                                                onClick={header.column.getToggleSortingHandler()}
+                                            >
+                                                {flexRender(header.column.columnDef.header, header.getContext())}
+                                                {(header.column.getCanSort() &&
+                                                    { asc: <ArrowUpIcon />, desc: <ArrowDownIcon /> }[header.column.getIsSorted() as string]) ?? (
+                                                    <ChevronsUpDownIcon />
+                                                )}
+                                            </div>
+                                        )}
                                     </th>
                                 );
                             })}
