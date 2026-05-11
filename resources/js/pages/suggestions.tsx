@@ -394,10 +394,13 @@ export default function Suggestions({ tournament, mappool, tags, slots }: Sugges
     }
 
     useEffect(() => {
-        filterSuggestions(searchTerm);
+        filterSuggestions(searchTerm, tagFilters);
     }, [suggestionsState]);
 
+    const [tagFilters, setTagFilters] = useState<TagFilter[]>([]);
+
     function handleTagFilters(tagFilters: TagFilter[]) {
+        setTagFilters(tagFilters);
         filterSuggestions(searchTerm, tagFilters);
     }
 
