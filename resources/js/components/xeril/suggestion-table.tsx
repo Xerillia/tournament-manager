@@ -45,10 +45,10 @@ export default function SuggestionTable({ tags, suggestions }: SuggestionTablePr
                 cell: (props) => (
                     <button
                         type="button"
-                        className="rounded-md bg-red-200 p-1 align-middle hover:cursor-pointer hover:bg-red-300"
+                        className="hover:text-700 flex justify-self-center rounded-md bg-red-200 p-1 align-middle font-medium whitespace-nowrap text-red-800 hover:cursor-pointer hover:bg-red-300"
                         onClick={() => router.delete(deleteSuggestion(props.row.original.id))}
                     >
-                        <Trash2Icon className="hover:text-700 text-red-800" />
+                        <Trash2Icon /> Delete
                     </button>
                 ),
             }),
