@@ -11,6 +11,7 @@ import { useDraggable } from '@dnd-kit/react';
 import { ArrowUpIcon, ArrowDownIcon, ChevronsUpDownIcon } from 'lucide-react';
 import TagsHeader, { TagFilter } from './tags-header';
 import MapPreviewer from './map-previewer';
+import { Mode, ModeUtils } from '@/enums';
 
 interface SuggestionTableProps {
     tags: BeatmapTag[];
@@ -142,6 +143,10 @@ export default function SuggestionTable({ tags, suggestions, handleTagFilters }:
                     );
                 },
                 sortDescFirst: false,
+            }),
+            columnHelper.accessor('beatmap.mode', {
+                header: 'Mode',
+                cell: (props) => <p>{ModeUtils.label(props.row.original.beatmap.mode)}</p>,
             }),
             columnHelper.accessor('beatmap.mods', {
                 header: 'Mods',
