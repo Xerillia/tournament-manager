@@ -1,5 +1,6 @@
 <?php
 
+use App\Enums\Mode;
 use App\Enums\TournamentStatus;
 use App\Models\Beatmap;
 use App\Models\Tournament;
@@ -26,6 +27,23 @@ Route::get('/', function () {
 Route::get('/beatmap/{id}', function (int $id) {
     // load queries
     $mods = request()->has('mods') ? request()->query('mods') : null;
+    $mode = Mode::STANDARD;
+    if (request()->has('mode')) {
+        switch (request()->query('mode')) {
+            case 'mania':
+                $mode = Mode::MANIA;
+                break;
+            case 'taiko':
+                $mode = Mode::TAIKO;
+                break;
+            case 'catch':
+                $mode = Mode::CATCH;
+                break;
+            default:
+                break;
+        }
+    }
+
     $refresh = request()->has('refresh');
 
     // array manipulation
@@ -37,7 +55,7 @@ Route::get('/beatmap/{id}', function (int $id) {
     if (! $beatmap) {
         try {
             $accessToken = Auth::user()->getAccessToken();
-            $beatmapObject = (new OsuService)->getBeatmap($accessToken, $id, $array_mods);
+            $beatmapObject = (new OsuService)->getBeatmap($accessToken, $id, $array_mods, $mode);
             $beatmap = Beatmap::updateOrCreate($beatmapObject->toArray());
         } catch (Exception $e) {
             dd($e);
