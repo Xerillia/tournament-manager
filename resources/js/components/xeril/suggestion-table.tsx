@@ -59,12 +59,7 @@ export default function SuggestionTable({ tags, suggestions, handleTagFilters }:
             columnHelper.display({
                 id: 'preview_button',
                 header: 'Preview',
-                cell: (props) => (
-                    <MapPreviewer
-                        beatmap_id={props.row.original.beatmap.beatmap_id}
-                        mods={props.row.original.beatmap.mods}
-                    />
-                ),
+                cell: (props) => <MapPreviewer beatmap={props.row.original.beatmap} />,
             }),
             columnHelper.accessor('beatmap.beatmap_id', {
                 header: 'Beatmap ID',

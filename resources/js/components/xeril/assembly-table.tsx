@@ -75,13 +75,7 @@ export default function AssemblyTable({ mappool, slots }: AssemblyTableProps) {
             }),
             columnHelper.display({
                 id: 'preview_button',
-                cell: (props) =>
-                    props.row.original.suggestion ? (
-                        <MapPreviewer
-                            beatmap_id={props.row.original.suggestion.beatmap.beatmap_id}
-                            mods={props.row.original.suggestion.beatmap.mods}
-                        />
-                    ) : null,
+                cell: (props) => (props.row.original.suggestion ? <MapPreviewer beatmap={props.row.original.suggestion.beatmap} /> : null),
             }),
             columnHelper.accessor('slot', {
                 header: 'Slot',
