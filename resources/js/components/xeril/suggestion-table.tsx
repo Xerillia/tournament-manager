@@ -10,6 +10,7 @@ import TagsCell from './tags-cell';
 import { useDraggable } from '@dnd-kit/react';
 import { ArrowUpIcon, ArrowDownIcon, ChevronsUpDownIcon } from 'lucide-react';
 import TagsHeader, { TagFilter } from './tags-header';
+import MapPreviewer from './map-previewer';
 
 interface SuggestionTableProps {
     tags: BeatmapTag[];
@@ -52,6 +53,16 @@ export default function SuggestionTable({ tags, suggestions, handleTagFilters }:
                     >
                         <Trash2Icon /> Delete
                     </button>
+                ),
+            }),
+            columnHelper.display({
+                id: 'preview_button',
+                header: 'Preview',
+                cell: (props) => (
+                    <MapPreviewer
+                        beatmap_id={props.row.original.beatmap.beatmap_id}
+                        mods={props.row.original.beatmap.mods}
+                    />
                 ),
             }),
             columnHelper.accessor('beatmap.beatmap_id', {
