@@ -2,6 +2,7 @@ import AssemblyTable from '@/components/xeril/assembly-table';
 import SuggestionSearchbar from '@/components/xeril/suggestion-searchbar';
 import SuggestionTable from '@/components/xeril/suggestion-table';
 import { TagFilter } from '@/components/xeril/tags-header';
+import { ModeUtils } from '@/enums';
 import { addSuggestion } from '@/routes/mappools';
 import { Beatmap } from '@/types/beatmaps';
 import { BeatmapTag } from '@/types/beatmaptag';
@@ -277,6 +278,21 @@ export default function Suggestions({ tournament, mappool, tags, slots }: Sugges
                             onBlur={() => validate('mods')}
                         />
                         {invalid('mods') && <p className="text-red-400">{errors.mods}</p>}
+                        <select
+                            name="mode"
+                            className="block border-2 border-blue-400 p-2 focus:outline-0"
+                            required
+                            defaultValue={tournament.mode}
+                        >
+                            {ModeUtils.options().map((mode) => (
+                                <option
+                                    key={mode}
+                                    value={mode}
+                                >
+                                    {ModeUtils.label(mode)}
+                                </option>
+                            ))}
+                        </select>
                         <button
                             type="submit"
                             className="block bg-green-300 p-2 hover:cursor-pointer hover:bg-green-400"
