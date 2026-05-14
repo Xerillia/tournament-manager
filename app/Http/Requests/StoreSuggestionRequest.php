@@ -2,8 +2,10 @@
 
 namespace App\Http\Requests;
 
+use App\Enums\Mode;
 use App\Rules\ValidMods;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class StoreSuggestionRequest extends FormRequest
 {
@@ -26,6 +28,7 @@ class StoreSuggestionRequest extends FormRequest
             'beatmap_id' => ['required', 'integer'],
             'mods' => ['required', 'string', new ValidMods],
             'tags' => ['nullable', 'string'],
+            'mode' => ['required', Rule::enum(Mode::class)],
         ];
     }
 }
