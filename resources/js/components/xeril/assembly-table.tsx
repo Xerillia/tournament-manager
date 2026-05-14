@@ -9,6 +9,7 @@ import { Trash2Icon } from 'lucide-react';
 import { disableFreemod, insertSuggestionToSlot, reenableFreemod, removeSuggestionFromSlot } from '@/routes/slots';
 import { overrideFreemodRules } from '@/routes/tournaments/pooling/slots/override';
 import MapPreviewer from './map-previewer';
+import { ModeUtils } from '@/enums';
 
 interface AssemblyTableProps {
     mappool: Mappool;
@@ -74,13 +75,7 @@ export default function AssemblyTable({ mappool, slots }: AssemblyTableProps) {
             }),
             columnHelper.display({
                 id: 'preview_button',
-                cell: (props) =>
-                    props.row.original.suggestion ? (
-                        <MapPreviewer
-                            beatmap_id={props.row.original.suggestion.beatmap.beatmap_id}
-                            mods={props.row.original.suggestion.beatmap.mods}
-                        />
-                    ) : null,
+                cell: (props) => (props.row.original.suggestion ? <MapPreviewer beatmap={props.row.original.suggestion.beatmap} /> : null),
             }),
             columnHelper.accessor('slot', {
                 header: 'Slot',
@@ -88,6 +83,10 @@ export default function AssemblyTable({ mappool, slots }: AssemblyTableProps) {
             columnHelper.accessor('suggestion.beatmap.beatmap_id', {
                 header: 'Beatmap ID',
                 cell: (props) => props.row.original.suggestion?.beatmap.beatmap_id,
+            }),
+            columnHelper.accessor('suggestion.beatmap.mode', {
+                header: 'Mode',
+                cell: (props) => (props.row.original.suggestion ? <p>{ModeUtils.label(props.row.original.suggestion.beatmap.mode)}</p> : null),
             }),
             columnHelper.accessor('suggestion.beatmap.mods', {
                 header: 'Mods',

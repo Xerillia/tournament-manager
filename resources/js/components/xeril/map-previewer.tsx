@@ -1,28 +1,31 @@
+import { Mode } from '@/enums';
+import { Beatmap } from '@/types/beatmaps';
 import { XIcon } from 'lucide-react';
 import { useState } from 'react';
 
 interface MapPreviewerProps {
-    beatmap_id: number;
-    mods: string;
+    beatmap: Beatmap;
 }
 
-export default function MapPreviewer({ beatmap_id, mods }: MapPreviewerProps) {
+export default function MapPreviewer({ beatmap }: MapPreviewerProps) {
+    if (beatmap.mode !== Mode.STANDARD) return;
+
     const [showModal, setShowModal] = useState<boolean>(false);
 
-    let validMods = '';
-    mods.match(/.{2}/gi)?.forEach((mod) => {
+    let mods = '';
+    beatmap.mods.match(/.{2}/gi)?.forEach((mod) => {
         switch (mod) {
             case 'HD':
-                validMods += 'HD';
+                mods += 'HD';
                 break;
             case 'HR':
-                validMods += 'HR';
+                mods += 'HR';
                 break;
             case 'DT':
-                validMods += 'DT';
+                mods += 'DT';
                 break;
             case 'EZ':
-                validMods += 'EZ';
+                mods += 'EZ';
                 break;
         }
     });
@@ -40,7 +43,7 @@ export default function MapPreviewer({ beatmap_id, mods }: MapPreviewerProps) {
                 <div className="fixed inset-0 z-10 flex items-center justify-center bg-black/80">
                     <div className="w-full max-w-350 rounded-lg bg-white">
                         <div className="relative flex flex-row items-center justify-center px-4">
-                            <h1 className="flex-1 border-b px-4 py-3 text-xl font-bold">{`Preview for ${beatmap_id} - ${mods}`}</h1>
+                            <h1 className="flex-1 border-b px-4 py-3 text-xl font-bold">{`Preview for ${beatmap.beatmap_id} - ${beatmap.mods}`}</h1>
                             <button
                                 className="absolute right-4 cursor-pointer rounded-md hover:bg-black/20"
                                 onClick={() => setShowModal(false)}
@@ -51,7 +54,7 @@ export default function MapPreviewer({ beatmap_id, mods }: MapPreviewerProps) {
 
                         <iframe
                             className="aspect-video w-full"
-                            src={`https://preview.tryz.id.vn/?b=${beatmap_id}&m=${validMods}`}
+                            src={`https://preview.tryz.id.vn/?b=${beatmap.beatmap_id}&m=${mods}`}
                         />
                     </div>
                 </div>

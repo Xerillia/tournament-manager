@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Enums\Mode;
 use App\Http\Requests\StoreSuggestionRequest;
 use App\Http\Requests\UpdateSuggestionRequest;
 use App\Models\Beatmap;
@@ -18,6 +19,7 @@ class SuggestionController extends Controller
         $validated = $request->validated();
         $beatmapId = $validated['beatmap_id'];
         $mods = $validated['mods'];
+        $mode = $request->enum('mode', Mode::class, Mode::STANDARD);
 
         // manipulate string with array methods
         $array_mods = str_split($mods, 2);
@@ -25,11 +27,11 @@ class SuggestionController extends Controller
         $mods = implode(' ', $array_mods); // 'DT HD', 'HD HR', ...
 
         // loading beatmap
-        $beatmap = Beatmap::whereBeatmapId($beatmapId)->whereMods($mods)->first();
+        $beatmap = Beatmap::whereBeatmapId($beatmapId)->whereMods($mods)->whereMode($mods)->first();
         if (! $beatmap) {
             try {
                 $accessToken = Auth::user()->getAccessToken();
-                $beatmapObject = (new OsuService)->getBeatmap($accessToken, $beatmapId, $array_mods);
+                $beatmapObject = (new OsuService)->getBeatmap($accessToken, $beatmapId, $array_mods, $mode);
                 $beatmap = Beatmap::updateOrCreate($beatmapObject->toArray());
             } catch (\Exception $e) {
                 return redirect()->back()->with('beatmap_not_found', 'Beatmap not found!');
