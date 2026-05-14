@@ -8,6 +8,7 @@ import { Form, router } from '@inertiajs/react';
 import { Trash2Icon } from 'lucide-react';
 import { disableFreemod, insertSuggestionToSlot, reenableFreemod, removeSuggestionFromSlot } from '@/routes/slots';
 import { overrideFreemodRules } from '@/routes/tournaments/pooling/slots/override';
+import MapPreviewer from './map-previewer';
 
 interface AssemblyTableProps {
     mappool: Mappool;
@@ -69,9 +70,17 @@ export default function AssemblyTable({ mappool, slots }: AssemblyTableProps) {
                         >
                             <Trash2Icon />
                         </button>
-                    ) : (
-                        <></>
-                    ),
+                    ) : null,
+            }),
+            columnHelper.display({
+                id: 'preview_button',
+                cell: (props) =>
+                    props.row.original.suggestion ? (
+                        <MapPreviewer
+                            beatmap_id={props.row.original.suggestion.beatmap.beatmap_id}
+                            mods={props.row.original.suggestion.beatmap.mods}
+                        />
+                    ) : null,
             }),
             columnHelper.accessor('slot', {
                 header: 'Slot',
