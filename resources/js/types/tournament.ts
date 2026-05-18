@@ -1,4 +1,4 @@
-import { Mode, TournamentStatus } from '@/enums';
+import { Mode, TournamentStatus, WinCondition } from '@/enums';
 import { User } from './auth';
 import { Mappool } from './mappools';
 
@@ -12,6 +12,7 @@ export type Tournament = {
     min_rank: number;
     start_datetime: Date;
     end_datetime: Date;
+    win_condition: WinCondition;
     status: TournamentStatus;
     links: Link[];
     mappools: Mappool[];
