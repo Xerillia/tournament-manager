@@ -17,6 +17,7 @@ class MappoolFormatObserver
                 'mappool_format_id' => $mappoolFormat->id,
                 'slot' => $mappoolFormat->slot.($i),
                 'is_freemod' => $mappoolFormat->is_freemod,
+                'win_condition' => $mappoolFormat->mappool->tournament->win_condition,
             ]);
         }
     }
@@ -36,6 +37,7 @@ class MappoolFormatObserver
                 $slot->update([
                     'slot' => $mappoolFormat->slot.($number++),
                     'is_freemod' => $mappoolFormat->is_freemod,
+                    'win_condition' => $mappoolFormat->mappool->tournament->win_condition,
                 ]);
             }
 
@@ -45,6 +47,7 @@ class MappoolFormatObserver
                     'mappool_format_id' => $mappoolFormat->id,
                     'slot' => $mappoolFormat->slot.($number++),
                     'is_freemod' => $mappoolFormat->is_freemod,
+                    'win_condition' => $mappoolFormat->mappool->tournament->win_condition,
                 ]);
             }
 
