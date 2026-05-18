@@ -3,6 +3,7 @@
 namespace App\Http\Requests;
 
 use App\Enums\Mode;
+use App\Enums\WinCondition;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
@@ -31,6 +32,7 @@ class UpdateTournamentRequest extends FormRequest
             'min_rank' => ['required', 'numeric', 'gt:max_rank'],
             'start_datetime' => ['required', 'date'],
             'end_datetime' => ['required', 'date', 'after:start_datetime'],
+            'win_condition' => ['required', Rule::enum(WinCondition::class)],
             'links.*.label' => ['required', 'string'],
             'links.*.url' => ['required', 'url'],
         ];

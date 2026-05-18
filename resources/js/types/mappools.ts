@@ -1,3 +1,4 @@
+import { WinCondition } from '@/enums';
 import { FreemodRule } from './freemodrule';
 import { Suggestion } from './suggestion';
 
@@ -26,6 +27,7 @@ export type Slot = {
     mappool_suggestion_id: number;
     suggestion: Suggestion;
     slot: string;
+    win_condition: WinCondition;
     is_freemod: boolean;
     freemod_disabled: boolean;
     freemod_rules?: FreemodRule[];

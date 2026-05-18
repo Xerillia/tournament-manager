@@ -53,4 +53,7 @@ Route::middleware('auth')->group(function () {
     // toggle freemod
     Route::post('/slots/{slot}/freemod/disable', [AssemblyController::class, 'disableFreemod'])->name('slots.disableFreemod');
     Route::post('/slots/{slot}/freemod/reenable', [AssemblyController::class, 'reenableFreemod'])->name('slots.reenableFreemod');
+
+    // win condition
+    Route::patch('/slots/{slot}/win_condition', [AssemblyController::class, 'setWinCondition'])->name('slots.setWinCondition');
 });

@@ -68,30 +68,32 @@ class PoolingController extends Controller
      */
     public function updateMappoolsFormat(UpdateMappoolFormatRequest $request, Tournament $tournament)
     {
-        foreach ($request->mappools as $mappool) {
-            $retrieved_mappool = Mappool::updateOrCreate([
-                'id' => $mappool['id'],
-                'tournament_id' => $tournament->id,
-            ],
-                [
-                    'round' => $mappool['round'],
-                    'slug' => Str::slug($mappool['round']),
-                    'star_rating' => (float) $mappool['star_rating'],
-                ]);
-
-            $formats = Arr::has($mappool, 'formats') ? $mappool['formats'] : [];
-            foreach ($formats as $format) {
-                MappoolFormat::updateOrCreate([
-                    'id' => $format['id'],
-                    'mappool_id' => $retrieved_mappool->id,
+        if (count($request->mappools) > 0) {
+            foreach ($request->mappools as $mappool) {
+                $retrieved_mappool = Mappool::updateOrCreate([
+                    'id' => $mappool['id'],
+                    'tournament_id' => $tournament->id,
                 ],
                     [
-                        'slot' => $format['slot'],
-                        'count' => $format['count'],
-                        'is_freemod' => $format['is_freemod'],
+                        'round' => $mappool['round'],
+                        'slug' => Str::slug($mappool['round']),
+                        'star_rating' => (float) $mappool['star_rating'],
                     ]);
-            }
 
+                $formats = Arr::has($mappool, 'formats') ? $mappool['formats'] : [];
+                foreach ($formats as $format) {
+                    MappoolFormat::updateOrCreate([
+                        'id' => $format['id'],
+                        'mappool_id' => $retrieved_mappool->id,
+                    ],
+                        [
+                            'slot' => $format['slot'],
+                            'count' => $format['count'],
+                            'is_freemod' => $format['is_freemod'],
+                        ]);
+                }
+
+            }
         }
 
         return redirect()->back();

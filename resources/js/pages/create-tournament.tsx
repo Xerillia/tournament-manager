@@ -1,4 +1,4 @@
-import { Mode, ModeUtils } from '@/enums';
+import { Mode, ModeUtils, WinCondition, WinConditionUtils } from '@/enums';
 import { storeTournament } from '@/routes/tournaments';
 import { Link } from '@/types/tournament';
 import { Form, Head } from '@inertiajs/react';
@@ -228,6 +228,28 @@ export default function CreateTournament() {
                                 {invalid('end_datetime') && <p className="text-red-600">{errors.end_datetime}</p>}
                             </div>
                         </div>
+
+                        <label className="mt-4">
+                            <p className="text-lg font-bold">
+                                Win Condition <span className="text-red-600">*</span>
+                            </p>
+
+                            <select
+                                name="win_condition"
+                                defaultValue={WinCondition.SCORE_V2}
+                                className="block rounded-md border border-black p-2 hover:outline-0 focus:outline-0"
+                            >
+                                {WinConditionUtils.options().map((option) => (
+                                    <option
+                                        key={option}
+                                        value={option}
+                                    >
+                                        {WinConditionUtils.label(option)}
+                                    </option>
+                                ))}
+                            </select>
+                            {invalid('win_condition') && <p className="text-red-600">{errors.win_condition}</p>}
+                        </label>
 
                         <p className="mt-4 text-lg font-bold">Links</p>
                         {links.map((link) => (

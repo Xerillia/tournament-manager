@@ -10,6 +10,7 @@ import { disableFreemod, insertSuggestionToSlot, reenableFreemod, removeSuggesti
 import { overrideFreemodRules } from '@/routes/tournaments/pooling/slots/override';
 import MapPreviewer from './map-previewer';
 import { ModeUtils } from '@/enums';
+import WinCondition from './win-condition';
 
 interface AssemblyTableProps {
     mappool: Mappool;
@@ -80,13 +81,17 @@ export default function AssemblyTable({ mappool, slots }: AssemblyTableProps) {
             columnHelper.accessor('slot', {
                 header: 'Slot',
             }),
+            columnHelper.accessor('win_condition', {
+                header: 'Win Con',
+                cell: (props) => <WinCondition slot={props.row.original} />,
+            }),
             columnHelper.accessor('suggestion.beatmap.beatmap_id', {
                 header: 'Beatmap ID',
                 cell: (props) => props.row.original.suggestion?.beatmap.beatmap_id,
             }),
             columnHelper.accessor('suggestion.beatmap.mode', {
                 header: 'Mode',
-                cell: (props) => (props.row.original.suggestion ? <p>{ModeUtils.label(props.row.original.suggestion.beatmap.mode)}</p> : null),
+                cell: (props) => (props.row.original.suggestion ? <p>{ModeUtils.label(props.getValue())}</p> : null),
             }),
             columnHelper.accessor('suggestion.beatmap.mods', {
                 header: 'Mods',
