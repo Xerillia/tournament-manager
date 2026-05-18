@@ -241,6 +241,7 @@ export default function Suggestions({ tournament, mappool, tags, slots }: Sugges
         slot.suggestion = e.slot.suggestion;
         slot.mappool_suggestion_id = e.slot.mappool_suggestion_id;
         slot.freemod_disabled = e.slot.freemod_disabled;
+        slot.win_condition = e.slot.win_condition;
 
         updateSlotsState(slot);
     }

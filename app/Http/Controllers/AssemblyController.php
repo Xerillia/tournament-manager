@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Events\MappoolSlotUpdated;
+use App\Http\Requests\UpdateSlotWinConditionRequest;
 use App\Models\MappoolSlot;
 use App\Models\MappoolSuggestion;
 
@@ -52,6 +53,15 @@ class AssemblyController extends Controller
         $slot->update([
             'freemod_disabled' => false,
         ]);
+
+        broadcast(new MappoolSlotUpdated($slot));
+
+        return redirect()->back();
+    }
+
+    public function setWinCondition(UpdateSlotWinConditionRequest $request, MappoolSlot $slot)
+    {
+        $slot->update($request->safe()->only('win_condition'));
 
         broadcast(new MappoolSlotUpdated($slot));
 
