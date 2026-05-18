@@ -40,6 +40,7 @@ export default function ShowTournament({ tournament }: ShowTournamentProps) {
             <p>
                 Period: {tournament.start_datetime.toString()} - {tournament.end_datetime.toString()}
             </p>
+            <p>Win Condition: {tournament.win_condition}</p>
             <p>Status: {tournament.status}</p>
             <p>Links:</p>
             {linkItems}
