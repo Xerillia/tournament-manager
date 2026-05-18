@@ -9,7 +9,8 @@ import { Trash2Icon } from 'lucide-react';
 import { disableFreemod, insertSuggestionToSlot, reenableFreemod, removeSuggestionFromSlot } from '@/routes/slots';
 import { overrideFreemodRules } from '@/routes/tournaments/pooling/slots/override';
 import MapPreviewer from './map-previewer';
-import { ModeUtils, WinConditionUtils } from '@/enums';
+import { ModeUtils } from '@/enums';
+import WinCondition from './win-condition';
 
 interface AssemblyTableProps {
     mappool: Mappool;
@@ -82,7 +83,7 @@ export default function AssemblyTable({ mappool, slots }: AssemblyTableProps) {
             }),
             columnHelper.accessor('win_condition', {
                 header: 'Win Con',
-                cell: (props) => WinConditionUtils.label(props.getValue()),
+                cell: (props) => <WinCondition slot={props.row.original} />,
             }),
             columnHelper.accessor('suggestion.beatmap.beatmap_id', {
                 header: 'Beatmap ID',
