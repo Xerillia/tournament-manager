@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
-#[Fillable(['mappool_id', 'mapper', 'beatmap_url', 'beatmap_name', 'mods', 'status', 'bpm', 'cs', 'ar', 'od'])]
+#[Fillable(['tournament_id', 'mappool_id', 'mapper', 'beatmap_url', 'beatmap_name', 'mods', 'status', 'bpm', 'cs', 'ar', 'od'])]
 class CustomMap extends Model
 {
     /**
