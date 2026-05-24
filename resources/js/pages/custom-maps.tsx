@@ -2,7 +2,6 @@ import CustomMapsTable from '@/components/xeril/custom-maps-table';
 import SuggestionFooter from '@/components/xeril/suggestion-footer';
 import { CustomMap } from '@/types/custommap';
 import { Tournament } from '@/types/tournament';
-import { Form } from '@inertiajs/react';
 
 interface CustomMapsProps {
     tournament: Tournament;
