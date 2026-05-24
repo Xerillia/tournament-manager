@@ -131,9 +131,6 @@ class OsuService
         return User::updateOrCreate(
             [
                 'osu_id' => $user->id,
-                'country_code' => $user->country->code,
-                'country_name' => $user->country->name,
-                'avatar_url' => $user->avatar_url,
             ],
             $user->toArray(),
         );
