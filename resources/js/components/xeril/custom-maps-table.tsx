@@ -36,6 +36,7 @@ export default function CustomMapsTable({ tournament, mappools, customMaps }: Cu
             }),
             columnHelper.accessor('status', {
                 header: 'Status',
+                cell: (props) => CustomMapStatusUtils.label(props.getValue()),
             }),
             columnHelper.accessor('bpm', {
                 header: 'BPM',
