@@ -58,4 +58,12 @@ class Mappool extends Model
     {
         return $this->hasMany(FreemodRule::class);
     }
+
+    /**
+     * Get the custom maps of this mappool
+     */
+    public function customMaps(): HasMany
+    {
+        return $this->hasMany(CustomMap::class);
+    }
 }
