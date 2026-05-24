@@ -2,18 +2,21 @@ import ConfirmedPasswordStatusController from '@/actions/Laravel/Fortify/Http/Co
 import { CustomMapStatusUtils } from '@/enums';
 import { addCustomMap } from '@/routes/tournaments/custom';
 import { CustomMap } from '@/types/custommap';
+import { Mappool } from '@/types/mappools';
+import { Tournament } from '@/types/tournament';
 import { useForm } from '@inertiajs/react';
 import { createColumnHelper, flexRender, getCoreRowModel, useReactTable } from '@tanstack/react-table';
 import { useMemo } from 'react';
 
 interface CustomMapsTableProps {
-    tournament_id: number;
+    tournament: Tournament;
+    mappools: Mappool[];
     customMaps: CustomMap[];
 }
 
 const columnHelper = createColumnHelper<CustomMap>();
 
-export default function CustomMapsTable({ tournament_id, customMaps }: CustomMapsTableProps) {
+export default function CustomMapsTable({ tournament, mappools, customMaps }: CustomMapsTableProps) {
     const columns = useMemo(
         () => [
             columnHelper.accessor('mapper', {
@@ -24,6 +27,9 @@ export default function CustomMapsTable({ tournament_id, customMaps }: CustomMap
             }),
             columnHelper.accessor('beatmap_name', {
                 header: 'Beatmap',
+            }),
+            columnHelper.accessor('mappool.round', {
+                header: 'Round',
             }),
             columnHelper.accessor('mods', {
                 header: 'Mods',
@@ -53,10 +59,11 @@ export default function CustomMapsTable({ tournament_id, customMaps }: CustomMap
         getCoreRowModel: getCoreRowModel(),
     });
 
-    const { data, setData, post, processing, errors } = useForm({
+    const { data, setData, post, processing, errors, transform } = useForm({
         mapper: '',
         beatmap_url: '',
         beatmap_name: '',
+        round: 'Quarterfinals',
         mods: '',
         status: 'default',
         bpm: '',
@@ -67,11 +74,13 @@ export default function CustomMapsTable({ tournament_id, customMaps }: CustomMap
 
     function submit(e: React.SubmitEvent<HTMLFormElement>) {
         e.preventDefault();
-        post(addCustomMap(tournament_id).url);
+        transform((data) => ({ ...data, mods: data.mods.toUpperCase() }));
+        post(addCustomMap(tournament).url);
     }
 
     return (
-        <div className="container mx-auto mt-6">
+        <div className="mx-auto mt-6">
+            {errors.round && <p>{errors.round}</p>}
             <form onSubmit={submit}>
                 <table>
                     <thead className="border-b bg-gray-300">
@@ -132,6 +141,24 @@ export default function CustomMapsTable({ tournament_id, customMaps }: CustomMap
                                 />
                             </td>
                             <td>
+                                <select
+                                    name="round"
+                                    className="h-12 w-full border border-gray-50 text-center focus:outline-0"
+                                    value={data.round}
+                                    onChange={(e) => setData('round', e.target.value)}
+                                    required
+                                >
+                                    {mappools.map((mappool) => (
+                                        <option
+                                            key={mappool.round}
+                                            value={mappool.round}
+                                        >
+                                            {mappool.round}
+                                        </option>
+                                    ))}
+                                </select>
+                            </td>
+                            <td>
                                 <input
                                     type="text"
                                     name="mods"
@@ -147,7 +174,7 @@ export default function CustomMapsTable({ tournament_id, customMaps }: CustomMap
                             <td>
                                 <select
                                     name="status"
-                                    className="h-12 border border-gray-50 text-center focus:outline-0"
+                                    className="h-12 w-full border border-gray-50 text-center focus:outline-0"
                                     value={data.status}
                                     onChange={(e) => setData('status', e.target.value)}
                                     required
@@ -223,7 +250,7 @@ export default function CustomMapsTable({ tournament_id, customMaps }: CustomMap
                             </td>
                         </tr>
                         <tr>
-                            <td colSpan={9}>
+                            <td colSpan={10}>
                                 <button
                                     type="submit"
                                     className="h-8 w-full cursor-pointer bg-green-300 text-center hover:bg-green-400"

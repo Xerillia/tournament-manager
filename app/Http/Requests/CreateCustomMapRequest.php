@@ -28,6 +28,7 @@ class CreateCustomMapRequest extends FormRequest
             'mapper' => ['required', 'string'],
             'beatmap_url' => ['required', 'url'],
             'beatmap_name' => ['required', 'string'],
+            'round' => ['required', 'exists:mappools,round'],
             'mods' => ['required', new ValidMods],
             'status' => ['required', Rule::enum(CustomMapStatus::class)],
             'bpm' => ['required', 'numeric'],
