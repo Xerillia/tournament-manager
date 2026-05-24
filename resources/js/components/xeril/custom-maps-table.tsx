@@ -59,7 +59,7 @@ export default function CustomMapsTable({ tournament, mappools, customMaps }: Cu
         getCoreRowModel: getCoreRowModel(),
     });
 
-    const { data, setData, post, processing, errors, transform } = useForm({
+    const { data, setData, post, processing, errors, transform, resetAndClearErrors } = useForm({
         mapper: '',
         beatmap_url: '',
         beatmap_name: '',
@@ -75,7 +75,9 @@ export default function CustomMapsTable({ tournament, mappools, customMaps }: Cu
     function submit(e: React.SubmitEvent<HTMLFormElement>) {
         e.preventDefault();
         transform((data) => ({ ...data, mods: data.mods.toUpperCase() }));
-        post(addCustomMap(tournament).url);
+        post(addCustomMap(tournament).url, {
+            onSuccess: () => resetAndClearErrors(),
+        });
     }
 
     return (
@@ -174,7 +176,7 @@ export default function CustomMapsTable({ tournament, mappools, customMaps }: Cu
                             <td>
                                 <select
                                     name="status"
-                                    className="h-12 w-full border border-gray-50 text-center focus:outline-0"
+                                    className="h-12 border border-gray-50 text-center focus:outline-0"
                                     value={data.status}
                                     onChange={(e) => setData('status', e.target.value)}
                                     required
