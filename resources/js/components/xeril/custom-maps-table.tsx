@@ -1,17 +1,19 @@
 import ConfirmedPasswordStatusController from '@/actions/Laravel/Fortify/Http/Controllers/ConfirmedPasswordStatusController';
 import { CustomMapStatusUtils } from '@/enums';
+import { addCustomMap } from '@/routes/tournaments/custom';
 import { CustomMap } from '@/types/custommap';
 import { useForm } from '@inertiajs/react';
 import { createColumnHelper, flexRender, getCoreRowModel, useReactTable } from '@tanstack/react-table';
 import { useMemo } from 'react';
 
 interface CustomMapsTableProps {
+    tournament_id: number;
     customMaps: CustomMap[];
 }
 
 const columnHelper = createColumnHelper<CustomMap>();
 
-export default function CustomMapsTable({ customMaps }: CustomMapsTableProps) {
+export default function CustomMapsTable({ tournament_id, customMaps }: CustomMapsTableProps) {
     const columns = useMemo(
         () => [
             columnHelper.accessor('mapper', {
@@ -65,7 +67,7 @@ export default function CustomMapsTable({ customMaps }: CustomMapsTableProps) {
 
     function submit(e: React.SubmitEvent<HTMLFormElement>) {
         e.preventDefault();
-        console.log(e);
+        post(addCustomMap(tournament_id).url);
     }
 
     return (
@@ -140,6 +142,7 @@ export default function CustomMapsTable({ customMaps }: CustomMapsTableProps) {
                                     onChange={(e) => setData('mods', e.target.value)}
                                     required
                                 />
+                                {errors.mods && <p className="text-center text-red-400">{errors.mods}</p>}
                             </td>
                             <td>
                                 <select

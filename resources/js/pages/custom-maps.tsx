@@ -12,7 +12,10 @@ export default function CustomMaps({ tournament, customMaps }: CustomMapsProps) 
     return (
         <div className="my-8 flex flex-col items-center">
             <h1 className="text-4xl font-bold">Custom Maps</h1>
-            <CustomMapsTable customMaps={customMaps} />
+            <CustomMapsTable
+                tournament_id={tournament.id}
+                customMaps={customMaps}
+            />
             <SuggestionFooter tournament={tournament} />
         </div>
     );
