@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AssemblyController;
+use App\Http\Controllers\CustomMapController;
 use App\Http\Controllers\PoolingController;
 use App\Http\Controllers\SuggestionCommentController;
 use App\Http\Controllers\SuggestionController;
@@ -11,7 +12,7 @@ use Illuminate\Support\Facades\Route;
 
 Route::middleware('auth')->group(function () {
     Route::prefix('tournaments')->name('tournaments.')->group(function () {
-
+        // tournament
         Route::get('/create', [TournamentController::class, 'createTournament'])->name('createTournament');
         Route::post('/', [TournamentController::class, 'storeTournament'])->middleware([HandlePrecognitiveRequests::class])->name('storeTournament');
         Route::get('/{tournament}', [TournamentController::class, 'showTournament'])->name('showTournament');
@@ -30,6 +31,9 @@ Route::middleware('auth')->group(function () {
         // freemod rules
         Route::post('/pooling/freemod/rules', [PoolingController::class, 'updateFreemodRules'])->name('pooling.freemod.rules.updateFreemodRules');
         Route::post('/pooling/slots/{slot}/override', [PoolingController::class, 'overrideFreemodRules'])->name('pooling.slots.override.overrideFreemodRules');
+
+        // custom maps
+        Route::get('/{tournament}/customs', [CustomMapController::class, 'listCustomMaps'])->name('custom.listCustomMaps');
     });
 
     // suggestions
