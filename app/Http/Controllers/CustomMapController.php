@@ -14,7 +14,7 @@ class CustomMapController extends Controller
     {
         $tournament->load(['mappools']);
 
-        $customMaps = CustomMap::whereTournamentId($tournament->id)->get();
+        $customMaps = CustomMap::with('mappool')->whereTournamentId($tournament->id)->get();
 
         return Inertia::render('custom-maps', [
             'tournament' => $tournament,
