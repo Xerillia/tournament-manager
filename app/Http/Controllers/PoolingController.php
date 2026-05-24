@@ -24,6 +24,8 @@ class PoolingController extends Controller
      */
     public function showPoolingPanel(Tournament $tournament, Mappool $mappool)
     {
+        $tournament->load(['mappools']);
+
         $mappool->load([
             'suggestions.beatmap',
             'suggestions.user',

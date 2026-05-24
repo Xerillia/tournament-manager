@@ -1,4 +1,5 @@
 import AssemblyTable from '@/components/xeril/assembly-table';
+import SuggestionFooter from '@/components/xeril/suggestion-footer';
 import SuggestionSearchbar from '@/components/xeril/suggestion-searchbar';
 import SuggestionTable from '@/components/xeril/suggestion-table';
 import { TagFilter } from '@/components/xeril/tags-header';
@@ -449,6 +450,10 @@ export default function Suggestions({ tournament, mappool, tags, slots }: Sugges
                     </div>
                 </div>
             </DragDropProvider>
+            <SuggestionFooter
+                tournament={tournament}
+                current_id={mappool.id}
+            />
         </>
     );
 }
