@@ -2,6 +2,7 @@ import { CustomMapStatus } from '@/enums';
 import { Mappool } from './mappools';
 
 export type CustomMap = {
+    id: number;
     mappool_id: number;
     mappool: Mappool;
     mapper: string;
