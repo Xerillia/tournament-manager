@@ -34,4 +34,11 @@ class CustomMapController extends Controller
 
         return redirect()->back();
     }
+
+    public function removeCustomMap(CustomMap $customMap)
+    {
+        $customMap->delete();
+
+        return redirect()->back();
+    }
 }
