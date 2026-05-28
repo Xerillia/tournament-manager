@@ -1,12 +1,12 @@
-import ConfirmedPasswordStatusController from '@/actions/Laravel/Fortify/Http/Controllers/ConfirmedPasswordStatusController';
 import { CustomMapStatusUtils } from '@/enums';
-import { addCustomMap } from '@/routes/tournaments/custom';
+import { addCustomMap, removeCustomMap } from '@/routes/tournaments/custom';
 import { CustomMap } from '@/types/custommap';
 import { Mappool } from '@/types/mappools';
 import { Tournament } from '@/types/tournament';
-import { useForm } from '@inertiajs/react';
+import { router, useForm } from '@inertiajs/react';
 import { createColumnHelper, flexRender, getCoreRowModel, useReactTable } from '@tanstack/react-table';
-import { useMemo } from 'react';
+import { Trash2Icon } from 'lucide-react';
+import { useMemo, useState } from 'react';
 
 interface CustomMapsTableProps {
     tournament: Tournament;
@@ -19,6 +19,65 @@ const columnHelper = createColumnHelper<CustomMap>();
 export default function CustomMapsTable({ tournament, mappools, customMaps }: CustomMapsTableProps) {
     const columns = useMemo(
         () => [
+            columnHelper.display({
+                id: 'action',
+                header: 'Action',
+                cell: (props) => {
+                    const customMap = props.row.original;
+                    const [show, setShow] = useState<boolean>(false);
+
+                    function handleConfirm() {
+                        console.log(customMap);
+                        router.delete(removeCustomMap(customMap.id), {
+                            onSuccess: () => setShow(false),
+                        });
+                    }
+
+                    return (
+                        <>
+                            <button
+                                type="button"
+                                className="cursor-pointer rounded-md bg-red-300 p-1 hover:bg-red-400"
+                                onClick={() => setShow(true)}
+                            >
+                                <Trash2Icon />
+                            </button>
+                            {show && (
+                                <div className="fixed inset-0 z-10 flex h-screen w-screen items-center justify-center bg-black/40">
+                                    <div className="z-11 w-md rounded-md bg-white p-4 shadow-sm">
+                                        <h1 className="border-b border-black pb-2 text-2xl font-bold">Confirmation</h1>
+                                        <div className="my-6">
+                                            <p>Are you sure you want to delete:</p>
+                                            <ul className="my-3">
+                                                <li>{customMap.beatmap_name}</li>
+                                                <li>{customMap.mappool.round}</li>
+                                                <li>{customMap.mods}</li>
+                                            </ul>
+                                            <p>This action is unrecoverable!</p>
+                                        </div>
+                                        <div className="flex gap-2">
+                                            <button
+                                                type="button"
+                                                className="flex-1 cursor-pointer rounded-sm bg-red-300 p-1 shadow-sm transition-colors hover:bg-red-400"
+                                                onClick={handleConfirm}
+                                            >
+                                                Confirm
+                                            </button>
+                                            <button
+                                                type="button"
+                                                className="flex-1 cursor-pointer rounded-sm bg-blue-300 p-1 shadow-sm transition-colors hover:bg-blue-400"
+                                                onClick={() => setShow(false)}
+                                            >
+                                                Cancel
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            )}
+                        </>
+                    );
+                },
+            }),
             columnHelper.accessor('mapper', {
                 header: 'Mapper',
             }),
@@ -107,6 +166,7 @@ export default function CustomMapsTable({ tournament, mappools, customMaps }: Cu
                     </thead>
                     <tbody>
                         <tr className="bg-gray-50">
+                            <td />
                             <td>
                                 <input
                                     type="text"
@@ -253,7 +313,7 @@ export default function CustomMapsTable({ tournament, mappools, customMaps }: Cu
                             </td>
                         </tr>
                         <tr>
-                            <td colSpan={10}>
+                            <td colSpan={11}>
                                 <button
                                     type="submit"
                                     className="h-8 w-full cursor-pointer bg-green-300 text-center hover:bg-green-400"
