@@ -35,6 +35,7 @@ Route::middleware('auth')->group(function () {
         // custom maps
         Route::get('/{tournament}/customs', [CustomMapController::class, 'listCustomMaps'])->name('custom.listCustomMaps');
         Route::post('/{tournament}/customs', [CustomMapController::class, 'addCustomMap'])->name('custom.addCustomMap');
+        Route::patch('/customs/{customMap}', [CustomMapController::class, 'editCustomMap'])->name('custom.editCustomMap');
         Route::delete('/customs/{customMap}', [CustomMapController::class, 'removeCustomMap'])->name('custom.removeCustomMap');
     });
 
