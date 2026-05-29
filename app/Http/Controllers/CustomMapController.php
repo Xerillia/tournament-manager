@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\CreateCustomMapRequest;
+use App\Http\Requests\UpdateCustomMapRequest;
 use App\Models\CustomMap;
 use App\Models\Mappool;
 use App\Models\Tournament;
@@ -31,6 +32,20 @@ class CustomMapController extends Controller
         ];
 
         CustomMap::create($request->safe()->merge($payload)->toArray());
+
+        return redirect()->back();
+    }
+
+    public function editCustomMap(UpdateCustomMapRequest $request, CustomMap $customMap)
+    {
+        $collection = collect($request->validated());
+
+        if ($collection->has('round')) {
+            $mappool = Mappool::whereTournamentId($customMap->tournament_id)->whereRound($collection->get('round'))->first();
+            $collection = $collection->merge(['mappool_id' => $mappool->id]);
+        }
+
+        $customMap->update($collection->toArray());
 
         return redirect()->back();
     }
