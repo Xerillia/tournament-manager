@@ -1,12 +1,12 @@
 import { CustomMapStatusUtils } from '@/enums';
-import { addCustomMap, removeCustomMap } from '@/routes/tournaments/custom';
+import { addCustomMap, editCustomMap, removeCustomMap } from '@/routes/tournaments/custom';
 import { CustomMap } from '@/types/custommap';
 import { Mappool } from '@/types/mappools';
 import { Tournament } from '@/types/tournament';
 import { router, useForm } from '@inertiajs/react';
 import { createColumnHelper, flexRender, getCoreRowModel, useReactTable } from '@tanstack/react-table';
 import { Trash2Icon } from 'lucide-react';
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 
 interface CustomMapsTableProps {
     tournament: Tournament;
@@ -80,34 +80,419 @@ export default function CustomMapsTable({ tournament, mappools, customMaps }: Cu
             }),
             columnHelper.accessor('mapper', {
                 header: 'Mapper',
+                cell: (props) => {
+                    const customMap = props.row.original;
+
+                    const [value, setValue] = useState<string>(customMap.mapper);
+                    const [isDirty, setDirty] = useState<boolean>(false);
+
+                    function handleInput(e: React.ChangeEvent<HTMLInputElement, HTMLInputElement>) {
+                        setValue(e.target.value);
+                        setDirty(true);
+                    }
+
+                    function handleBlur() {
+                        if (isDirty) {
+                            router.patch(
+                                editCustomMap(customMap.id),
+                                {
+                                    mapper: value,
+                                },
+                                {
+                                    onSuccess: () => setDirty(false),
+                                },
+                            );
+                        }
+                    }
+
+                    return (
+                        <input
+                            type="text"
+                            autoComplete="off"
+                            className="h-full text-center"
+                            value={value}
+                            onChange={handleInput}
+                            onBlur={handleBlur}
+                        />
+                    );
+                },
             }),
             columnHelper.accessor('beatmap_url', {
                 header: 'URL',
+                cell: (props) => {
+                    const customMap = props.row.original;
+
+                    const [value, setValue] = useState<string>(customMap.beatmap_url);
+                    const [isDirty, setDirty] = useState<boolean>(false);
+
+                    function handleInput(e: React.ChangeEvent<HTMLInputElement, HTMLInputElement>) {
+                        setValue(e.target.value);
+                        setDirty(true);
+                    }
+
+                    function handleBlur() {
+                        if (isDirty) {
+                            router.patch(
+                                editCustomMap(customMap.id),
+                                {
+                                    beatmap_url: value,
+                                },
+                                {
+                                    onSuccess: () => setDirty(false),
+                                },
+                            );
+                        }
+                    }
+
+                    return (
+                        <input
+                            type="text"
+                            autoComplete="off"
+                            className="h-full text-center"
+                            value={value}
+                            onChange={handleInput}
+                            onBlur={handleBlur}
+                        />
+                    );
+                },
             }),
             columnHelper.accessor('beatmap_name', {
                 header: 'Beatmap',
+                cell: (props) => {
+                    const customMap = props.row.original;
+
+                    const [value, setValue] = useState<string>(customMap.beatmap_name);
+                    const [isDirty, setDirty] = useState<boolean>(false);
+
+                    function handleInput(e: React.ChangeEvent<HTMLInputElement, HTMLInputElement>) {
+                        setValue(e.target.value);
+                        setDirty(true);
+                    }
+
+                    function handleBlur() {
+                        if (isDirty) {
+                            router.patch(
+                                editCustomMap(customMap.id),
+                                {
+                                    beatmap_name: value,
+                                },
+                                {
+                                    onSuccess: () => setDirty(false),
+                                },
+                            );
+                        }
+                    }
+
+                    return (
+                        <input
+                            type="text"
+                            autoComplete="off"
+                            className="h-full text-center"
+                            value={value}
+                            onChange={handleInput}
+                            onBlur={handleBlur}
+                        />
+                    );
+                },
             }),
             columnHelper.accessor('mappool.round', {
                 header: 'Round',
+                cell: (props) => {
+                    const customMap = props.row.original;
+
+                    const [value, setValue] = useState<string>(customMap.mappool.round);
+
+                    function handleChange(e: React.ChangeEvent<HTMLSelectElement, HTMLSelectElement>) {
+                        setValue(e.target.value);
+                        router.patch(editCustomMap(customMap.id), {
+                            round: e.target.value,
+                        });
+                    }
+
+                    return (
+                        <select
+                            className="h-12 w-full appearance-none text-center"
+                            value={value}
+                            onChange={(e) => handleChange(e)}
+                        >
+                            {mappools.map((mappool) => (
+                                <option
+                                    key={mappool.round}
+                                    value={mappool.round}
+                                >
+                                    {mappool.round}
+                                </option>
+                            ))}
+                        </select>
+                    );
+                },
             }),
             columnHelper.accessor('mods', {
                 header: 'Mods',
+                cell: (props) => {
+                    const customMap = props.row.original;
+
+                    const [error, setError] = useState<string>('');
+                    const [value, setValue] = useState<string>(customMap.mods);
+                    const [originalValue, setOriginalValue] = useState<string>(customMap.mods);
+                    const [isDirty, setDirty] = useState<boolean>(false);
+
+                    function handleInput(e: React.ChangeEvent<HTMLInputElement, HTMLInputElement>) {
+                        setValue(e.target.value);
+                        setDirty(true);
+                    }
+
+                    function handleBlur() {
+                        if (isDirty) {
+                            setDirty(false);
+                            router.patch(
+                                editCustomMap(customMap.id),
+                                {
+                                    mods: value,
+                                },
+                                {
+                                    onSuccess: () => {
+                                        setOriginalValue(value);
+                                        setError('');
+                                    },
+                                    onError: (e) => {
+                                        setValue(originalValue);
+                                        setError(e.mods);
+                                    },
+                                },
+                            );
+                        }
+                    }
+
+                    useEffect(() => {
+                        if (!error) return;
+
+                        // Clear error after 3 seconds
+                        const timer = setTimeout(() => {
+                            setError('');
+                        }, 3000);
+
+                        return () => clearTimeout(timer);
+                    }, [error]);
+
+                    return (
+                        <div className="flex h-full flex-col">
+                            <input
+                                type="string"
+                                autoComplete="off"
+                                className="flex-1 text-center"
+                                value={value}
+                                onChange={handleInput}
+                                onBlur={handleBlur}
+                            />
+                            {error && <p className="text-sm text-red-400">{error}</p>}
+                        </div>
+                    );
+                },
             }),
             columnHelper.accessor('status', {
                 header: 'Status',
-                cell: (props) => CustomMapStatusUtils.label(props.getValue()),
+                cell: (props) => {
+                    const customMap = props.row.original;
+
+                    const [value, setValue] = useState<string>(customMap.status);
+
+                    function handleChange(e: React.ChangeEvent<HTMLSelectElement, HTMLSelectElement>) {
+                        setValue(e.target.value);
+                        router.patch(editCustomMap(customMap.id), {
+                            status: e.target.value,
+                        });
+                    }
+
+                    return (
+                        <select
+                            className="h-12 appearance-none text-center"
+                            value={value}
+                            onChange={handleChange}
+                        >
+                            <option
+                                disabled
+                                className="hidden"
+                                value="default"
+                            >
+                                Select...
+                            </option>
+                            {CustomMapStatusUtils.options().map((option) => (
+                                <option
+                                    key={option}
+                                    value={option}
+                                >
+                                    {CustomMapStatusUtils.label(option)}
+                                </option>
+                            ))}
+                        </select>
+                    );
+                },
+                // cell: (props) => CustomMapStatusUtils.label(props.getValue()),
             }),
             columnHelper.accessor('bpm', {
                 header: 'BPM',
+                cell: (props) => {
+                    const customMap = props.row.original;
+
+                    const [value, setValue] = useState<number>(customMap.bpm);
+                    const [isDirty, setDirty] = useState<boolean>(false);
+
+                    function handleInput(e: React.ChangeEvent<HTMLInputElement, HTMLInputElement>) {
+                        setValue(Number(e.target.value));
+                        setDirty(true);
+                    }
+
+                    function handleBlur() {
+                        if (isDirty) {
+                            router.patch(
+                                editCustomMap(customMap.id),
+                                {
+                                    bpm: value,
+                                },
+                                {
+                                    onSuccess: () => setDirty(false),
+                                },
+                            );
+                        }
+                    }
+
+                    return (
+                        <input
+                            type="number"
+                            min="0"
+                            step="0.01"
+                            autoComplete="off"
+                            className="h-full text-center"
+                            value={value}
+                            onChange={handleInput}
+                            onBlur={handleBlur}
+                        />
+                    );
+                },
             }),
             columnHelper.accessor('cs', {
                 header: 'CS',
+                cell: (props) => {
+                    const customMap = props.row.original;
+
+                    const [value, setValue] = useState<number>(customMap.cs);
+                    const [isDirty, setDirty] = useState<boolean>(false);
+
+                    function handleInput(e: React.ChangeEvent<HTMLInputElement, HTMLInputElement>) {
+                        setValue(Number(e.target.value));
+                        setDirty(true);
+                    }
+
+                    function handleBlur() {
+                        if (isDirty) {
+                            router.patch(
+                                editCustomMap(customMap.id),
+                                {
+                                    cs: value,
+                                },
+                                {
+                                    onSuccess: () => setDirty(false),
+                                },
+                            );
+                        }
+                    }
+
+                    return (
+                        <input
+                            type="number"
+                            min="0"
+                            step="0.01"
+                            autoComplete="off"
+                            className="h-full text-center"
+                            value={value}
+                            onChange={handleInput}
+                            onBlur={handleBlur}
+                        />
+                    );
+                },
             }),
             columnHelper.accessor('ar', {
                 header: 'AR',
+                cell: (props) => {
+                    const customMap = props.row.original;
+
+                    const [value, setValue] = useState<number>(customMap.ar);
+                    const [isDirty, setDirty] = useState<boolean>(false);
+
+                    function handleInput(e: React.ChangeEvent<HTMLInputElement, HTMLInputElement>) {
+                        setValue(Number(e.target.value));
+                        setDirty(true);
+                    }
+
+                    function handleBlur() {
+                        if (isDirty) {
+                            router.patch(
+                                editCustomMap(customMap.id),
+                                {
+                                    ar: value,
+                                },
+                                {
+                                    onSuccess: () => setDirty(false),
+                                },
+                            );
+                        }
+                    }
+
+                    return (
+                        <input
+                            type="number"
+                            min="0"
+                            step="0.01"
+                            autoComplete="off"
+                            className="h-full text-center"
+                            value={value}
+                            onChange={handleInput}
+                            onBlur={handleBlur}
+                        />
+                    );
+                },
             }),
             columnHelper.accessor('od', {
                 header: 'OD',
+                cell: (props) => {
+                    const customMap = props.row.original;
+
+                    const [value, setValue] = useState<number>(customMap.od);
+                    const [isDirty, setDirty] = useState<boolean>(false);
+
+                    function handleInput(e: React.ChangeEvent<HTMLInputElement, HTMLInputElement>) {
+                        setValue(Number(e.target.value));
+                        setDirty(true);
+                    }
+
+                    function handleBlur() {
+                        if (isDirty) {
+                            router.patch(
+                                editCustomMap(customMap.id),
+                                {
+                                    od: value,
+                                },
+                                {
+                                    onSuccess: () => setDirty(false),
+                                },
+                            );
+                        }
+                    }
+
+                    return (
+                        <input
+                            type="number"
+                            min="0"
+                            step="0.01"
+                            autoComplete="off"
+                            className="h-full text-center"
+                            value={value}
+                            onChange={handleInput}
+                            onBlur={handleBlur}
+                        />
+                    );
+                },
             }),
         ],
         [],
